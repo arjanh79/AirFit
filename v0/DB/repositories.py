@@ -43,6 +43,3 @@ class GenericRepository:
 
 repo = RepositoryFactory.get_repository('sqlite')
 print(repo.get_intensities())
-
-def empty():
-    pass

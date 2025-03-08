@@ -40,6 +40,3 @@ class GenericDB:
 class SQLiteDB(GenericDB):
     def __init__(self, db_name):
         super().__init__(db_name, sqlite3)
-
-def empty():
-    pass
