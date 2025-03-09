@@ -1,19 +1,7 @@
-from dev.v0.DB.factories import DatabaseFactory
-
-class RepositoryFactory:
-    @staticmethod
-    def get_repository(db_type='sqlite', **kwargs):
-        db = DatabaseFactory.get_database(db_type, db_name='airfit.db', **kwargs)
-
-        if db_type == 'sqlite':
-            return GenericRepository(db)
-        else:
-            raise ValueError(f'UNKNOWN: {db_type=}')
-
 
 class GenericRepository:
     def __init__(self, db):
-        self.db = db  # SQLiteDB object
+        self.db = db  # 
 
     def get_all_workouts(self):
         sql = """
@@ -41,5 +29,6 @@ class GenericRepository:
             self.db.execute_query_commit(delete_exercises)
             self.db.execute_query_commit(delete_workouts)
 
-repo = RepositoryFactory.get_repository('sqlite')
-print(repo.get_intensities())
+class SQLiteRepository(GenericRepository):
+    def __init__(self, db):
+        super().__init__(db)
