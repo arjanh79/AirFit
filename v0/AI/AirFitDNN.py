@@ -4,6 +4,10 @@ import torch.nn as nn
 class AirFitDNN(nn.Module):
     def __init__(self):
         super().__init__()
+
+        self.loss_fn = nn.MSELoss()
+        self.optimizer = torch.optim.NAdam(self.model.parameters(), lr=0.005)
+
         self.embedding = nn.Embedding(13, 3)
         self.seq_features = nn.Linear(79, 5)
         self.fc1 = nn.Linear(5 + 3, 10)
