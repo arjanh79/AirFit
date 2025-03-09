@@ -30,10 +30,9 @@ class WorkoutPreprocessor:
 
         # Calculate weight factor for loss
         self.weighted_loss = torch.tensor(np.cumprod([1.0075] * (self.data_x.shape[0] - 1)), dtype=torch.float32)
-        self.weighted_loss = torch.cat((torch.ones(1), self.weighted_loss))
-        print(self.weighted_loss)
+        self.weighted_loss = torch.cat((torch.ones(1), self.weighted_loss)) # Needs to go into DataSet as well
 
-        self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y)
+        self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y, self.weighted_loss)
 
     @staticmethod
     def create_dataframe(db_data):

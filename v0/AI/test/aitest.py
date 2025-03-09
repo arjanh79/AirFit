@@ -4,7 +4,7 @@ from dev.v0.AI.modelDNN import AirFitDNN
 from dev.v0.AI.train import train_model
 
 pre = WorkoutPreprocessor()
-dataset = WorkoutDataset(pre.embeddings_x, pre.data_x, pre.data_y)
+dataset = WorkoutDataset(pre.embeddings_x, pre.data_x, pre.data_y, pre.weighted_loss)
 
 model = AirFitDNN()
 
