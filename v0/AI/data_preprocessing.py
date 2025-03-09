@@ -1,32 +1,11 @@
+
 import torch
-from torch.utils.data import Dataset, DataLoader
-import torch.nn as nn
 
 import pandas as pd
+import numpy as np
 
-from dev.v0.AI.AirFitDNN import AirFitDNN
+from dev.v0.AI.dataset import WorkoutDataset
 from dev.v0.DB.factories import RepositoryFactory
-
-class WorkoutDataset(Dataset):
-    def __init__(self, Xe, Xf, y):
-        self.Xe = Xe
-        self.Xf = Xf
-        self.y = y
-
-    def __len__(self):
-        return len(self.Xe)
-
-    def __getitem__(self, idx):
-        return self.Xe[idx], self.Xf[idx], self.y[idx]
-
-    def __repr__(self):
-        summary = (f'WorkoutDataset('
-                f'samples={len(self)}, '
-                f'embeddings_shape={self.Xe.shape}, '
-                f'data_x_shape={self.Xf.shape}, '
-                f'data_y_shape={self.y.shape})')
-        return summary
-
 
 
 class WorkoutPreprocessor:
@@ -49,6 +28,11 @@ class WorkoutPreprocessor:
         # Reshape the data for a DNN
         self.embeddings_x, self.data_x = self.create_dnn_data_x()
 
+        # Calculate weight factor for loss
+        self.weighted_loss = torch.tensor(np.cumprod([1.0075] * (self.data_x.shape[0] - 1)), dtype=torch.float32)
+        self.weighted_loss = torch.cat((torch.ones(1), self.weighted_loss))
+        print(self.weighted_loss)
+
         self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y)
 
     @staticmethod
@@ -57,7 +41,7 @@ class WorkoutPreprocessor:
         return pd.DataFrame(data, columns=cols)
 
     def create_dnn_data_x(self):
-        embeddings = self.data_x[:, :, 0]
+        embeddings = self.data_x[:, :, 0].int()
         self.data_x = torch.cat((self.data_x[:, :, 1:], ), dim=2)
         self.data_x = self.data_x.flatten(start_dim=1, end_dim=2)
         return embeddings, self.data_x
@@ -83,26 +67,3 @@ class WorkoutPreprocessor:
 
     def get_dataset(self):
         return self.ds
-
-
-class WorkoutTrainer:
-    def __init__(self):
-        # Get the data
-        self.ds = WorkoutPreprocessor().get_dataset()
-        self.dl = DataLoader(self.ds)
-
-        # Load the model
-        self.model = AirFitDNN()
-
-    def train(self):
-        for epoch in range(10):
-            self.model.train()
-            for batch, (Xe, Xf, y) in enumerate(self.dl):
-                y_hat = self.model(Xe, Xf)
-                loss = self.model.loss_fn(y_hat, y)
-                loss.backward()
-                self.model.optimizer.step()
-                self.model.optimizer.zero_grad()
-
-wt = WorkoutTrainer()
-wt.train()
