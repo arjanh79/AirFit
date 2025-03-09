@@ -9,12 +9,12 @@ class GenericRepository:
                     FROM WorkoutExercise E
                     JOIN Workout W on W.w_id = E.w_id
                 WHERE w.intensity IS NOT NULL
-                ORDER BY W.timestamp, E.e_sequence;
+                ORDER BY W.timestamp, W.w_id, E.e_sequence;
               """
         return self.db.execute_query(sql)
 
     def get_intensities(self):
-        sql = 'SELECT w_id, intensity FROM Workout WHERE intensity IS NOT NULL ORDER BY timestamp;'
+        sql = 'SELECT w_id, intensity FROM Workout WHERE intensity IS NOT NULL ORDER BY timestamp, w_id;'
         return self.db.execute_query(sql)
 
     def get_mapping(self):

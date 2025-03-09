@@ -10,7 +10,6 @@ class AirFitDNN(nn.Module):
         self.relu = nn.LeakyReLU()
         self.output = nn.Linear(10, 1)
 
-
     def forward(self, e, f):
         e = self.embedding(e)
         e = e.flatten(start_dim=1)

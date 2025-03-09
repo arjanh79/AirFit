@@ -10,7 +10,9 @@ class GenericDB:
             cursor = conn.cursor()
             try:
                 cursor.execute(sql, params or ())
-                return cursor.fetchall()
+                data = cursor.fetchall()
+                cols = [desc[0] for desc in cursor.description]
+                return data, cols
             finally:
                 cursor.close()
 
