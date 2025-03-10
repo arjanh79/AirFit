@@ -9,10 +9,10 @@ class ModelTraining:
 
         self.model_location = 'workout_model.pth'
 
-        self.epochs = 15
+        self.epochs = 10
         self.batch_size = 32
         self.lr = 0.005
-        self.safe_model = False # Don't overwrite what we already have.
+        self.safe_model = True # Don't overwrite what we already have.
         self.load_model = True # Test if the extra data add any value.
 
         if self.load_model:
