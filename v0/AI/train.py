@@ -8,12 +8,15 @@ class ModelTraining:
         self.dataset = dataset
 
         self.model_location = 'workout_model.pth'
-        self.model.load_state_dict(torch.load(self.model_location))
 
-        self.epochs = 3
+        self.epochs = 15
         self.batch_size = 32
-        self.lr = 0.003
-        self.safe_model = False
+        self.lr = 0.005
+        self.safe_model = False # Don't overwrite what we already have.
+        self.load_model = True # Test if the extra data add any value.
+
+        if self.load_model:
+            self.model.load_state_dict(torch.load(self.model_location))
 
         self.loss = self.get_loss()
         self.optimizer = self.get_optimizer()
@@ -41,18 +44,20 @@ class ModelTraining:
                 loss = torch.mean(loss * wl)
                 loss.backward()
                 optimizer.step()
-        self.eval_model()
+            print(f'Epoch {epoch+1:03d}, Loss: {loss.item():>8.5f}')
         if self.safe_model:
             torch.save(self.model.state_dict(), self.model_location)
 
     def eval_model(self):
-        self.model.load_state_dict(torch.load(self.model_location))
+
+        if self.load_model:
+            self.model.load_state_dict(torch.load(self.model_location))
 
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=self.batch_size, shuffle=False)
         self.model.eval()
         with torch.no_grad():
             for Xe, Xf, y, _ in dataloader:
                 y_hat = self.model(Xe, Xf)
-                print('---- Model performance:')
+                print('\n---- Model performance:')
                 print(f'y_true: {y.flatten()}')
                 print(f'y_hat: {y_hat.flatten()}')
