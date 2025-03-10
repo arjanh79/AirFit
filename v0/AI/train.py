@@ -7,7 +7,7 @@ class ModelTraining:
         self.model = model
         self.dataset = dataset
 
-        self.model_location = '../workout_model.pth'
+        self.model_location = 'workout_model.pth'
         self.model.load_state_dict(torch.load(self.model_location))
 
         self.epochs = 3
@@ -54,5 +54,5 @@ class ModelTraining:
             for Xe, Xf, y, _ in dataloader:
                 y_hat = self.model(Xe, Xf)
                 print('---- Model performance:')
-                print(f'y_hat: {y_hat.flatten()}')
                 print(f'y_true: {y.flatten()}')
+                print(f'y_hat: {y_hat.flatten()}')
