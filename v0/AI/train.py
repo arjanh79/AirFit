@@ -9,11 +9,11 @@ class ModelTraining:
 
         self.model_location = 'workout_model.pth'
 
-        self.epochs = 10
+        self.epochs = 15
         self.batch_size = 32
         self.lr = 0.005
-        self.safe_model = True # Don't overwrite what we already have.
-        self.load_model = True # Test if the extra data add any value.
+        self.safe_model = False # FALSE!!
+        self.load_model = False # FALSE!!
 
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))

@@ -29,15 +29,22 @@ class WorkoutPreprocessor:
         # Reshape the data for a DNN
         self.embeddings_x, self.data_x = self.create_dnn_data_x()
 
-        # Scale the data, only of the features.. Dirty... Keep it
+        # Scale the data, only of the features.. Dirty like Diana... Keep it
         scaler = StandardScaler()
         self.data_x = torch.tensor(scaler.fit_transform(self.data_x), dtype=torch.float32)
+        samples = self.data_x.shape[0]
+        seq_nums = (torch.arange(1, 20+1, dtype=torch.float32).repeat(samples, 1) -1 ) / 19
+        self.data_x[:, 2::3] = seq_nums
 
         # Calculate weight factor for loss
         self.weighted_loss = torch.tensor(np.cumprod([1.0075] * (self.data_x.shape[0] - 1)), dtype=torch.float32)
-        self.weighted_loss = torch.cat((torch.ones(1), self.weighted_loss)) # Needs to go into DataSet as well
+        self.weighted_loss = torch.cat((torch.ones(1), self.weighted_loss))
+        self.weighted_loss = (self.weighted_loss - self.weighted_loss.min()) / (self.weighted_loss.max() - self.weighted_loss.min())
+        self.weighted_loss = self.weighted_loss + 0.5
 
         self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y, self.weighted_loss)
+
+
 
     @staticmethod
     def create_dataframe(db_data):
@@ -52,10 +59,11 @@ class WorkoutPreprocessor:
 
     def create_lstm_data_x(self):
         workouts = []
-        for _, w in self.df_workout.groupby('w_id'):
+        for _, w in self.df_workout.groupby('w_id', sort=False):
+            w = w.reset_index(drop=True)
             w = w.reindex(range(20), fill_value=0)
             w = w.drop(['w_id'], axis=1)
-            w['e_sequence'] = range(1, 20+1)
+            # w['e_sequence'] = range(1, 20+1)
             workouts.append(torch.tensor(w.values, dtype=torch.float32))
         return torch.stack(workouts)
 
