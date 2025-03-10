@@ -9,7 +9,9 @@ def get_optimizer(model, lr):
     return optim.NAdam(model.parameters(), lr=lr)
 
 
-def train_model(model, dataset, epochs=10, batch_size=32, lr=0.005):
+def train_model(model, dataset, epochs=8, batch_size=32, lr=0.003):
+
+    model.load_state_dict(torch.load("../workout_model.pth"))
 
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
@@ -26,5 +28,16 @@ def train_model(model, dataset, epochs=10, batch_size=32, lr=0.005):
             loss = torch.mean(loss * wl)
             loss.backward()
             optimizer.step()
-            print(output.item(), loss.item())
+    print(output.flatten(), loss.item())
     # torch.save(model.state_dict(), '../workout_model.pth')
+
+def eval_model(model, dataset):
+    model.load_state_dict(torch.load("../workout_model.pth"))
+
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=False)
+    model.eval()
+    with torch.no_grad():
+        for Xe, Xf, y, _ in dataloader:
+            pred = model(Xe, Xf)
+            print(f'PRED: {pred.flatten()}')
+            print(f'EXP: {y.flatten()}')
