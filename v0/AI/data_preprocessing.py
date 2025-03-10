@@ -3,6 +3,7 @@ import torch
 
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 
 from dev.v0.AI.dataset import WorkoutDataset
 from dev.v0.DB.factories import RepositoryFactory
@@ -21,12 +22,16 @@ class WorkoutPreprocessor:
         # Do some data cleaning
         self.clean_mappings()
 
-        # Create dataset # Store in vars, keep it flexable.
+        # Create dataset -  Store in vars, keep it flexable.
         self.data_x = self.create_lstm_data_x()
         self.data_y = self.create_lstm_data_y()
 
         # Reshape the data for a DNN
         self.embeddings_x, self.data_x = self.create_dnn_data_x()
+
+        # Scale the data, only of the features.. Dirty... Keep it
+        scaler = StandardScaler()
+        self.data_x = torch.tensor(scaler.fit_transform(self.data_x), dtype=torch.float32)
 
         # Calculate weight factor for loss
         self.weighted_loss = torch.tensor(np.cumprod([1.0075] * (self.data_x.shape[0] - 1)), dtype=torch.float32)
