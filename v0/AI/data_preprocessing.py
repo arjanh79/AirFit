@@ -45,11 +45,11 @@ class WorkoutPreprocessor:
         self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y, self.weighted_loss)
 
 
-
     @staticmethod
     def create_dataframe(db_data):
         data, cols = db_data
         return pd.DataFrame(data, columns=cols)
+
 
     def create_dnn_data_x(self):
         embeddings = self.data_x[:, :, 0].int()
@@ -57,25 +57,28 @@ class WorkoutPreprocessor:
         self.data_x = self.data_x.flatten(start_dim=1, end_dim=2)
         return embeddings, self.data_x
 
+
     def create_lstm_data_x(self):
         workouts = []
         for _, w in self.df_workout.groupby('w_id', sort=False):
             w = w.reset_index(drop=True)
             w = w.reindex(range(20), fill_value=0)
             w = w.drop(['w_id'], axis=1)
-            # w['e_sequence'] = range(1, 20+1)
             workouts.append(torch.tensor(w.values, dtype=torch.float32))
         return torch.stack(workouts)
+
 
     def create_lstm_data_y(self):
         y = torch.tensor(self.df_intensity['intensity'].values, dtype=torch.float32)
         y = y.unsqueeze(-1)
         return y
 
+
     def clean_mappings(self):
         self.df_mapping = pd.concat((pd.DataFrame({'mapid': [0], 'name': ['UNK']}), self.df_mapping), ignore_index=True)
         self.df_mapping = dict(zip(self.df_mapping['mapid'], self.df_mapping.index))
         self.df_workout['e_id'] = self.df_workout['e_id'].map(self.df_mapping).fillna(0).astype(int)
+
 
     def get_dataset(self):
         return self.ds
