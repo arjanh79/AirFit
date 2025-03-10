@@ -19,6 +19,7 @@ class GenericRepository:
         sql = 'SELECT w_id, intensity FROM Workout WHERE intensity IS NOT NULL ORDER BY timestamp, w_id;'
         return self.db.execute_query(sql)
 
+
     def get_mapping(self):
         sql = 'SELECT min(e_id) mapid, name FROM Exercise GROUP BY name'
         return self.db.execute_query(sql)
@@ -31,6 +32,11 @@ class GenericRepository:
             delete_workouts = 'DELETE FROM Workout WHERE intensity IS NULL;'
             self.db.execute_query_commit(delete_exercises)
             self.db.execute_query_commit(delete_workouts)
+
+
+    def get_all_exercises(self):
+        sql = 'SELECT name, weight FROM Exercise GROUP BY name, weight'
+        return self.db.execute_query(sql)
 
 
 class SQLiteRepository(GenericRepository):

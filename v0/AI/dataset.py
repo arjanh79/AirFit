@@ -19,7 +19,7 @@ class WorkoutDataset(Dataset):
                 f'samples={len(self)}, '
                 f'embeddings_shape={self.Xe.shape}, '
                 f'data_x_shape={self.Xf.shape}, '
-                f'data_y_shape={self.y.shape},'
+                f'data_y_shape={self.y.shape}, '
                 f'weighted_loss_shape={self.wl.shape})'
                    )
         return summary
