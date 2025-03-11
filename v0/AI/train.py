@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+
 class ModelTraining:
     def __init__(self, model, dataset):
         self.model = model
@@ -49,7 +50,6 @@ class ModelTraining:
             torch.save(self.model.state_dict(), self.model_location)
 
     def eval_model(self):
-
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
 
@@ -61,3 +61,16 @@ class ModelTraining:
                 print('\n---- Model performance:')
                 print(f'y_true: {y.flatten()}')
                 print(f'y_hat: {y_hat.flatten()}')
+
+    def eval_workout(self):
+        self.model.load_state_dict(torch.load(self.model_location))
+        dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=1, shuffle=False)
+
+        if not len(dataloader) == 1:
+            return -1
+
+        self.model.eval()
+        with torch.no_grad():
+            Xe, Xf, _, _ = next(iter(dataloader))
+            y_hat = self.model(Xe, Xf)
+        return y_hat

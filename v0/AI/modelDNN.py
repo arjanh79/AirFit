@@ -20,6 +20,7 @@ class AirFitDNN(nn.Module):
     def forward(self, e, f):
         e = self.embedding(e)
         e = e.flatten(start_dim=1)
+
         f = self.seq_features(f)
 
         x = torch.cat((e, f), dim=1)
@@ -28,7 +29,7 @@ class AirFitDNN(nn.Module):
         x = self.relu1(x)
 
         x = self.fc2(x)
-        x = self.relu1(x)
+        x = self.relu2(x)
 
         x = self.output(x)
 

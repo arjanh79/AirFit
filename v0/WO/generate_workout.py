@@ -1,70 +1,64 @@
-
 import numpy as np
 import pandas as pd
 import torch
-import joblib
 
-from dev.v0.AI.dataset import WorkoutDataset
 from dev.v0.AI.modelDNN import AirFitDNN
-from dev.v0.AI.train import ModelTraining
 from dev.v0.DB.factories import RepositoryFactory
 
-repo = RepositoryFactory.get_repository('sqlite')
-rnd_gen = np.random.default_rng()
 
-mappings = repo.get_mapping()
-df_mapping = pd.DataFrame(mappings[0], columns=mappings[1])
-df_mapping = [(v, c+1) for c, v in enumerate(df_mapping['name'])]
-df_mapping.insert(0, ('UNK', 0))
-df_mapping = dict(df_mapping)
+class NewWorkOut:
+    def __init__(self):
+        self.repo = RepositoryFactory.get_repository('sqlite')
+        self.all_exercises = self.get_all_exercises()
+        self.rnd_gen = np.random.default_rng()
+        self.model = self.get_model()
+        self.get_mappings = self.get_mappings()
 
-seq_mapping = {i: (i-1)/19  for i in range(1, 20+1)}
+    def get_mappings(self):
+        mappings = self.repo.get_mapping()[0]
+        mappings.insert(0, (0, 'UNK'))
+        mappings = {m[1]: c for c, m in enumerate(mappings)}
+        return mappings
 
-exercises = repo.get_all_exercises()
-df_exercises = pd.DataFrame(exercises[0], columns=exercises[1])
+    def get_all_exercises(self):
+        return self.repo.get_all_exercises()
 
-model = AirFitDNN()
-model.load_state_dict(torch.load('../AI/workout_model.pth')) # Load the model
+    @staticmethod
+    def get_model():
+        model = AirFitDNN()
+        model.load_state_dict(torch.load('../AI/workout_model.pth'))  # Load the model
+        return model
+
+    def get_warming_up(self):
+        min_exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
+        min_exercises = min_exercises.groupby('name').min().reset_index()
+        min_exercises = min_exercises[~min_exercises['name'].str.contains('Plank|Clean|Push')]
+
+        exercises = self.rnd_gen.choice(len(min_exercises), size=3, replace=False)
+        exercises = min_exercises.iloc[exercises, :].reset_index(drop=True)
+        exercises['reps'] = 10
+
+        return exercises
+
+    def get_final(self):
+        order = ['Push Ups', 'Squats', 'Clean and Press']
+        exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
+        single_weight = exercises.loc[exercises['name'].isin(['Push Ups', 'Clean and Press'])]
+
+        finale = pd.DataFrame(self.rnd_gen.choice(exercises[exercises['name'] == 'Squats'], size=1), columns=['name','weight'])
+        finale = pd.concat((finale, single_weight), ignore_index=True)
+        finale['name'] = pd.Categorical(finale['name'], categories=order, ordered=True)
+        finale = finale.sort_values('name').reset_index(drop=True)
+        finale['reps'] = 10
+
+        return finale
+
+    def get_core(self):
+        exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
+        print(exercises)
 
 
-scaler = joblib.load('../AI/scaler.pkl') # Use the same file as used for training
-
-df_exercises_min = df_exercises.groupby('name').min().reset_index()
-
-df_exercises_min = df_exercises_min[~df_exercises_min['name'].str.contains('Plank|Push|Clean')]
-
-warming_up = pd.DataFrame(rnd_gen.choice(df_exercises_min, size=3, replace=False), columns=['name', 'weight'])
-warming_up['reps'] = rnd_gen.integers(10, 20+1, size=3)
-
-to_even = warming_up['name'].str.contains('Step Ups|Twist')
-is_odd = warming_up['reps'] % 2
-
-warming_up['reps'] = warming_up['reps'] + (to_even & is_odd)
-print(warming_up)
-
-warming_up['name'] = warming_up['name'].map(df_mapping)
-warming_up.columns = ['e_id', 'weight', 'reps']
-warming_up['weight'] = warming_up['weight'].astype(int)
-
-# Dummies... bad decisions were made...
-seq_nums = torch.arange(1, 20 + 1).unsqueeze(-1)
-
-warming_up = torch.tensor(warming_up.values, dtype=torch.float32)
-warming_up = torch.cat((warming_up, torch.zeros((17, 3))))
-
-warming_up = torch.cat((warming_up, seq_nums), dim=1)
-
-warming_up_e = warming_up[:, 0]
-warming_up_f = warming_up[:, 1:]
-
-warming_up_f = warming_up_f.flatten().reshape((-1, 60))
-warming_up_f = scaler.transform(warming_up_f)
-
-warming_up_f[:, 2::3] = list(seq_mapping.values())
-warming_up_f = torch.tensor(warming_up_f, dtype=torch.float32)
-
-warming_up_e = warming_up_e.reshape((1, -1)).long()
-
-dataset = WorkoutDataset(warming_up_e, warming_up_f, torch.ones((1, 1)), torch.zeros(1))
-mt = ModelTraining(AirFitDNN(), dataset)
-mt.eval_model()
+nwo = NewWorkOut()
+print(nwo.get_warming_up())
+print(nwo.get_final())
+nwo.get_core()
