@@ -31,12 +31,15 @@ class WorkoutPreprocessor:
         # Reshape the data for a DNN
         self.embeddings_x, self.data_x = self.create_dnn_data_x()
 
-        # Scale the data, only of the features.. Dirty like Diana... Keep it
+        # TODO: create functions!
+        # Scale the data, only the features.. dirty... Keep it for now
         scaler = StandardScaler()
         self.data_x = torch.tensor(scaler.fit_transform(self.data_x), dtype=torch.float32)
+        # Fix sequence numbers
         samples = self.data_x.shape[0]
         seq_nums = (torch.arange(1, 20+1, dtype=torch.float32).repeat(samples, 1) - 1 ) / 19
         self.data_x[:, 2::3] = seq_nums
+        # Save values for workout generation. Used in WO.
         joblib.dump(scaler, "scaler.pkl")
 
         # Calculate weight factor for loss
