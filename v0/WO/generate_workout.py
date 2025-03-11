@@ -1,6 +1,7 @@
 
 import pandas as pd
 import torch
+import joblib
 
 from dev.v0.AI.modelDNN import AirFitDNN
 from dev.v0.DB.factories import RepositoryFactory
@@ -16,7 +17,11 @@ exercises = repo.get_all_exercises()
 df_exercises = pd.DataFrame(exercises[0], columns=exercises[1])
 
 model = AirFitDNN()
-model.load_state_dict(torch.load('../AI/workout_model.pth'))
+model.load_state_dict(torch.load('../AI/workout_model.pth')) # Load the model
+model.eval() # Put model in eval mode
 
-print(model.embedding.weight.data)
+scaler = joblib.load('../AI/scaler.pkl') # Use the same file as used for training
 
+df_exercises_min = df_exercises.groupby('name').min().reset_index()
+
+print(df_exercises_min)

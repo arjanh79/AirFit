@@ -3,6 +3,8 @@ import torch
 
 import pandas as pd
 import numpy as np
+import joblib
+
 from sklearn.preprocessing import StandardScaler
 
 from dev.v0.AI.dataset import WorkoutDataset
@@ -33,8 +35,9 @@ class WorkoutPreprocessor:
         scaler = StandardScaler()
         self.data_x = torch.tensor(scaler.fit_transform(self.data_x), dtype=torch.float32)
         samples = self.data_x.shape[0]
-        seq_nums = (torch.arange(1, 20+1, dtype=torch.float32).repeat(samples, 1) -1 ) / 19
+        seq_nums = (torch.arange(1, 20+1, dtype=torch.float32).repeat(samples, 1) - 1 ) / 19
         self.data_x[:, 2::3] = seq_nums
+        joblib.dump(scaler, "scaler.pkl")
 
         # Calculate weight factor for loss
         self.weighted_loss = torch.tensor(np.cumprod([1.0075] * (self.data_x.shape[0] - 1)), dtype=torch.float32)
