@@ -8,5 +8,5 @@ dataset = WorkoutDataset(pre.embeddings_x, pre.data_x, pre.data_y, pre.weighted_
 
 mt = ModelTraining(AirFitDNN(), dataset)
 
-mt.train_model()
+# mt.train_model()
 mt.eval_model()

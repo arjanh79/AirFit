@@ -7,13 +7,13 @@ class ModelTraining:
         self.model = model
         self.dataset = dataset
 
-        self.model_location = 'workout_model.pth'
+        self.model_location = '../AI/workout_model.pth'
 
         self.epochs = 15
         self.batch_size = 32
         self.lr = 0.005
         self.safe_model = False # FALSE!!
-        self.load_model = False # FALSE!!
+        self.load_model = True # FALSE!!
 
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
@@ -53,7 +53,7 @@ class ModelTraining:
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
 
-        dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=self.batch_size, shuffle=False)
+        dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=32, shuffle=False)
         self.model.eval()
         with torch.no_grad():
             for Xe, Xf, y, _ in dataloader:

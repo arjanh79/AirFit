@@ -8,11 +8,14 @@ class WorkoutDataset(Dataset):
         self.y = y
         self.wl = wl
 
+
     def __len__(self):
         return len(self.Xe)
 
+
     def __getitem__(self, idx):
         return self.Xe[idx], self.Xf[idx], self.y[idx], self.wl[idx]
+
 
     def __repr__(self):
         summary = (f'WorkoutDataset('
