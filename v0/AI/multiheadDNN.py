@@ -21,19 +21,19 @@ class AirFitMultiHeadDNN(nn.Module):
                 nn.Softplus()
             ) for _ in range(self.heads)
         ])
-        self.output_layer = nn.Linear(20, 1)
-        self.final_relu = nn.ReLU()
 
         with torch.no_grad():
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
 
+
     def forward(self, e, f):
         e = self.embedding(e)
         f = f.reshape((-1, 20, 3)) # Reshape f, create a 3 vector per exercise
+        mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
         f = self.features(f)
         x = torch.cat((e, f), dim=2) # Output: torch.Size([2, 20, 8])
         h = [head(x[:, i, :]) for i, head in enumerate(self.heads)]
         h = torch.cat(h, dim=1)
-        output = self.output_layer(h)
-        print(output)
-        return output
+        h = h * mask
+        output = torch.sum(h, dim=1).reshape((-1, 1))
+        return output, h

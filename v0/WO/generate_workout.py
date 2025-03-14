@@ -24,6 +24,7 @@ class NewWorkout:
 
         self.estimate_intensity()
         self.tune_workout()
+        self.heads = None
         print(self.workout)
 
     def estimate_intensity(self):
@@ -35,13 +36,16 @@ class NewWorkout:
 
         dataset = WorkoutDataset(X_embeddings, X_features, y, wl)
         mt = ModelTraining(AirFitMultiHeadDNN(), dataset)
-        intensity = mt.eval_workout().item()
+        intensity, heads = mt.eval_workout()
+        intensity = intensity.item()
+        self.heads = heads
         print(f'\nExpected Intensity: {intensity:.3f}')
         return intensity
 
 
     def tune_workout(self):
         intensity = self.estimate_intensity()
+        # todo: replace sample with weights from self.heads
         while intensity < 3:
             to_increase = self.workout.sample(n=1)
             index = to_increase.index.item()
