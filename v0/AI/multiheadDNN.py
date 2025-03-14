@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
 class AirFitMultiHeadDNN(nn.Module):
     def __init__(self):
@@ -27,18 +28,12 @@ class AirFitMultiHeadDNN(nn.Module):
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
 
     def forward(self, e, f):
-        print(f)
         e = self.embedding(e)
         f = f.reshape((-1, 20, 3)) # Reshape f, create a 3 vector per exercise
-        print(f)
         f = self.features(f)
         x = torch.cat((e, f), dim=2) # Output: torch.Size([2, 20, 8])
         h = [head(x[:, i, :]) for i, head in enumerate(self.heads)]
         h = torch.cat(h, dim=1)
-        print(h)
         output = self.output_layer(h)
-        # print(output)
+        print(output)
         return output
-
-model = AirFitMultiHeadDNN()
-print(model)

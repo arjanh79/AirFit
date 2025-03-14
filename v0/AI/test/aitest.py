@@ -1,6 +1,6 @@
 from dev.v0.AI.data_preprocessing import WorkoutPreprocessor
 from dev.v0.AI.dataset import WorkoutDataset
-from dev.v0.AI.test.mulihead_test import AirFitMultiHeadDNN
+from dev.v0.AI.multiheadDNN import AirFitMultiHeadDNN
 
 from dev.v0.AI.train import ModelTraining
 

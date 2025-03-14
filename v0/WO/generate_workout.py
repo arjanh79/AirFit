@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 
 from dev.v0.AI.dataset import WorkoutDataset
-from dev.v0.AI.modelDNN import AirFitDNN
+from dev.v0.AI.multiheadDNN import AirFitMultiHeadDNN
 from dev.v0.AI.train import ModelTraining
 from dev.v0.DB.factories import RepositoryFactory
 
@@ -21,7 +21,6 @@ class NewWorkout:
         self.core = self.get_core()
 
         self.workout, self.workout_model = self.get_workout()
-        print(self.workout)
 
         self.estimate_intensity()
         self.tune_workout()
@@ -35,7 +34,7 @@ class NewWorkout:
         wl = torch.tensor([[1]])
 
         dataset = WorkoutDataset(X_embeddings, X_features, y, wl)
-        mt = ModelTraining(AirFitDNN(), dataset)
+        mt = ModelTraining(AirFitMultiHeadDNN(), dataset)
         intensity = mt.eval_workout().item()
         print(f'\nExpected Intensity: {intensity:.3f}')
         return intensity
@@ -83,7 +82,7 @@ class NewWorkout:
 
     @staticmethod
     def get_model():
-        model = AirFitDNN()
+        model = AirFitMultiHeadDNN()
         model.load_state_dict(torch.load('../AI/workout_model.pth'))  # Load the model
         return model
 
