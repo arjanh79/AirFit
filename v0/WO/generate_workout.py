@@ -20,13 +20,15 @@ class NewWorkout:
         self.finale = self.get_finale()
         self.core = self.get_core()
 
-        self.workout = self.get_workout()
+        self.workout, self.workout_model = self.get_workout()
         print(self.workout)
 
         self.estimate_intensity()
+        self.tune_workout()
+        print(self.workout)
 
     def estimate_intensity(self):
-        X_embeddings, X_features = self.workout.iloc[:, 0], self.workout.iloc[:, 1:]
+        X_embeddings, X_features = self.workout_model.iloc[:, 0], self.workout_model.iloc[:, 1:]
         X_embeddings = torch.tensor(X_embeddings.values).long().reshape((1, 20))
         X_features = torch.tensor(X_features.values, dtype=torch.float32).reshape((1, 60))
         y = torch.tensor([[3.5]])
@@ -34,20 +36,40 @@ class NewWorkout:
 
         dataset = WorkoutDataset(X_embeddings, X_features, y, wl)
         mt = ModelTraining(AirFitDNN(), dataset)
-        print(f'\nExpected Intensity: {mt.eval_workout().item():.3f}')
+        intensity = mt.eval_workout().item()
+        print(f'\nExpected Intensity: {intensity:.3f}')
+        return intensity
 
+
+    def tune_workout(self):
+        intensity = self.estimate_intensity()
+        while intensity < 3:
+            to_increase = self.workout.sample(n=1)
+            index = to_increase.index.item()
+            to_increase = to_increase.squeeze()
+
+            step_size = 1
+            if to_increase['name'] in ['Step Ups', 'Ab Twist']:
+                step_size = 2
+            if to_increase['name'] in ['Plank', 'Bosu Plank']:
+                step_size = 5
+
+            self.workout.loc[index, 'reps'] += step_size
+            self.workout_model.loc[index, 'reps'] += step_size
+
+            intensity = self.estimate_intensity()
 
 
     def get_workout(self):
         workout = pd.concat([self.warming_up, self.core, self.finale], ignore_index=True)
         workout['reps'] = np.where(workout['name'].str.contains('Plank'), 45, 10)
+        workout['seq_num'] = range(1, 15+1)
+        workout_model = workout.reindex(range(20), fill_value=0)
+        workout_model.loc[workout_model['name'] == 0, 'name'] = 'UNK'
+        workout_model['seq_num'] = range(1, 20+1)
+        workout_model['name'] = workout_model['name'].map(self.mappings).astype(int)
 
-        workout = workout.reindex(range(20), fill_value=0)
-        workout.loc[workout['name'] == 0, 'name'] = 'UNK'
-        workout['seq_num'] = range(1, 20+1)
-        workout['name'] = workout['name'].map(self.mappings).astype(int)
-
-        return workout
+        return workout, workout_model
 
 
     def get_mappings(self):

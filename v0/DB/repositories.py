@@ -6,7 +6,7 @@ class GenericRepository:
 
     def get_all_workouts(self):
         sql = """
-                SELECT W.w_id, E.e_id, E.reps, E.weight, E.e_sequence
+                SELECT W.w_id, E.e_id, E.weight, E.reps, E.e_sequence
                     FROM WorkoutExercise E
                     JOIN Workout W on W.w_id = E.w_id
                 WHERE w.intensity IS NOT NULL
