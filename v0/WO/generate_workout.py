@@ -139,5 +139,3 @@ class NewWorkout:
             grouped = core.groupby(['name']).count()
             diff_ex = grouped.shape[0]
         return core
-
-nwo = NewWorkout()

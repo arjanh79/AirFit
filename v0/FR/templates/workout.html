@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        tbody tr.done td {
+            background-color: #27ae60 !important;
+            color: white !important;
+        }
+        td, th {
+            padding: 10px;
+        }
+        .notes {
+            background-color: #e3f2fd;
+            border-left: 4px solid #004085;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+
+    <h1 class="mb-4" align="center">AirFit</h1>
+    <table class="table">
+        <thead>
+        <tr class="exercise-row">
+        </tr>
+        </thead>
+        <tbody id="exerciseTable">
+            <tr class="empty-row">
+                <td colspan="3" style="height: 20px; background-color: #004085; color: white;" class="text-center"><b>Warming Up</b></td>
+            </tr>
+            <tr>
+                <td style="background-color: #e3f2fd; color: black;" class="text-end"><b>Exercise</b></td>
+                <td style="background-color: #e3f2fd; color: black;" class="text-center"><b>Reps</b></td>
+                <td style="background-color: #e3f2fd; color: black;" class="text-center"><b>Weight</b></td>
+            </tr>
+            {% for exercise, weight, reps in workout %}
+            <tr class="exercise-row">
+                <td class="text-end">{{ exercise }}</td>
+                <td class="text-center">{{ reps }}</td>
+                <td class="text-center">{{ weight }}</td>
+            </tr>
+            {% if loop.index == 3 %}
+            <tr class="empty-row">
+                <td colspan="3" style="height: 20px; background-color: #004085; color: white;" class="text-center"><b>Workout</b></td>
+            </tr>
+            <tr>
+                <td style="background-color: #e3f2fd; color: black;" class="text-end"><b>Exercise</b></td>
+                <td style="background-color: #e3f2fd; color: black;" class="text-center"><b>Reps</b></td>
+                <td style="background-color: #e3f2fd; color: black;" class="text-center"><b>Weight</b></td>
+            </tr>
+            {% endif %}
+            {% if loop.index % 3 == 0 and loop.index > 3 and not loop.last%}
+            <tr class="empty-row">
+                <td colspan="3" style="height: 20px; background-color: #ff9800; color: black;" class="text-center"><b>Break</b></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+<div class="alert alert-info mt-3 notes">
+<form action="/submit_rating" method="post" class="d-flex flex-column align-items-center">
+    <input type="hidden" name="workout_id" value="{{ workout_id }}">
+    <h4>Workout Intensity</h4>
+    <div class="btn-group mb-3" role="group">
+        <input type="radio" class="btn-check" name="rating" id="rating1" value="1" required>
+        <label class="btn btn-outline-primary" for="rating1">✸</label>
+
+        <input type="radio" class="btn-check" name="rating" id="rating2" value="2">
+        <label class="btn btn-outline-primary" for="rating2">✸✸</label>
+
+        <input type="radio" class="btn-check" name="rating" id="rating3" value="3">
+        <label class="btn btn-outline-primary" for="rating3">✸✸✸</label>
+
+        <input type="radio" class="btn-check" name="rating" id="rating4" value="4">
+        <label class="btn btn-outline-primary" for="rating4">✸✸✸✸</label>
+
+        <input type="radio" class="btn-check" name="rating" id="rating5" value="5">
+        <label class="btn btn-outline-primary" for="rating5">✸✸✸✸✸</label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit</button>
+</form>
+</div>
+
+
+    <div class="alert alert-info mt-3 notes">
+    <h6><strong>Notes:</strong></h6>
+    <ul class="mb-0">
+        <li>Dumbbell Press and Bicep Curls are weight per dumbbell.</li>
+        <li>All other exercises are in total weight.</li>
+        <li>Breaks are at least 1 minute.</li>
+    </ul>
+    </div>
+<h6 class="mb-4" align="center">{{ workout_id }}</h6>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const rows = document.querySelectorAll(".exercise-row");
+
+            rows.forEach(row => {
+                row.addEventListener("click", function() {
+                    row.classList.toggle("done");
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -50,13 +50,25 @@ class GenericRepository:
     def new_wo_insert_row(self, w_id, wo):
         for row in wo.itertuples(index=False):
             sql = 'INSERT INTO WorkoutExercise(w_id, e_id, e_sequence, weight, reps) VALUES (?, ?, ?, ?, ?)'
-            # Pandas(name=47, weight=8, reps=10, seq_num=1)
             self.db.execute_insert(sql, (w_id, row[0], row[3], row[1], row[2]))
 
 
     def new_wo_insert(self, w_id, now):
         sql = 'INSERT INTO Workout(w_id, timestamp) VALUES (?, ?)'
         self.db.execute_insert(sql, (w_id, now))
+
+    def get_available_workout(self):
+        sql = ('SELECT W.w_id, E.name, WE.weight, WE.reps, WE.e_sequence '
+                'FROM WorkoutExercise WE '
+                'JOIN Workout W on W.w_id = WE.w_id '
+                'JOIN Exercise E on E.e_id = WE.e_id '
+                'WHERE W.intensity IS NULL '
+               'ORDER BY WE.e_sequence')
+        return self.db.execute_query(sql)
+
+    def save_workout_intensity(self, w_id, intensity):
+        sql = 'UPDATE Workout SET intensity = (?) WHERE w_id = (?);'
+        self.db.execute_insert(sql, (intensity, w_id))
 
 
 class SQLiteRepository(GenericRepository):
