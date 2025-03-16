@@ -140,5 +140,4 @@ class NewWorkout:
             diff_ex = grouped.shape[0]
         return core
 
-
 nwo = NewWorkout()
