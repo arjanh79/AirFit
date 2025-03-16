@@ -11,7 +11,6 @@ class AirFitBiLSTM(nn.Module):
 
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
 
-        # Increase number of features, interactions. Check with PCA.
         self.features = nn.Linear(3, 3)
 
         with torch.no_grad():
