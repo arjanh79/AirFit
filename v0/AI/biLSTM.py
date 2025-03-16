@@ -12,13 +12,13 @@ class AirFitBiLSTM(nn.Module):
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
 
         # Increase number of features, interactions. Check with PCA.
-        self.features = nn.Linear(3, 5)
+        self.features = nn.Linear(3, 3)
 
         with torch.no_grad():
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
 
         self.lstm = nn.LSTM(
-            input_size=8, hidden_size=10, num_layers=2, batch_first=True, bidirectional=True
+            input_size=6, hidden_size=10, num_layers=2, batch_first=True, bidirectional=True
         )
 
         self.relu = nn.ReLU()
@@ -29,6 +29,7 @@ class AirFitBiLSTM(nn.Module):
         f = f.reshape((-1, 20, 3)) # Reshape f, create a 3 vector per exercise
         mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
         f = self.features(f)
+
         x = torch.cat((e, f), dim=2) # Output: torch.Size([2, 20, 8])
         lstm_out, _ = self.lstm(x)
         intensity_per_exercise = lstm_out[:, :, -1]

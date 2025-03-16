@@ -56,7 +56,8 @@ class NewWorkout:
     def tune_workout(self):
         intensity, e_weight = self.estimate_intensity(print_output=False)
         e_length = self.workout.shape[0]
-        while intensity < 3:
+        rounds = 0
+        while intensity < 3 and rounds < 30:
             to_increase = self.workout.sample(n=1, weights=1/(e_weight.squeeze()[:e_length]))
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
@@ -70,6 +71,7 @@ class NewWorkout:
             self.workout_model.loc[index, 'reps'] += step_size
 
             intensity, e_weight = self.estimate_intensity()
+            rounds += 1
 
 
     def get_workout(self):
