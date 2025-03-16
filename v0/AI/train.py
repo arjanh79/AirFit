@@ -22,6 +22,7 @@ class ModelTraining:
         self.loss = self.get_loss()
         self.optimizer = self.get_optimizer()
 
+
     @staticmethod
     def get_loss():
         return nn.MSELoss(reduction='none')
@@ -49,6 +50,7 @@ class ModelTraining:
         if self.safe_model:
             torch.save(self.model.state_dict(), self.model_location)
 
+
     def eval_model(self):
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
@@ -61,6 +63,7 @@ class ModelTraining:
                 print('\n---- Model performance:')
                 print(f'y_true: {y.flatten()}')
                 print(f'y_hat: {y_hat.flatten()}')
+
 
     def eval_workout(self):
         self.model.load_state_dict(torch.load(self.model_location))

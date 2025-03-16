@@ -27,6 +27,7 @@ class NewWorkout:
         self.estimate_intensity(print_output=True)
         self.save_workout()
 
+
     def save_workout(self):
         self.repo.delete_unrated_workouts()
         db_mappings = self.repo.get_mapping()[0]
@@ -92,14 +93,17 @@ class NewWorkout:
         mappings = {m[1]: c for c, m in enumerate(mappings)}
         return mappings
 
+
     def get_all_exercises(self):
         return self.repo.get_all_exercises()
+
 
     @staticmethod
     def get_model():
         model = AirFitBiLSTM()
         model.load_state_dict(torch.load('../AI/workout_model.pth'))  # Load the model
         return model
+
 
     def get_warming_up(self):
         min_exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
@@ -110,6 +114,7 @@ class NewWorkout:
         exercises = min_exercises.iloc[exercises, :]
 
         return exercises
+
 
     def get_finale(self):
         order = ['Push Ups', 'Squats', 'Clean and Press']
@@ -123,12 +128,14 @@ class NewWorkout:
 
         return finale
 
+
     def get_core(self):
         core1 = self.get_core_element([self.warming_up])
         core3 = self.get_core_element([self.finale])
         core2 = self.get_core_element([core1, core3])
         core = pd.concat([core1, core2, core3], ignore_index=True)
         return core
+
 
     def get_core_element(self, exclude):
         exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
