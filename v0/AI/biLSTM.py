@@ -2,28 +2,26 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-class AirFitMultiHeadDNN(nn.Module):
+class AirFitBiLSTM(nn.Module):
     def __init__(self):
         super().__init__()
 
-        self.heads = 20 # Each exercise in the workout gets a head
         self.num_exercises = 13 # 13 difference exercises
         self.embeddings_dim = 3 # Use a 3D representation per exercise
 
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
-        self.features = nn.Linear(3, 5)  # Increase number of features, interactions
 
-        self.heads = nn.ModuleList([
-            nn.Sequential(
-                nn.Linear(8, 10),
-                nn.LeakyReLU(),
-                nn.Linear(10, 1),
-                nn.Softplus()
-            ) for _ in range(self.heads)
-        ])
+        # Increase number of features, interactions. Check with PCA.
+        self.features = nn.Linear(3, 5)
 
         with torch.no_grad():
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
+
+        self.lstm = nn.LSTM(
+            input_size=8, hidden_size=10, num_layers=2, batch_first=True, bidirectional=True
+        )
+
+        self.relu = nn.ReLU()
 
 
     def forward(self, e, f):
@@ -32,8 +30,11 @@ class AirFitMultiHeadDNN(nn.Module):
         mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
         f = self.features(f)
         x = torch.cat((e, f), dim=2) # Output: torch.Size([2, 20, 8])
-        h = [head(x[:, i, :]) for i, head in enumerate(self.heads)]
-        h = torch.cat(h, dim=1)
-        h = h * mask
-        output = torch.sum(h, dim=1).reshape((-1, 1))
-        return output
+        lstm_out, _ = self.lstm(x)
+        intensity_per_exercise = lstm_out[:, :, -1]
+        intensity_per_exercise *= mask
+        intensity_per_exercise = self.relu(intensity_per_exercise)
+
+        total_intensity = intensity_per_exercise.sum(dim=1).unsqueeze(-1)
+
+        return total_intensity, intensity_per_exercise

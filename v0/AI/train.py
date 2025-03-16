@@ -14,7 +14,7 @@ class ModelTraining:
         self.batch_size = 32
         self.lr = 0.005
         self.safe_model = False # FALSE!!
-        self.load_model = False # FALSE!!
+        self.load_model = True # FALSE!!
 
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
@@ -40,7 +40,7 @@ class ModelTraining:
         for epoch in range(self.epochs):
             for Xe, Xf, y, wl in dataloader:
                 optimizer.zero_grad()
-                output = self.model(Xe, Xf)
+                output, _ = self.model(Xe, Xf)
                 loss = loss_fn(output, y)
                 loss = torch.mean(loss * wl)
                 loss.backward()
@@ -57,7 +57,7 @@ class ModelTraining:
         self.model.eval()
         with torch.no_grad():
             for Xe, Xf, y, _ in dataloader:
-                y_hat = self.model(Xe, Xf)
+                y_hat, _ = self.model(Xe, Xf)
                 print('\n---- Model performance:')
                 print(f'y_true: {y.flatten()}')
                 print(f'y_hat: {y_hat.flatten()}')

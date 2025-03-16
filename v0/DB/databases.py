@@ -28,6 +28,15 @@ class GenericDB:
             finally:
                 cursor.close()
 
+    def execute_insert(self, sql, params=None):
+        with self.db_type.connect(self.db_name) as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(sql, params or ())
+                conn.commit()
+            finally:
+                cursor.close()
+
 class SQLiteDB(GenericDB):
     def __init__(self, db_name):
         super().__init__(db_name, sqlite3)

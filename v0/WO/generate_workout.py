@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import torch
 
+from dev.v0.AI.biLSTM import AirFitBiLSTM
 from dev.v0.AI.dataset import WorkoutDataset
-from dev.v0.AI.multiheadDNN import AirFitMultiHeadDNN
 from dev.v0.AI.train import ModelTraining
 from dev.v0.DB.factories import RepositoryFactory
 
@@ -22,12 +22,21 @@ class NewWorkout:
 
         self.workout, self.workout_model = self.get_workout()
 
-        self.estimate_intensity()
+        # self.estimate_intensity()
         self.tune_workout()
-        self.heads = None
         print(self.workout)
+        self.estimate_intensity(print_output=True)
+        self.save_workout()
 
-    def estimate_intensity(self):
+    def save_workout(self):
+        self.repo.delete_unrated_workouts()
+        db_mappings = self.repo.get_mapping()[0]
+        db_mappings = {v: k for k, v in db_mappings}
+        self.workout['name'] = self.workout['name'].map(db_mappings)
+        self.repo.save_workout(self.workout)
+
+
+    def estimate_intensity(self, print_output=False):
         X_embeddings, X_features = self.workout_model.iloc[:, 0], self.workout_model.iloc[:, 1:]
         X_embeddings = torch.tensor(X_embeddings.values).long().reshape((1, 20))
         X_features = torch.tensor(X_features.values, dtype=torch.float32).reshape((1, 60))
@@ -35,22 +44,22 @@ class NewWorkout:
         wl = torch.tensor([[1]])
 
         dataset = WorkoutDataset(X_embeddings, X_features, y, wl)
-        mt = ModelTraining(AirFitMultiHeadDNN(), dataset)
-        intensity, heads = mt.eval_workout()
+        mt = ModelTraining(AirFitBiLSTM(), dataset)
+        intensity, e_weight = mt.eval_workout()
         intensity = intensity.item()
-        self.heads = heads
-        print(f'\nExpected Intensity: {intensity:.3f}')
-        return intensity
+        if print_output:
+            print(f'\nExpected Intensity: {intensity:.3f}')
+            print(f'Expected Weight: {e_weight}')
+        return intensity, e_weight
 
 
     def tune_workout(self):
-        intensity = self.estimate_intensity()
-        # todo: replace sample with weights from self.heads
+        intensity, e_weight = self.estimate_intensity(print_output=False)
+        e_length = self.workout.shape[0]
         while intensity < 3:
-            to_increase = self.workout.sample(n=1)
+            to_increase = self.workout.sample(n=1, weights=1/(e_weight.squeeze()[:e_length]))
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
-
             step_size = 1
             if to_increase['name'] in ['Step Ups', 'Ab Twist']:
                 step_size = 2
@@ -60,7 +69,7 @@ class NewWorkout:
             self.workout.loc[index, 'reps'] += step_size
             self.workout_model.loc[index, 'reps'] += step_size
 
-            intensity = self.estimate_intensity()
+            intensity, e_weight = self.estimate_intensity()
 
 
     def get_workout(self):
@@ -86,7 +95,7 @@ class NewWorkout:
 
     @staticmethod
     def get_model():
-        model = AirFitMultiHeadDNN()
+        model = AirFitBiLSTM()
         model.load_state_dict(torch.load('../AI/workout_model.pth'))  # Load the model
         return model
 
