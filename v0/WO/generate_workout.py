@@ -26,7 +26,7 @@ class NewWorkout:
         self.tune_workout()
         print(self.workout)
         self.estimate_intensity(print_output=True)
-        self.save_workout()
+        # self.save_workout()
 
     def save_workout(self):
         self.repo.delete_unrated_workouts()
@@ -57,7 +57,7 @@ class NewWorkout:
         intensity, e_weight = self.estimate_intensity(print_output=False)
         e_length = self.workout.shape[0]
         rounds = 0
-        while intensity < 3 and rounds < 30:
+        while intensity < 3 and rounds < 50:
             to_increase = self.workout.sample(n=1, weights=1/(e_weight.squeeze()[:e_length]))
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
@@ -71,7 +71,7 @@ class NewWorkout:
             self.workout_model.loc[index, 'reps'] += step_size
 
             intensity, e_weight = self.estimate_intensity()
-            rounds += 1
+            rounds += 1 # Might not be required in the future...
 
 
     def get_workout(self):
