@@ -63,7 +63,7 @@ class NewWorkout:
             step_size = 1
             if to_increase['name'] in ['Step Ups', 'Ab Twist']:
                 step_size = 2
-            if to_increase['name'] in ['Plank', 'Bosu Plank']:
+            if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x']:
                 step_size = 5
 
             self.workout.loc[index, 'reps'] += step_size
