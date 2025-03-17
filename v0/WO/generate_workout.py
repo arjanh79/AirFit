@@ -57,7 +57,7 @@ class NewWorkout:
         intensity, e_weight = self.estimate_intensity(print_output=False)
         e_length = self.workout.shape[0]
         rounds = 0
-        while intensity < 3.5 and rounds < 50:
+        while intensity < 3.25 and rounds < 50:
             to_increase = self.workout.sample(n=1, weights=1/(e_weight.squeeze()[:e_length]))
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
