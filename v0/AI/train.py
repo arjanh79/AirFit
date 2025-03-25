@@ -10,11 +10,11 @@ class ModelTraining:
 
         self.model_location = '../AI/workout_model.pth'
 
-        self.epochs = 15
+        self.epochs = 5
         self.batch_size = 32
         self.lr = 0.005
         self.safe_model = False # FALSE!!
-        self.load_model = False # FALSE!!
+        self.load_model = True # FALSE!!
 
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
