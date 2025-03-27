@@ -1,4 +1,6 @@
 
+from abc import ABC, abstractmethod
+
 import numpy as np
 import pandas as pd
 import torch
@@ -9,7 +11,8 @@ from dev.v0.AI.train import ModelTraining
 from dev.v0.DB.factories import RepositoryFactory
 
 
-class BasicWorkout:
+
+class BasicWorkout(ABC):
     def __init__(self):
         self.model_location = '../AI/workout_model.pth'
         self.rnd_gen = np.random.default_rng()
@@ -18,7 +21,6 @@ class BasicWorkout:
         self.all_exercises = self.get_all_exercises()
         self.mappings = self.get_mappings()
 
-        # Every workout has a short warming up and the finale.
         self.warming_up = self.get_warming_up()
         self.finale = self.get_finale()
 
@@ -65,9 +67,9 @@ class BasicWorkout:
 
         return finale
 
-
+    @abstractmethod
     def get_core(self):
-        print("Implement in sub class!")
+        pass
 
     def get_workout(self):
         workout = pd.concat([self.warming_up, self.core, self.finale], ignore_index=True)
