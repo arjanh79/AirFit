@@ -101,7 +101,7 @@ class NewWorkout:
     @staticmethod
     def get_model():
         model = AirFitBiLSTM()
-        model.load_state_dict(torch.load('../AI/workout_model.pth'))  # Load the model
+        model.load_state_dict(torch.load('../../AI/workout_model.pth'))  # Load the model
         return model
 
 

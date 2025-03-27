@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request
 
 from dev.v0.DB.factories import RepositoryFactory
-from dev.v0.WO.generate_workout import NewWorkout
+from dev.v0.WO import WorkoutFactory
 
 import json
 
@@ -24,17 +24,14 @@ class AirFitApp:
         self.repo.save_workout_intensity(workout_id, intensity)
         return f'{workout_id}, {intensity}'
 
-
     def general_workout(self):
-        # self.repo.delete_unrated_workouts() # Clear workout, testing only!
         workout = self.repo.get_available_workout()
         if len(workout[0]) != 15:
             self.repo.delete_unrated_workouts()
-            NewWorkout()
+            WorkoutFactory.workout_factory('focus').generate()
             workout = self.repo.get_available_workout()
         workout_id = workout[0][0][0]
         workout = [(w[1], '-' if w[2] == 0 else w[2], w[3]) for w in workout[0]]
-        print(workout)
         return workout_id, workout
 
     def create_workout(self):

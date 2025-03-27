@@ -5,7 +5,6 @@ from dev.v0.WO.BasicWorkout import BasicWorkout
 
 
 class ClassicWorkout(BasicWorkout):
-
     def __init__(self):
         super().__init__()
 
@@ -13,9 +12,14 @@ class ClassicWorkout(BasicWorkout):
         warming_up = self.get_warming_up()
         finale = self.get_finale()
         core = self.get_core(warming_up, finale)
-        print(warming_up)
-        print(finale)
-        print(core)
+
+        workout, workout_model = self.get_workout(warming_up, core, finale)
+        workout, workout_model = self.tune_workout(workout, workout_model)
+
+        print(workout)
+        self.estimate_intensity(workout_model, print_output=True)
+        self.save_workout(workout)
+
 
     def get_core(self, warming_up, finale):
         core1 = self.get_core_element([warming_up])
@@ -37,5 +41,3 @@ class ClassicWorkout(BasicWorkout):
             diff_ex = grouped.shape[0]
         return core
 
-cw = ClassicWorkout()
-cw.generate()

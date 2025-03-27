@@ -34,7 +34,7 @@ class BasicWorkout(ABC):
         db_mappings = self.repo.get_mapping()[0]
         db_mappings = {v: k for k, v in db_mappings}
         workout['name'] = workout['name'].map(db_mappings)
-        self.repo.save_workout(self)
+        self.repo.save_workout(workout)
 
     def get_all_exercises(self):
         return self.repo.get_all_exercises()
@@ -84,11 +84,13 @@ class BasicWorkout(ABC):
         return workout, workout_model
 
     def tune_workout(self, workout, workout_model):
-        intensity, e_weight = self.estimate_intensity(print_output=False)
+        intensity, e_weight = self.estimate_intensity(workout_model, print_output=False)
         e_length = workout.shape[0]
         rounds = 0
         while intensity < 3.25 and rounds < 50:
-            to_increase = workout.sample(n=1, weights=1/(e_weight.squeeze()[:e_length]))
+            e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
+            weights = 1/(e_weight.squeeze()[:e_length])
+            to_increase = workout.sample(n=1, weights=weights)
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
             step_size = 1
@@ -100,9 +102,9 @@ class BasicWorkout(ABC):
             workout.loc[index, 'reps'] += step_size
             workout_model.loc[index, 'reps'] += step_size
 
-            intensity, e_weight = self.estimate_intensity()
+            intensity, e_weight = self.estimate_intensity(workout_model)
             rounds += 1 # Might not be required in the future...
-        print(rounds)
+        return workout, workout_model
 
     def estimate_intensity(self, workout_model, print_output=False):
         X_embeddings, X_features = workout_model.iloc[:, 0], workout_model.iloc[:, 1:]
