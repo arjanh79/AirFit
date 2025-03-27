@@ -1,12 +1,20 @@
-from dev.v0.AI.data_preprocessing import WorkoutPreprocessor
-from dev.v0.AI.dataset import WorkoutDataset
-from dev.v0.AI.multiheadDNN import AirFitMultiHeadDNN
+import torch
 
-from dev.v0.AI.train import ModelTraining
+from sklearn.cluster import KMeans
 
-pre = WorkoutPreprocessor()
-dataset = WorkoutDataset(pre.embeddings_x, pre.data_x, pre.data_y, pre.weighted_loss)
+from dev.v0.AI.biLSTM import AirFitBiLSTM
 
-mt = ModelTraining(AirFitMultiHeadDNN(), dataset)
+class TestModel(AirFitBiLSTM):
+    def __init__(self):
+        super().__init__()
 
-mt.train_model()
+
+model = TestModel()
+
+model.load_state_dict(torch.load('../workout_model.pth'))
+embeddings = model.embedding.weight.data
+
+kmeans = KMeans(n_clusters=3)
+x = kmeans.fit_predict(embeddings[1:])
+
+print(x)
