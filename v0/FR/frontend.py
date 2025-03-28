@@ -25,6 +25,7 @@ class AirFitApp:
         return f'{workout_id}, {intensity}'
 
     def general_workout(self):
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
         workout = self.repo.get_available_workout()
         if len(workout[0]) != 15:
             self.repo.delete_unrated_workouts()
