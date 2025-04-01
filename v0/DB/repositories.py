@@ -2,6 +2,7 @@
 import uuid
 import time
 
+
 class GenericRepository:
     def __init__(self, db):
         self.db = db  # 
@@ -38,14 +39,16 @@ class GenericRepository:
 
 
     def get_all_exercises(self):
-        sql = 'SELECT name, weight FROM Exercise GROUP BY name, weight'
+        sql = 'SELECT name, weight FROM Exercise GROUP BY name, weight ORDER by name, weight'
         return self.db.execute_query(sql)
+
 
     def save_workout(self, workout):
         w_id = str(uuid.uuid4())
         now = int(time.time())
         self.new_wo_insert(w_id, now)
         self.new_wo_insert_row(w_id, workout)
+
 
     def new_wo_insert_row(self, w_id, wo):
         for row in wo.itertuples(index=False):
@@ -57,6 +60,7 @@ class GenericRepository:
         sql = 'INSERT INTO Workout(w_id, timestamp) VALUES (?, ?)'
         self.db.execute_insert(sql, (w_id, now))
 
+
     def get_available_workout(self):
         sql = ('SELECT W.w_id, E.name, WE.weight, WE.reps, WE.e_sequence '
                 'FROM WorkoutExercise WE '
@@ -66,9 +70,13 @@ class GenericRepository:
                'ORDER BY WE.e_sequence')
         return self.db.execute_query(sql)
 
+
     def save_workout_intensity(self, w_id, intensity):
-        sql = 'UPDATE Workout SET intensity = (?) WHERE w_id = (?);'
-        self.db.execute_insert(sql, (intensity, w_id))
+        now = int(time.time())
+        sql = 'UPDATE Workout SET intensity = (?), timestamp = (?) WHERE w_id = (?);'
+        self.db.execute_insert(sql, (intensity, now, w_id))
+
+
 
 
 class SQLiteRepository(GenericRepository):

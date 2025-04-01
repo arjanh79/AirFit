@@ -19,6 +19,7 @@ class BasicWorkout(ABC):
 
         self.repo = RepositoryFactory.get_repository('sqlite')
         self.all_exercises = self.get_all_exercises()
+
         self.mappings = self.get_mappings()
 
 
