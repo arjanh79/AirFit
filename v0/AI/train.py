@@ -51,6 +51,7 @@ class ModelTraining:
             torch.save(self.model.state_dict(), self.model_location)
 
 
+
     def eval_model(self):
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))

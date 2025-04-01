@@ -16,6 +16,8 @@ class AirFitApp:
         self.app.add_url_rule('/api/workout', 'api_create_workout', self.api_create_workout)
         self.app.add_url_rule('/api/submit_rating', 'api_submit_rating', self.api_submit_rating, methods=['POST'])
 
+        # GUI APP
+
 
     def api_submit_rating(self):
         result = json.loads(request.data)
@@ -29,7 +31,7 @@ class AirFitApp:
         workout = self.repo.get_available_workout()
         if len(workout[0]) != 15:
             self.repo.delete_unrated_workouts()
-            WorkoutFactory.workout_factory('focus').generate()
+            WorkoutFactory.workout_factory('random').generate()
             workout = self.repo.get_available_workout()
         workout_id = workout[0][0][0]
         workout = [(w[1], '-' if w[2] == 0 else w[2], w[3]) for w in workout[0]]

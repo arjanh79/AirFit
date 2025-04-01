@@ -9,6 +9,8 @@ def workout_factory(workout_type):
 
     type_list = ['random', 'classic', 'focus']
 
+    print(f'Workout type: {workout_type}')
+
     if workout_type not in type_list:
         raise ValueError(f'Invalid Workout type: {workout_type}')
 
