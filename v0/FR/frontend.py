@@ -13,7 +13,7 @@ class AirFitApp:
 
         self.app.add_url_rule('/', 'create_workout', self.create_workout)
         self.app.add_url_rule('/submit_rating', 'save_workout', self.save_workout, methods=['POST'])
-        self.app.add_url_rule('/api/workout', 'api_create_workout', self.api_create_workout)
+        self.app.add_url_rule('/api/workout', 'api_crea  te_workout', self.api_create_workout)
         self.app.add_url_rule('/api/submit_rating', 'api_submit_rating', self.api_submit_rating, methods=['POST'])
 
         # GUI APP
