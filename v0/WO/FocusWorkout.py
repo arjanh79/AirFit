@@ -31,7 +31,7 @@ class FocusWorkout(BasicWorkout):
     def get_core(self, warming_up, finale):
         inverse_mapping = {v: k for k, v in self.mappings.items()}
         e_embeddings = self.model.embedding.weight[1:]
-        cluster = KMeans(n_clusters=3)
+        cluster = KMeans(n_clusters=3, n_init=50)
         clusters = cluster.fit_predict(e_embeddings.detach().numpy())
 
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])

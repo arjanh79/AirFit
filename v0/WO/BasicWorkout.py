@@ -65,10 +65,6 @@ class BasicWorkout(ABC):
         clean_press = exercises[exercises['name'] == 'Clean and Press'].sample(n=1)
         squats = exercises[exercises['name'] == 'Squats'].sample(n=1)
 
-        print(pushups)
-        print(clean_press)
-        print(squats)
-
         finale = pd.concat((squats, pushups, clean_press))
         finale['name'] = pd.Categorical(finale['name'], categories=order, ordered=True)
         finale = finale.sort_values('name')

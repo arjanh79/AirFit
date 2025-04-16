@@ -1,5 +1,6 @@
 
 import pandas as pd
+import numpy as np
 
 from dev.v0.WO.BasicWorkout import BasicWorkout
 
@@ -35,8 +36,13 @@ class ClassicWorkout(BasicWorkout):
         available = exercises.loc[~exercises.index.isin(exclude.index)]
         diff_ex = 0
 
+        exercise_count = available.groupby(['name']).count().reset_index()
+        exercise_count.columns = ['name', 'prob']
+        probability = pd.merge(available, exercise_count, on='name')['prob']
+        probability = probability / np.sum(probability)
+
         while diff_ex < 3:
-            core = available.sample(n=3, replace=False)
+            core = available.sample(n=3, replace=False, weights=probability)
             grouped = core.groupby(['name']).count()
             diff_ex = grouped.shape[0]
         return core
