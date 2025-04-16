@@ -8,7 +8,7 @@ class AirFitBiLSTM(nn.Module):
 
         # LSTM params
         self.input_size = 6
-        self.hidden_size=10
+        self.hidden_size= 10
         self.num_layers = 2
 
         self.num_exercises = 13 # 13 difference exercises

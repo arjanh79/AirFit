@@ -60,10 +60,16 @@ class BasicWorkout(ABC):
     def get_finale(self):
         order = ['Push Ups', 'Squats', 'Clean and Press']
         exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-        single_weight = exercises.loc[exercises['name'].isin(['Push Ups', 'Clean and Press'])]
 
-        finale = exercises[exercises['name'] == 'Squats'].sample(n=1)
-        finale = pd.concat((finale, single_weight))
+        pushups = exercises.loc[exercises['name'].isin(['Push Ups'])]
+        clean_press = exercises[exercises['name'] == 'Clean and Press'].sample(n=1)
+        squats = exercises[exercises['name'] == 'Squats'].sample(n=1)
+
+        print(pushups)
+        print(clean_press)
+        print(squats)
+
+        finale = pd.concat((squats, pushups, clean_press))
         finale['name'] = pd.Categorical(finale['name'], categories=order, ordered=True)
         finale = finale.sort_values('name')
 
