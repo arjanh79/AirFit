@@ -22,3 +22,5 @@ def workout_factory(workout_type):
         return ClassicWorkout()
     if workout_type == 'focus':
         return FocusWorkout()
+
+    return None
