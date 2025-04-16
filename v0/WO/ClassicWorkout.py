@@ -32,8 +32,13 @@ class ClassicWorkout(BasicWorkout):
 
     def get_core_element(self, exclude):
         exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-        exclude = pd.concat(exclude)
-        available = exercises.loc[~exercises.index.isin(exclude.index)]
+
+        if exclude is not None:
+            exclude = pd.concat(exclude)
+            available = exercises.loc[~exercises.index.isin(exclude.index)]
+        else:
+            available = exercises
+
         diff_ex = 0
 
         exercise_count = available.groupby(['name']).count().reset_index()
