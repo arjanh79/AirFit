@@ -23,14 +23,14 @@ class ClassicWorkout(BasicWorkout):
 
 
     def get_core(self, warming_up, finale):
-        core1 = self.get_core_element([warming_up])
-        core3 = self.get_core_element([finale])
-        core2 = self.get_core_element([core1, core3])
+        core1 = self.get_core_element()
+        core2 = self.get_core_element([core1])
+        core3 = self.get_core_element([core2])
         core = pd.concat([core1, core2, core3], ignore_index=True)
         return core
 
 
-    def get_core_element(self, exclude):
+    def get_core_element(self, exclude=None):
         exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
 
         if exclude is not None:
