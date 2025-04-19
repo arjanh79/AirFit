@@ -58,7 +58,7 @@ class BasicWorkout(ABC):
 
 
     def get_finale(self):
-        order = ['Push Ups', 'Squats', 'Clean and Press']
+        order = ['Squats', 'Push Ups', 'Clean and Press']
         exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
 
         pushups = exercises.loc[exercises['name'].isin(['Push Ups'])]
