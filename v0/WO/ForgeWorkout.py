@@ -1,8 +1,5 @@
-import numpy as np
 import pandas as pd
 import torch
-
-from sklearn.cluster import KMeans
 
 from dev.v0.AI.biLSTM import AirFitBiLSTM
 from dev.v0.WO.BasicWorkout import BasicWorkout
