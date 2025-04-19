@@ -29,7 +29,7 @@ class ForgeWorkout(BasicWorkout):
 
 
     def get_core(self, warming_up, finale):
-        result = [self.get_finale()]
+        result = [finale]
         result = result * 3
         result = pd.concat(result, ignore_index=True)
         return result
