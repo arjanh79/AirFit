@@ -15,8 +15,6 @@ def workout_factory(workout_type):
 
     print(f'Workout type: {workout_type}')
 
-    workout_type = 'forge'
-
     if workout_type == 'random':
         rnd_gen = np.random.default_rng()
         workout_type = rnd_gen.choice(type_list[1:], 1)
