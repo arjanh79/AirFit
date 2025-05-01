@@ -78,6 +78,7 @@ class BasicWorkout(ABC):
     def get_workout(self, warming_up, core, finale):
         workout = pd.concat([warming_up, core, finale], ignore_index=True)
         workout['reps'] = np.where(workout['name'].str.contains('Plank'), 45, 10)
+        workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
         workout['seq_num'] = range(1, 15+1)
         workout_model = workout.reindex(range(20), fill_value=0)
         workout_model.loc[workout_model['name'] == 0, 'name'] = 'UNK'

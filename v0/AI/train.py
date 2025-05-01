@@ -10,7 +10,7 @@ class ModelTraining:
 
         self.model_location = '../AI/workout_model.pth'
 
-        self.epochs = 30  # 5
+        self.epochs = 5  # 5
         self.batch_size = 32
         self.lr = 0.005
         self.safe_model = False # FALSE!!
@@ -78,3 +78,7 @@ class ModelTraining:
             Xe, Xf, _, _ = next(iter(dataloader))
             y_hat = self.model(Xe, Xf)
         return y_hat
+
+    def eval_workout_training(self):
+        # Method to eval training after updating the model...
+        pass
