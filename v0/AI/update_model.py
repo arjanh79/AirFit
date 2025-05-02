@@ -10,4 +10,4 @@ mt = ModelTraining(AirFitBiLSTM(), dataset)
 
 mt.train_model()
 mt.eval_model(test_model=False)
-# mt.eval_model(test_model=True)
+mt.eval_model(test_model=True)
