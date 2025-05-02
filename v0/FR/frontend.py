@@ -28,7 +28,7 @@ class AirFitApp:
     def general_workout(self):
         # self.repo.delete_unrated_workouts()  # Uncomment for testing!
         workout = self.repo.get_available_workout()
-        if len(workout[0]) != 15:
+        if len(workout[0]) < 5:
             self.repo.delete_unrated_workouts()
             WorkoutFactory.workout_factory('random').generate()
             workout = self.repo.get_available_workout()

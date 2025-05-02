@@ -43,7 +43,7 @@
                 <td class="text-center">{{ reps }}</td>
                 <td class="text-center">{{ weight }}</td>
             </tr>
-            {% if loop.index == 3 %}
+            {% if loop.index == 5 %}
             <tr class="empty-row">
                 <td colspan="3" style="height: 20px; background-color: #004085; color: white;" class="text-center"><b>Workout</b></td>
             </tr>
@@ -53,7 +53,7 @@
                 <td style="background-color: #e3f2fd; color: black;" class="text-center"><b>Weight</b></td>
             </tr>
             {% endif %}
-            {% if loop.index % 3 == 0 and loop.index > 3 and not loop.last%}
+            {% if (loop.index - 5) % 3 == 0 and loop.index > 5 and not loop.last%}
             <tr class="empty-row">
                 <td colspan="3" style="height: 20px; background-color: #ff9800; color: black;" class="text-center"><b>Break</b></td>
             </tr>
