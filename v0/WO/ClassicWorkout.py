@@ -26,7 +26,8 @@ class ClassicWorkout(BasicWorkout):
         core1 = self.get_core_element()
         core2 = self.get_core_element([core1])
         core3 = self.get_core_element([core2])
-        core = pd.concat([core1, core2, core3], ignore_index=True)
+        core4 = self.get_core_element([core3])
+        core = pd.concat([core1, core2, core3, core4], ignore_index=True)
         return core
 
 

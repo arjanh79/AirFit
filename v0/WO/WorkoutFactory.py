@@ -16,9 +16,12 @@ def workout_factory(workout_type):
     print(f'Workout type: {workout_type}')
 
     if workout_type == 'random':
+        prob = [1] * len(type_list[1:])
+        prob[0] += len(type_list[2:])
+
         rnd_gen = np.random.default_rng()
-        workout_type = rnd_gen.choice(type_list[1:], 1)
-        print(f'Workout type: {workout_type}')
+        workout_type = rnd_gen.choice(type_list[1:], 1, p=[0.5, 0.25, 0.25])
+        print(f'Workout type update: {workout_type[0]}')
 
     if workout_type == 'classic':
         return ClassicWorkout()
