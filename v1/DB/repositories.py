@@ -25,7 +25,7 @@ class GenericRepository:
 
 
     def get_mapping(self):
-        sql = 'SELECT min(e_id) mapid, name FROM Exercise GROUP BY name'
+        sql = 'SELECT min(e_id) mapid, name FROM Exercise GROUP BY name ORDER BY e_id;'
         return self.db.execute_query(sql)
 
 

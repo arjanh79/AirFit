@@ -8,8 +8,8 @@ class ModelTraining:
         self.model = model
         self.dataset = dataset
 
-        self.model_location = '../AI/workout_model.pth'
-        self.model_location_train = '../AI/workout_model_train.pth'
+        self.model_location = 'AI/workout_model.pth'
+        self.model_location_train = 'AI/workout_model_train.pth'
 
         self.epochs = 5  # 5
         self.batch_size = 32

@@ -10,9 +10,8 @@ from dev.v1.WO.BasicWorkout import BasicWorkout
 class FocusWorkout(BasicWorkout):
     def __init__(self):
         super().__init__()
-        self.model_location = '../AI/workout_model.pth'
-        self.model = AirFitBiLSTM()
-        self.model.load_state_dict(torch.load(self.model_location))
+        # self.model = AirFitBiLSTM()
+        # self.model.load_state_dict(torch.load(self.model_location))
 
 
     def generate(self):

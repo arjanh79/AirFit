@@ -14,7 +14,11 @@ from dev.v1.DB.factories import RepositoryFactory
 
 class BasicWorkout(ABC):
     def __init__(self):
-        self.model_location = '../AI/workout_model.pth'
+
+        self.model_location = 'AI/workout_model.pth'
+        self.model = AirFitBiLSTM()
+        self.model.load_state_dict(torch.load(self.model_location))
+
         self.rnd_gen = np.random.default_rng()
 
         self.repo = RepositoryFactory.get_repository('sqlite')
@@ -80,6 +84,7 @@ class BasicWorkout(ABC):
         # Set details values for reps
         workout['reps'] = 10
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
+        workout.loc[workout['name'].str.contains('Dead', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
 
         workout['seq_num'] = range(1, workout.shape[0]+1)

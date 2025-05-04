@@ -54,6 +54,3 @@ class AirFitApp:
     def run(self, host='0.0.0.0', debug=True):
         self.app.run(host=host, debug=debug)
 
-if __name__ == '__main__':
-    app = AirFitApp()
-    app.run()
