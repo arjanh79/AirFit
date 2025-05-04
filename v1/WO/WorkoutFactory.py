@@ -2,12 +2,13 @@
 import numpy as np
 
 from dev.v1.WO.ClassicWorkout import ClassicWorkout
+from dev.v1.WO.ComboWorkout import ComboWorkout
 from dev.v1.WO.FocusWorkout import FocusWorkout
 from dev.v1.WO.ForgeWorkout import ForgeWorkout
 
 def workout_factory(workout_type):
 
-    type_list = ['random', 'classic', 'focus', 'forge']
+    type_list = ['random', 'classic', 'focus', 'forge', 'combo']
 
     if workout_type not in type_list:
         raise ValueError(f'Invalid Workout type: {workout_type}')
@@ -16,7 +17,7 @@ def workout_factory(workout_type):
 
     if workout_type == 'random':
         rnd_gen = np.random.default_rng()
-        workout_type = rnd_gen.choice(type_list[1:], 1, p=[0.4, 0.3, 0.3])
+        workout_type = rnd_gen.choice(type_list[1:], 1)
         print(f'Workout type update: {workout_type[0]}')
 
     if workout_type == 'classic':
@@ -25,5 +26,7 @@ def workout_factory(workout_type):
         return FocusWorkout()
     if workout_type == 'forge':
         return ForgeWorkout()
+    if workout_type == 'combo':
+        return ComboWorkout()
 
     return None

@@ -1,15 +1,12 @@
-import numpy as np
+
 import pandas as pd
-
-from sklearn.cluster import KMeans
-
+import random
 from dev.v1.WO.BasicWorkout import BasicWorkout
 
-class FocusWorkout(BasicWorkout):
+
+class ComboWorkout(BasicWorkout):
     def __init__(self):
         super().__init__()
-
-
 
     def generate(self):
         warming_up = self.get_warming_up()
@@ -23,21 +20,18 @@ class FocusWorkout(BasicWorkout):
         self.estimate_intensity(workout_model, print_output=True)
         self.save_workout(workout)
 
-
     def get_core(self, warming_up, finale):
-        inverse_mapping = {v: k for k, v in self.mappings.items()}
-        e_embeddings = self.model.embedding.weight[1:]
-        cluster = KMeans(n_clusters=3, n_init=50)
-        clusters = cluster.fit_predict(e_embeddings.detach().numpy())
 
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-        result = []
-        for i in range(3):
-            e = self.rnd_gen.choice(np.where(clusters == i)[0], size=1)[0] + 1  # removed UNK
-            e_name = inverse_mapping[e]
-            result.append(df[df['name'] == e_name].sample(n=1))
+        e1 = df[df['name'] == 'Clean and Press'].sample(n=1)
+        e2 = df[df['name'] == 'Bent-Over Row'].sample(n=1)
+        e3 = df[df['name'] == 'Plank'].sample(n=1)
+        block = [e1, e2, e3]
 
-        result = result * 3
+        result = []
+        for _ in range(3):
+            random.shuffle(block)
+            result.extend(block)
+
         result = pd.concat(result, ignore_index=True)
         return result
-
