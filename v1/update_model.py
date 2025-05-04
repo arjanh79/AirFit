@@ -9,6 +9,6 @@ dataset = WorkoutDataset(pre.embeddings_x, pre.data_x, pre.data_y, pre.weighted_
 mt = ModelTraining(AirFitBiLSTM(), dataset)
 
 mt.train_model()
-print('\n\n')
+print('\n')
 mt.eval_model(test_model=False)
 mt.eval_model(test_model=True)
