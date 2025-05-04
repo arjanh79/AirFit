@@ -1,9 +1,9 @@
 
 import numpy as np
 
-from dev.v0.WO.ClassicWorkout import ClassicWorkout
-from dev.v0.WO.FocusWorkout import FocusWorkout
-from dev.v0.WO.ForgeWorkout import ForgeWorkout
+from dev.v1.WO.ClassicWorkout import ClassicWorkout
+from dev.v1.WO.FocusWorkout import FocusWorkout
+from dev.v1.WO.ForgeWorkout import ForgeWorkout
 
 def workout_factory(workout_type):
 

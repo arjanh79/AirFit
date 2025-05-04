@@ -1,8 +1,8 @@
 import pandas as pd
 import torch
 
-from dev.v0.AI.biLSTM import AirFitBiLSTM
-from dev.v0.WO.BasicWorkout import BasicWorkout
+from dev.v1.AI.biLSTM import AirFitBiLSTM
+from dev.v1.WO.BasicWorkout import BasicWorkout
 
 class ForgeWorkout(BasicWorkout):
     def __init__(self):

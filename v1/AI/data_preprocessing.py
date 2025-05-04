@@ -4,8 +4,8 @@ import torch
 import pandas as pd
 import numpy as np
 
-from dev.v0.AI.dataset import WorkoutDataset
-from dev.v0.DB.factories import RepositoryFactory
+from dev.v1.AI.dataset import WorkoutDataset
+from dev.v1.DB.factories import RepositoryFactory
 
 
 class WorkoutPreprocessor:

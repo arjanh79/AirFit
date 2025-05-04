@@ -1,5 +1,5 @@
-from dev.v0.DB.databases import SQLiteDB
-from dev.v0.DB.repositories import SQLiteRepository
+from dev.v1.DB.databases import SQLiteDB
+from dev.v1.DB.repositories import SQLiteRepository
 
 
 class DatabaseFactory:

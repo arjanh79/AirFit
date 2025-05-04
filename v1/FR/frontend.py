@@ -1,8 +1,8 @@
 
 from flask import Flask, render_template, request
 
-from dev.v0.DB.factories import RepositoryFactory
-from dev.v0.WO import WorkoutFactory
+from dev.v1.DB.factories import RepositoryFactory
+from dev.v1.WO import WorkoutFactory
 
 import json
 

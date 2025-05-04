@@ -4,8 +4,8 @@ import torch
 
 from sklearn.cluster import KMeans
 
-from dev.v0.AI.biLSTM import AirFitBiLSTM
-from dev.v0.WO.BasicWorkout import BasicWorkout
+from dev.v1.AI.biLSTM import AirFitBiLSTM
+from dev.v1.WO.BasicWorkout import BasicWorkout
 
 class FocusWorkout(BasicWorkout):
     def __init__(self):
