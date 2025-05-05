@@ -2,7 +2,6 @@ from dev.v1.DB.factories import RepositoryFactory
 
 repo = RepositoryFactory.get_repository('sqlite')
 db_mappings = repo.get_mapping()[0]
+all_exercises = repo.get_all_exercises()
 
-exercises = [e[1] for e in db_mappings]
-
-print(exercises)
+print(all_exercises)
