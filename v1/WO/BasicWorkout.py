@@ -106,9 +106,9 @@ class BasicWorkout(ABC):
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
             step_size = 1
-            if to_increase['name'] in ['Step Ups', 'Ab Twist']:
+            if to_increase['name'] in ['Step Ups', 'Ab Twist', 'Bosu Mountain Climbers']:
                 step_size = 2
-            if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x']:
+            if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x', 'Dead Bug']:
                 step_size = 5
 
             workout.loc[index, 'reps'] += step_size
