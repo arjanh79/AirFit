@@ -28,4 +28,4 @@ new_embeddings = torch.concat([current_embeddings, result])
 
 model.embedding = torch.nn.Embedding.from_pretrained(new_embeddings)
 
-torch.save(model.state_dict(), model_location)
+# torch.save(model.state_dict(), model_location)
