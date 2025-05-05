@@ -1,13 +1,14 @@
 
-import numpy as np
+import torch
 
-wl = np.array([[0.0364, 0.0729, 0.1566, 0.2530, 0.3638, 0.4912, 0.6377, 0.8062, 1.0000]])
-y_hat = np.array([[3.2342, 3.4660, 2.9589, 4.9412, 4.3478, 3.9519, 3.5844, 3.0091, 3.1857]])
-y_true = np.array([[4., 3., 2., 5., 4., 4., 3., 3., 3.]])
+wl = torch.tensor([0.0364, 0.0729, 0.1566, 0.2530, 0.3638, 0.4912, 0.6377, 0.8062, 1.0000])
+y_hat = torch.tensor([3.0504, 3.4092, 3.0151, 4.2135, 3.7287, 3.5623, 3.1515, 2.8245, 3.1567])
+y_true = torch.tensor([4., 3., 2., 5., 4., 4., 3., 3., 3.])
 
-# MSE
 
-loss = (y_hat - y_true) ** 2
-mean = np.mean(loss * wl)
+loss_fn = torch.nn.MSELoss(reduction='none')
+loss = loss_fn(y_hat, y_true) * wl
 
-print(mean)
+loss = torch.mean(loss)
+
+print(loss.item())
