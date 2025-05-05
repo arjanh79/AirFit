@@ -8,10 +8,10 @@ class AirFitBiLSTM(nn.Module):
 
         # LSTM params
         self.input_size = 6
-        self.hidden_size= 10
+        self.hidden_size = 10
         self.num_layers = 2
 
-        self.num_exercises = 18 # 17 difference exercises...
+        self.num_exercises = 18 # 17 difference exercises... + 1 UNK
         self.embeddings_dim = 3 # Use a 3D representation per exercise
 
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
@@ -40,9 +40,9 @@ class AirFitBiLSTM(nn.Module):
 
         attn_scores = self.attn(lstm_out).squeeze(-1)
         attn_scores = attn_scores.masked_fill(mask == 0, -1e9)
-        attn_weights = torch.softmax(attn_scores, dim=1).unsqueeze(-1)
+        attn_scores = self.relu(attn_scores).unsqueeze(-1)
 
-        intensity_per_exercise = self.relu(attn_weights * lstm_out)
+        intensity_per_exercise = self.relu(attn_scores * lstm_out)
         intensity_per_exercise = intensity_per_exercise.sum(dim=2)
         intensity_per_exercise = intensity_per_exercise * mask
 
