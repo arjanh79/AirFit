@@ -9,15 +9,41 @@ This document provides a high-level overview of the backend and summarizes devel
 All workouts follow this structure:
 - **Warming-up**: 5 random exercises, using the lowest possible dumbbell weight where applicable.
 - **Core**: The main part of the workout, created by various workout types.
-- **Finale**: Fixed sequence of Squats, Push-ups, and Clean and Press.
+- **Finale**: A fixed sequence of Squats, Push-ups, and Clean and Press.
 
 ### Workout Types
 
+#### Basic
+- Base workout class providing core functionality for all workout modes.
+- Not intended as a standalone workout.
+
 #### Classic
-- The original workout mode.
+- The original and most varied workout mode.
 - Contains 3 core blocks.
 - Avoids repeating exercises from previous blocks.
-- Exercises are mostly selected at random, ensuring plenty of variation.
+- Exercises are mostly selected at random, ensuring plenty of variety.
+
+#### Bosu
+- A workout focused on the Bosu ball.
+- Available exercises: Clean and Press, Mountain Climbers, Plank, Push-up — all performed using the Bosu.
+- Each core block selects 3 unique exercises at random.
+
+#### Combo
+- A workout combining Clean and Press, Bent-Over Row, and Plank.
+- Designed (with a little help from ChatGPT!) to target as many muscle groups as possible using the available exercises.
+- The exercise lineup may evolve as new exercises are added.
+
+#### Focus
+- Uses PyTorch embeddings to create 3 distinct exercise clusters.
+- Selects 1 exercise from each cluster.
+- Repeats this block 3 times in the same order.
+
+#### Forge
+- A workout consisting of a warming-up, followed by 4 consecutive finale blocks.
+
+#### Workout404
+- Originally designed as a fallback in case the WorkoutFactory encountered issues.
+- Includes the usual warming-up and finale, with a single core block: Push-ups, Step-ups, and Ab Crunches.
 
 ---
 
@@ -26,7 +52,7 @@ All workouts follow this structure:
 ### Notes for Future Updates
 - Fix loss logging after the optimizer step.
 - Improve mini-batch support.
-- Finish this document.
+- Expand and finalize this document.
 
 ---
 
@@ -40,7 +66,7 @@ All workouts follow this structure:
 - Reduced Classic workout length.
 - Investigated loss discrepancies between training and evaluation:
   - Cause: PyTorch prints loss before the optimizer update.
-  - Fix planned alongside improvements for mini-batch handling.
+  - Planned fix alongside improvements for mini-batch handling.
 
 **04-May-2025**
 - Started v1 development branch.
