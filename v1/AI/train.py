@@ -45,7 +45,7 @@ class ModelTraining:
                 optimizer.zero_grad()
                 output, _ = self.model(Xe, Xf)
                 loss = self.calculate_loss(output, y, wl)
-                epoch_loss += loss  # This works fine.... for now
+                epoch_loss += loss  # This works fine.... for now, with 1 batch :)
                 loss.backward()
                 optimizer.step()
                 print(f'   Epoch {epoch + 1:03d}, Batch {batch:03d}: {loss.item():>8.5f}')
