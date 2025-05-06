@@ -86,6 +86,8 @@ class BasicWorkout(ABC):
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
+        workout.loc[workout['name'].str.contains('Step Ups', case=False), 'reps'] = 10
+        workout.loc[workout['name'].str.contains('Bosu Mountain Climbers', case=False), 'reps'] = 10
 
         workout['seq_num'] = range(1, workout.shape[0]+1)
         workout_model = workout.reindex(range(20), fill_value=0)
@@ -99,7 +101,9 @@ class BasicWorkout(ABC):
         intensity, e_weight = self.estimate_intensity(workout_model, print_output=False)
         e_length = workout.shape[0]
         rounds = 0
-        while intensity < 3.25 and rounds < 50:
+        wo_intensity = self.rnd_gen.normal(3.0, 0.25, 1)[0]
+        print(f'Target intensity: {wo_intensity:.3f}')
+        while intensity < wo_intensity and rounds < 100:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
             weights = 1/(e_weight.squeeze()[:e_length])
             to_increase = workout.sample(n=1, weights=weights)
@@ -116,6 +120,7 @@ class BasicWorkout(ABC):
 
             intensity, e_weight = self.estimate_intensity(workout_model)
             rounds += 1 # Might not be required in the future...
+        print(f'Update rounds: {rounds}')
         return workout, workout_model
 
     def estimate_intensity(self, workout_model, print_output=False):
