@@ -56,6 +56,7 @@ All workouts follow this structure:
 ### Notes for Future Updates
 - Fix loss logging after the optimizer step.
 - Improve mini-batch support.
+- Clean up the database.
 - Expand and finalize this document.
 
 ---
