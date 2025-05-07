@@ -81,13 +81,11 @@ class BasicWorkout(ABC):
 
     def get_workout(self, warming_up, core, finale):
         workout = pd.concat([warming_up, core, finale], ignore_index=True)
-        # Set details values for reps
-        workout['reps'] = 5
+        # Set  values for reps
+        workout['reps'] = 8 # default value, leave this even!
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
-        workout.loc[workout['name'].str.contains('Step Ups', case=False), 'reps'] = 10
-        workout.loc[workout['name'].str.contains('Bosu Mountain Climbers', case=False), 'reps'] = 10
 
         workout['seq_num'] = range(1, workout.shape[0]+1)
         workout_model = workout.reindex(range(20), fill_value=0)
@@ -106,7 +104,7 @@ class BasicWorkout(ABC):
         while intensity < wo_intensity and rounds < 100:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
             # This should direct the focus away from the warming-up
-            e_weight[:5] = e_weight[:5] * 5
+            e_weight[:5] = e_weight[:5] * 10
 
             weights = 1/(e_weight.squeeze()[:e_length])
             to_increase = workout.sample(n=1, weights=weights)
@@ -123,7 +121,7 @@ class BasicWorkout(ABC):
             workout_model.loc[index, 'reps'] += step_size
 
             intensity, e_weight = self.estimate_intensity(workout_model)
-            rounds += 1 # Might not be required in the future...
+            rounds += 1 # Might not be required in the future...(I was wrong)
         print(f'Update rounds: {rounds}')
         return workout, workout_model
 
