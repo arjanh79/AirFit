@@ -41,6 +41,10 @@ All workouts follow this structure:
 #### Forge
 - A workout consisting of a warming-up, followed by 4 consecutive finale blocks.
 
+#### Single
+- A workout with 1 core block consisting of the same exercise, repeated 3 times. 
+- The exercise is randomly selected from all available exercises.
+
 #### Workout404
 - Originally designed as a fallback in case the WorkoutFactory encountered issues.
 - Includes the usual warming-up and finale, with a single core block: Push-ups, Step-ups, and Ab Crunches.
@@ -59,6 +63,9 @@ All workouts follow this structure:
 ## Development
 
 ### v1
+
+**07-May-2025**
+- Added the 'Single' workout type.
 
 **06-May-2025**
 - Added multiple exercise types.
