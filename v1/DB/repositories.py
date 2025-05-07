@@ -39,7 +39,7 @@ class GenericRepository:
 
 
     def get_all_exercises(self):
-        sql = 'SELECT name, weight FROM Exercise GROUP BY name, weight ORDER by name, weight'
+        sql = 'SELECT name, weight FROM Exercise ORDER by name, weight'
         return self.db.execute_query(sql)
 
 
