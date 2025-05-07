@@ -55,6 +55,7 @@ All workouts follow this structure:
 
 ### Notes for Future Updates
 - Fix loss logging after the optimizer step.
+  - At the moment (07-May), the difference is very small.
 - Improve mini-batch support.
 - Expand and finalize this document.
 
@@ -66,7 +67,8 @@ All workouts follow this structure:
 
 **07-May-2025**
 - Added the 'Single' workout type.
-- Database cleaned up. Removed reps column from Exercise table. 
+- Database cleaned up. Removed reps column from Exercise table.
+- Increased default reps to 8 to reduce rounds of fine-tuning.
 
 **06-May-2025**
 - Added multiple exercise types.
