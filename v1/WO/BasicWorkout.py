@@ -105,8 +105,12 @@ class BasicWorkout(ABC):
         print(f'Target intensity: {wo_intensity:.3f}')
         while intensity < wo_intensity and rounds < 100:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
+            # This should direct the focus away from the warming-up
+            e_weight[:5] = e_weight[:5] * 5
+
             weights = 1/(e_weight.squeeze()[:e_length])
             to_increase = workout.sample(n=1, weights=weights)
+
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
             step_size = 1
