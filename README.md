@@ -69,6 +69,7 @@ All workouts follow this structure:
 - First implementation of mini-batches
   - Calculates adaptive batch size while ensuring the last batch isn’t too small.
   - Enforces a minimum of 8 samples in the final batch for training stability.
+  - Much easier: reverse the dataset. The weighted loss ensures only minimal updates on older samples.
 
 **07-May-2025**
 - Added the 'Single' workout type.
