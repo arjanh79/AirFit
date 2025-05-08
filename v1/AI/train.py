@@ -62,7 +62,7 @@ class ModelTraining:
                 print(f'   Epoch {epoch + 1:03d}, Batch {batch:03d}: {loss.item():>8.5f}')
             epoch_loss = torch.cat(epoch_loss)
             epoch_loss = torch.mean(epoch_loss)
-            print(f'=> Epoch {epoch + 1:03d}      Total: {epoch_loss:>8.5f}\n')
+            print(f'=> Epoch {epoch + 1:03d}       Loss: {epoch_loss:>8.5f}\n')
         if self.safe_model:
             torch.save(self.model.state_dict(), self.model_location)
         torch.save(self.model.state_dict(), self.model_location_train)
