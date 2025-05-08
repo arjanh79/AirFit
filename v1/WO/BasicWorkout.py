@@ -53,7 +53,7 @@ class BasicWorkout(ABC):
     def get_warming_up(self):
         min_exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
         min_exercises = min_exercises.groupby('name').min().reset_index()
-        min_exercises = min_exercises[~min_exercises['name'].str.contains('Plank|Push')]
+        min_exercises = min_exercises[~min_exercises['name'].str.contains('Plank')]
 
         exercises = self.rnd_gen.choice(len(min_exercises), size=5, replace=False)
         exercises = min_exercises.iloc[exercises, :]
