@@ -12,7 +12,7 @@ class ModelTraining:
         self.model_location_train = 'AI/workout_model_train.pth'
 
         self.epochs = 5  # 5
-        self.batch_size = 32
+        self.batch_size = self.calc_batch_size()
         self.lr = 0.005
         self.safe_model = False # FALSE!!
         self.load_model = True # FALSE!!
@@ -23,6 +23,18 @@ class ModelTraining:
         self.loss = self.get_loss()
         self.optimizer = self.get_optimizer()
 
+    def calc_batch_size(self):
+        total_samples = len(self.dataset)
+        estimate = int(total_samples ** 0.5) + 1
+
+        last_batch = total_samples % estimate
+        min_last_batch = estimate - 1
+
+        while 0 < last_batch < min_last_batch:
+            estimate += 1
+            last_batch = total_samples % estimate
+
+        return estimate
 
     @staticmethod
     def get_loss():
@@ -37,28 +49,27 @@ class ModelTraining:
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=self.batch_size, shuffle=False)
         optimizer = self.get_optimizer()
         self.model.train()
-
         for epoch in range(self.epochs):
-            epoch_loss = 0
-            batch = 1
-            for Xe, Xf, y, wl in dataloader:
+            epoch_loss = []
+            for batch, (Xe, Xf, y, wl) in enumerate(dataloader, 1):
                 optimizer.zero_grad()
                 output, _ = self.model(Xe, Xf)
                 loss = self.calculate_loss(output, y, wl)
-                epoch_loss += loss  # This works fine.... for now, with 1 batch :)
+                epoch_loss.append(loss.flatten())
+                loss = torch.mean(loss)
                 loss.backward()
                 optimizer.step()
                 print(f'   Epoch {epoch + 1:03d}, Batch {batch:03d}: {loss.item():>8.5f}')
-                batch += 1
-            print(f'=> Epoch {epoch + 1:03d}      Total: {epoch_loss.item():>8.5f}\n')
+            epoch_loss = torch.cat(epoch_loss)
+            epoch_loss = torch.mean(epoch_loss)
+            print(f'=> Epoch {epoch + 1:03d}      Total: {epoch_loss:>8.5f}\n')
         if self.safe_model:
             torch.save(self.model.state_dict(), self.model_location)
         torch.save(self.model.state_dict(), self.model_location_train)
 
     def calculate_loss(self, y_hat, y_true, wl):
         loss_fn = self.get_loss()
-        loss = loss_fn(y_hat, y_true)
-        loss = torch.mean(loss * wl)
+        loss = loss_fn(y_hat, y_true) * wl
         return loss
 
 

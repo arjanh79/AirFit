@@ -56,7 +56,7 @@ All workouts follow this structure:
 ### Notes for Future Updates
 - Fix loss logging after the optimizer step.
   - At the moment (07-May), the difference is very small.
-- Improve mini-batch support.
+  - Might not be needed after implementing mini-bathes.
 - Expand and finalize this document.
 
 ---
@@ -64,6 +64,11 @@ All workouts follow this structure:
 ## Development
 
 ### v1
+
+**08-May-2025**
+- First implementation of mini-batches
+  - Calculates adaptive batch size while ensuring the last batch isn’t too small.
+  - Enforces a minimum of 8 samples in the final batch for training stability.
 
 **07-May-2025**
 - Added the 'Single' workout type.
