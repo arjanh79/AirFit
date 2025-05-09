@@ -58,6 +58,7 @@ All workouts follow this structure:
   - At the moment (07-May), the difference is very small.
   - Might not be needed after implementing mini-bathes.
   - 09-May-2025 New ew loss and model evaluation functions. 
+- Add cardio workouts.
 - Expand and finalize this document.
 
 ---
