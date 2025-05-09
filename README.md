@@ -41,6 +41,9 @@ All workouts follow this structure:
 #### Forge
 - A workout consisting of a warming-up, followed by 4 consecutive finale blocks.
 
+#### Heart
+- A workout focused on maximizing heart rate and intensity.
+
 #### Single
 - A workout with 1 core block consisting of the same exercise, repeated 3 times. 
 - The exercise is randomly selected from all available exercises.
