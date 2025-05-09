@@ -11,6 +11,6 @@ def calc_batch_size(total_samples):
     return estimate
 
 
-for i in range(12, 100+1):
+for i in range(12, 30+1):
     batch_size = calc_batch_size(i)
     print(i, batch_size, i % batch_size)

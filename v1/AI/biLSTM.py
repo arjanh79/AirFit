@@ -11,7 +11,7 @@ class AirFitBiLSTM(nn.Module):
         self.hidden_size = 10
         self.num_layers = 2
 
-        self.num_exercises = 20 # 19 difference exercises... + 1 UNK
+        self.num_exercises = 21 # Different exercises... + 1 UNK
         self.embeddings_dim = 3 # Use a 3D representation per exercise
 
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
