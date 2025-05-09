@@ -48,7 +48,7 @@ class EmbeddingsPlot:
                          textcoords="offset points", xytext=(5, 2), ha='left', fontsize=8)
         plt.xlabel('Component 1')
         plt.ylabel('Component 2')
-        plt.title('Embeddings Plot')
+        plt.title(f'Embeddings Plot - {today}')
 
         ax = plt.gca()
         ax.spines['top'].set_visible(False)
