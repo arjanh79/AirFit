@@ -6,13 +6,14 @@ from dev.v1.WO.ClassicWorkout import ClassicWorkout
 from dev.v1.WO.ComboWorkout import ComboWorkout
 from dev.v1.WO.FocusWorkout import FocusWorkout
 from dev.v1.WO.ForgeWorkout import ForgeWorkout
+from dev.v1.WO.HeartWorkout import HeartWorkout
 from dev.v1.WO.SingleWorkout import SingleWorkout
 from dev.v1.WO.Workout404 import Workout404
 
 
 def workout_factory(workout_type):
 
-    type_list = ['random', 'classic', 'focus', 'forge', 'combo', 'bosu', 'workout404', 'single']
+    type_list = ['random', 'classic', 'focus', 'forge', 'combo', 'bosu', 'workout404', 'single', 'heart']
 
     if workout_type not in type_list:
         print(f'Invalid Workout type: {workout_type}, falling back to \'workout404\'.')
@@ -39,5 +40,7 @@ def workout_factory(workout_type):
         return SingleWorkout()
     if workout_type == 'workout404':
         return Workout404()
+    if workout_type == 'heart':
+        return HeartWorkout()
 
     return None

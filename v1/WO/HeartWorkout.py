@@ -1,11 +1,12 @@
-import pandas as pd
 
+import pandas as pd
+import random
 from dev.v1.WO.BasicWorkout import BasicWorkout
 
-class ForgeWorkout(BasicWorkout):
+
+class HeartWorkout(BasicWorkout):
     def __init__(self):
         super().__init__()
-
 
     def generate(self):
         warming_up = self.get_warming_up()
@@ -19,10 +20,18 @@ class ForgeWorkout(BasicWorkout):
         self.estimate_intensity(workout_model, print_output=True)
         self.save_workout(workout)
 
-
     def get_core(self, warming_up, finale):
-        result = [finale]
-        result = result * 3
+
+        df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
+        e1 = df[df['name'] == 'Push Ups'].sample(n=1)
+        e2 = df[df['name'] == 'Step Ups'].sample(n=1)
+        e3 = df[df['name'] == 'Bosu Clean and Press'].sample(n=1)
+        block = [e1, e2, e3]
+
+        result = []
+        for _ in range(3):
+            random.shuffle(block)
+            result.extend(block)
+
         result = pd.concat(result, ignore_index=True)
         return result
-
