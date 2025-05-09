@@ -73,6 +73,7 @@ All workouts follow this structure:
 **09-May-2025**
 - Implemented new loss and model evaluation functions for more predictable outputs.
 - Created a workout focused on maximizing heart rate and intensity.
+- Cleaned up WorkoutFactory. Organized imports and removed if block.
 
 **08-May-2025**
 - First implementation of mini-batches
