@@ -86,6 +86,7 @@ class BasicWorkout(ABC):
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
+        workout.loc[workout['name'].str.contains('Flutter Kicks 4x', case=False), 'reps'] = 10
 
         workout['seq_num'] = range(1, workout.shape[0]+1)
         workout_model = workout.reindex(range(20), fill_value=0)
@@ -112,7 +113,7 @@ class BasicWorkout(ABC):
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
             step_size = 1
-            if to_increase['name'] in ['Step Ups', 'Ab Twist', 'Bosu Mountain Climbers', 'Shoulder Taps']:
+            if to_increase['name'] in ['Step Ups', 'Ab Twist', 'Bosu Mountain Climbers', 'Shoulder Taps', 'Front - Side']:
                 step_size = 2
             if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x', 'Dead Bug']:
                 step_size = 5

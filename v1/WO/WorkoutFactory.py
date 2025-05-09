@@ -1,19 +1,25 @@
 
 import numpy as np
 
-from dev.v1.WO.BosuWorkout import BosuWorkout
-from dev.v1.WO.ClassicWorkout import ClassicWorkout
-from dev.v1.WO.ComboWorkout import ComboWorkout
-from dev.v1.WO.FocusWorkout import FocusWorkout
-from dev.v1.WO.ForgeWorkout import ForgeWorkout
-from dev.v1.WO.HeartWorkout import HeartWorkout
-from dev.v1.WO.SingleWorkout import SingleWorkout
-from dev.v1.WO.Workout404 import Workout404
+from dev.v1.WO import (
+    BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout, HeartWorkout, SingleWorkout, Workout404,
+)
 
 
 def workout_factory(workout_type):
 
-    type_list = ['random', 'classic', 'focus', 'forge', 'combo', 'bosu', 'workout404', 'single', 'heart']
+    WORKOUT_MAP = {
+        'classic': ClassicWorkout,
+        'focus': FocusWorkout,
+        'forge': ForgeWorkout,
+        'combo': ComboWorkout,
+        'bosu': BosuWorkout,
+        'single': SingleWorkout,
+        'workout404': Workout404,
+        'heart': HeartWorkout,
+    }
+
+    type_list = list(WORKOUT_MAP.keys()) + ['random']
 
     if workout_type not in type_list:
         print(f'Invalid Workout type: {workout_type}, falling back to \'workout404\'.')
@@ -23,24 +29,9 @@ def workout_factory(workout_type):
 
     if workout_type == 'random':
         rnd_gen = np.random.default_rng()
-        workout_type = rnd_gen.choice(type_list[1:], 1)
-        print(f'Workout type update: {workout_type[0]}')
+        workout_type = rnd_gen.choice(list(WORKOUT_MAP.keys()), 1)[0]
+        print(f'Workout type update: {workout_type}')
 
-    if workout_type == 'classic':
-        return ClassicWorkout()
-    if workout_type == 'focus':
-        return FocusWorkout()
-    if workout_type == 'forge':
-        return ForgeWorkout()
-    if workout_type == 'combo':
-        return ComboWorkout()
-    if workout_type == 'bosu':
-        return BosuWorkout()
-    if workout_type == 'single':
-        return SingleWorkout()
-    if workout_type == 'workout404':
-        return Workout404()
-    if workout_type == 'heart':
-        return HeartWorkout()
+    WorkoutClass = WORKOUT_MAP.get(workout_type, Workout404)
 
-    return None
+    return WorkoutClass()
