@@ -56,7 +56,7 @@ All workouts follow this structure:
 ### Notes for Future Updates
 - Fix loss logging after the optimizer step.
   - At the moment (07-May), the difference is very small.
-  - Might not be needed after implementing mini-bathes.
+  - Might not be needed after implementing mini-bathes. 
 - Expand and finalize this document.
 
 ---
@@ -64,6 +64,9 @@ All workouts follow this structure:
 ## Development
 
 ### v1
+
+**09-May-2025**
+- Implemented new loss and model evaluation functions for more predictable outputs.
 
 **08-May-2025**
 - First implementation of mini-batches
