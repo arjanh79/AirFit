@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-
 class ModelTraining:
     def __init__(self, model, dataset):
         self.model = model
@@ -13,7 +12,7 @@ class ModelTraining:
 
         self.epochs = 5  # 5
         self.batch_size = self.calc_batch_size()
-        self.lr = 0.005
+        self.lr = 0.007 # 0.005
         self.safe_model = False # FALSE!!
         self.load_model = True # FALSE!!
 
@@ -50,50 +49,51 @@ class ModelTraining:
         optimizer = self.get_optimizer()
         self.model.train()
         for epoch in range(self.epochs):
-            epoch_loss = []
             for batch, (Xe, Xf, y, wl) in enumerate(dataloader, 1):
                 optimizer.zero_grad()
                 output, _ = self.model(Xe, Xf)
                 loss = self.calculate_loss(output, y, wl)
-                epoch_loss.append(loss.flatten())
                 loss = torch.mean(loss)
                 loss.backward()
                 optimizer.step()
-                print(f'   Epoch {epoch + 1:03d}, Batch {batch:03d}: {loss.item():>8.5f}')
-            epoch_loss = torch.cat(epoch_loss)
-            epoch_loss = torch.mean(epoch_loss)
+                print(f'   Epoch {epoch + 1:03d}, Batch {batch:03d}: {loss.item():>8.5f} ({len(y)})')
+            epoch_loss = self.calculate_epoch_loss()
             print(f'=> Epoch {epoch + 1:03d}       Loss: {epoch_loss:>8.5f}\n')
         if self.safe_model:
             torch.save(self.model.state_dict(), self.model_location)
         torch.save(self.model.state_dict(), self.model_location_train)
 
+
     def calculate_loss(self, y_hat, y_true, wl):
-        loss_fn = self.get_loss()
-        loss = loss_fn(y_hat, y_true) * wl
+        loss = self.loss(y_hat, y_true) * wl
         return loss
 
 
-    def eval_model(self, test_model):
-        if self.load_model:
-            self.model.load_state_dict(torch.load(self.model_location))
-        if test_model:
-            print('\nLoading training model...')
-            self.model.load_state_dict(torch.load(self.model_location_train))
-
-        loss_fn = self.get_loss()
-
-        dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=32, shuffle=False)
+    def calculate_epoch_loss(self):
+        dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=1, shuffle=False)
         self.model.eval()
+        epoch_loss = 0
         with torch.no_grad():
             for Xe, Xf, y, wl in dataloader:
                 y_hat, _ = self.model(Xe, Xf)
-                loss = loss_fn(y_hat, y)
-                loss = torch.mean(loss * wl)
+                loss = self.loss(y_hat, y) * wl
+                epoch_loss += loss.item()
+        epoch_loss = epoch_loss / len(dataloader)
+        return epoch_loss
 
-                print('---- Model performance:')
-                print(f'y_true: {y.flatten()}')
-                print(f'y_hat: {y_hat.flatten()}')
-                print(f'loss: {loss.item():>8.5f}')
+    def eval_model(self):
+        self.eval_model_helper(prod=False)
+        self.eval_model_helper(prod=True)
+
+    def eval_model_helper(self, prod):
+        if prod:
+            print('> Model on disk:')
+            self.model.load_state_dict(torch.load(self.model_location))
+        else:
+            print('> Last trained model:')
+            self.model.load_state_dict(torch.load(self.model_location_train))
+        loss = self.calculate_epoch_loss()
+        print(f'Loss: {loss:>8.5f}')
 
 
     def eval_workout(self):

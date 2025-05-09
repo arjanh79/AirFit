@@ -7,7 +7,6 @@ pre = WorkoutPreprocessor()
 dataset = WorkoutDataset(pre.embeddings_x, pre.data_x, pre.data_y, pre.weighted_loss)
 
 mt = ModelTraining(AirFitBiLSTM(), dataset)
-mt.train_model()
 
-mt.eval_model(test_model=True)
-mt.eval_model(test_model=False)
+mt.train_model()
+mt.eval_model()
