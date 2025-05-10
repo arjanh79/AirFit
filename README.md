@@ -60,8 +60,7 @@ All workouts follow this structure:
 - Fix loss logging after the optimizer step.
   - At the moment (07-May), the difference is very small.
   - Might not be needed after implementing mini-bathes.
-  - 09-May-2025 New ew loss and model evaluation functions. 
-- Add cardio workouts.
+  - 09-May-2025 New loss and model evaluation functions.
 - Expand and finalize this document.
 
 ---

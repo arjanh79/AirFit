@@ -61,8 +61,7 @@ class EmbeddingsPlot:
         plt.savefig(f'images/embeddings-{today}.png', dpi=300, bbox_inches='tight')
 
     def get_date(self):
-        today = datetime.today().strftime('%Y%m%d')
-        return today
+        return datetime.today().strftime('%Y%m%d')
 
     def run(self):
         embeddings_2d = self.get_pca()

@@ -13,11 +13,13 @@ class AirFitBiLSTM(nn.Module):
 
         self.num_exercises = 21 # Different exercises... + 1 UNK
         self.embeddings_dim = 3 # Use a 3D representation per exercise
-
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
+
         self.features = nn.Linear(3, 3)
+
         with torch.no_grad():
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
+
         self.lstm = nn.LSTM(
             input_size=self.input_size,
             hidden_size=self.hidden_size,
@@ -25,6 +27,7 @@ class AirFitBiLSTM(nn.Module):
             batch_first=True,
             bidirectional=True
         )
+
         self.attn = nn.Linear(self.hidden_size * 2, 1)
         self.relu = nn.ReLU()
 
