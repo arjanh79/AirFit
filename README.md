@@ -70,6 +70,9 @@ All workouts follow this structure:
 ### v1
 
 **09-May-2025**
+- Increased default reps to 10 to reduce rounds of fine-tuning.
+
+**09-May-2025**
 - Implemented new loss and model evaluation functions for more predictable outputs.
 - Created a workout focused on maximizing heart rate and intensity.
 - Cleaned up WorkoutFactory. Organized imports and removed if block.
