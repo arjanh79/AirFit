@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+import pandas as pd
+
 class ModelTraining:
     def __init__(self, model, dataset):
         self.model = model
@@ -22,6 +24,7 @@ class ModelTraining:
         self.loss = self.get_loss()
         self.optimizer = self.get_optimizer()
 
+
     def calc_batch_size(self):
         total_samples = len(self.dataset)
         estimate = int(total_samples ** 0.5) + 1
@@ -34,6 +37,7 @@ class ModelTraining:
             last_batch = total_samples % estimate
 
         return estimate
+
 
     @staticmethod
     def get_loss():
@@ -81,9 +85,11 @@ class ModelTraining:
         epoch_loss = epoch_loss / len(dataloader)
         return epoch_loss
 
+
     def eval_model(self):
         self.eval_model_helper(prod=False)
         self.eval_model_helper(prod=True)
+
 
     def eval_model_helper(self, prod):
         if prod:
@@ -108,3 +114,19 @@ class ModelTraining:
             Xe, Xf, _, _ = next(iter(dataloader))
             y_hat = self.model(Xe, Xf)
         return y_hat
+
+
+    def make_pred(self):
+        dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=1, shuffle=False)
+
+        self.model.load_state_dict(torch.load(self.model_location_train))
+        self.model.eval()
+
+        result = []
+        with torch.no_grad():
+            for Xe, Xf, y, wl in dataloader:
+                y_hat, _ = self.model(Xe, Xf)
+                result.append((y.item(), round(y_hat.item(), 3), round(wl.item(), 3)))
+
+        df = pd.DataFrame(result, columns=['True', 'Pred', 'WL'])
+        print(df)
