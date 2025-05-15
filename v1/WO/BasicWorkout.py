@@ -82,10 +82,11 @@ class BasicWorkout(ABC):
     def get_workout(self, warming_up, core, finale):
         workout = pd.concat([warming_up, core, finale], ignore_index=True)
         # Set  values for reps
-        workout['reps'] = 10 # default value, leave this even!
+        workout['reps'] = 12 # default value, leave this even!
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
+        workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 10
 
         workout['seq_num'] = range(1, workout.shape[0]+1)
         workout_model = workout.reindex(range(20), fill_value=0)
@@ -99,14 +100,15 @@ class BasicWorkout(ABC):
         intensity, e_weight = self.estimate_intensity(workout_model, print_output=False)
         e_length = workout.shape[0]
         rounds = 0
-        wo_intensity = self.rnd_gen.normal(3.0, 0.25, 1)[0]
+        wo_intensity = self.rnd_gen.normal(3.25, 0.125, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
         while intensity < wo_intensity and rounds < 100:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
             # This should direct the focus away from the warming-up
-            e_weight[:5] = e_weight[:5] * 10
 
             weights = 1/(e_weight.squeeze()[:e_length])
+            weights[:5] = weights[:5] / 1.5
+
             to_increase = workout.sample(n=1, weights=weights)
 
             index = to_increase.index.item()
@@ -114,7 +116,7 @@ class BasicWorkout(ABC):
             step_size = 1
             if to_increase['name'] in ['Step Ups', 'Ab Twist', 'Bosu Mountain Climbers', 'Shoulder Taps', 'Front - Side']:
                 step_size = 2
-            if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x', 'Dead Bug']:
+            if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x', 'Dead Bug - Static']:
                 step_size = 5
 
             workout.loc[index, 'reps'] += step_size
