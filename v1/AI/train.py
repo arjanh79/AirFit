@@ -129,4 +129,5 @@ class ModelTraining:
                 result.append((y.item(), round(y_hat.item(), 3), round(wl.item(), 3)))
 
         df = pd.DataFrame(result, columns=['True', 'Pred', 'WL'])
+        df['Gain'] = df['True'] - df['Pred']
         print(df)
