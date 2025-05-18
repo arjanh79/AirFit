@@ -22,12 +22,13 @@ class EmbeddingsPlot:
         return embeddings
 
     def get_pca(self):
-        pca = PCA(n_components=3)
+        pca = PCA(n_components=2)
         x = pca.fit_transform(self.get_embeddings())
+        print(pca.explained_variance_ratio_)
         return x
 
     def get_tsne(self):
-        tsne = TSNE(n_components=2, perplexity=5)
+        tsne = TSNE(n_components=2, perplexity=5, random_state=60279)
         x = tsne.fit_transform(self.get_embeddings())
         return x
 
@@ -64,7 +65,7 @@ class EmbeddingsPlot:
         return datetime.today().strftime('%Y%m%d')
 
     def run(self):
-        embeddings_2d = self.get_pca()
+        embeddings_2d = self.get_tsne()
         labels = [i[1] for i in self.get_db_mappings()]
         self.plot_embeddings(embeddings_2d, labels)
 

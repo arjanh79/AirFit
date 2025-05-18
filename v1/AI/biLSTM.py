@@ -7,12 +7,12 @@ class AirFitBiLSTM(nn.Module):
         super().__init__()
 
         # LSTM params
-        self.input_size = 6
+        self.input_size = 8
         self.hidden_size = 10
         self.num_layers = 2
 
         self.num_exercises = 21 # Different exercises... + 1 UNK
-        self.embeddings_dim = 3 # Use a 3D representation per exercise
+        self.embeddings_dim = 5 # Use a 3D representation per exercise
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
 
         self.features = nn.Linear(3, 3)
