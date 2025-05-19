@@ -67,9 +67,10 @@ All workouts follow this structure:
 
 **19-05-2025**
 - Problems with the loss function are now fixed.
-- Increased size of the embeddings to 5
+- Increased size of the embeddings to 5.
 - Increased default reps to 12 to reduce rounds of fine-tuning.
 - Changed combo workout to Clean and Press, Bent-Over Row, and Push-ups.
+- Visualizing the embedding now uses t-sne, was pca.
 
 **09-May-2025**
 - Increased default reps to 10 to reduce rounds of fine-tuning.
