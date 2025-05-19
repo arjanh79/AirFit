@@ -29,7 +29,7 @@ All workouts follow this structure:
 - Each core block selects 3 unique exercises at random.
 
 #### Combo
-- A workout combining Clean and Press, Bent-Over Row, and Plank.
+- A workout combining Clean and Press, Bent-Over Row, and Push-ups.
 - Designed (with a little help from ChatGPT!) to target as many muscle groups as possible using the available exercises.
 - The exercise lineup may evolve as new exercises are added.
 
@@ -57,10 +57,6 @@ All workouts follow this structure:
 ## TODO
 
 ### Notes for Future Updates
-- Fix loss logging after the optimizer step.
-  - At the moment (07-May), the difference is very small.
-  - Might not be needed after implementing mini-bathes.
-  - 09-May-2025 New loss and model evaluation functions.
 - Expand and finalize this document.
 
 ---
@@ -68,6 +64,12 @@ All workouts follow this structure:
 ## Development
 
 ### v1
+
+**19-05-2025**
+- Problems with the loss function are now fixed.
+- Increased size of the embeddings to 5
+- Increased default reps to 12 to reduce rounds of fine-tuning.
+- Changed combo workout to Clean and Press, Bent-Over Row, and Push-ups.
 
 **09-May-2025**
 - Increased default reps to 10 to reduce rounds of fine-tuning.

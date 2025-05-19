@@ -25,7 +25,7 @@ class ComboWorkout(BasicWorkout):
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
         e1 = df[df['name'] == 'Clean and Press'].sample(n=1)
         e2 = df[df['name'] == 'Bent-Over Row'].sample(n=1)
-        e3 = df[df['name'] == 'Plank'].sample(n=1)
+        e3 = df[df['name'] == 'Push Ups'].sample(n=1)
         block = [e1, e2, e3]
 
         result = []
