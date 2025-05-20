@@ -12,4 +12,4 @@ mt = ModelTraining(AirFitBiLSTM(), dataset)
 mt.train_model()
 mt.eval_model()
 
-# mt.make_pred()
+mt.make_pred()

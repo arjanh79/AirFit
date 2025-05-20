@@ -65,7 +65,7 @@ class EmbeddingsPlot:
         return datetime.today().strftime('%Y%m%d')
 
     def run(self):
-        embeddings_2d = self.get_tsne()
+        embeddings_2d = self.get_pca()
         labels = [i[1] for i in self.get_db_mappings()]
         self.plot_embeddings(embeddings_2d, labels)
 
