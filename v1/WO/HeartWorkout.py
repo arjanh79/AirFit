@@ -23,14 +23,15 @@ class HeartWorkout(BasicWorkout):
     def get_core(self, warming_up, finale):
 
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-        e1 = df[df['name'] == 'Push Ups'].sample(n=1)
-        e2 = df[df['name'] == 'Step Ups'].sample(n=1)
-        e3 = df[df['name'] == 'Bosu Clean and Press'].sample(n=1)
+
+        e1 = df[(df['name'] == 'Step Ups') & (df['weight'] == 16)].sample(n=1)
+        e2 = df[(df['name'] == 'Clean and Press') & (df['weight'] == 16)].sample(n=1)
+        e3 = df[df['name'] == 'Push Ups'].sample(n=1)
+
         block = [e1, e2, e3]
 
         result = []
         for _ in range(3):
-            random.shuffle(block)
             result.extend(block)
 
         result = pd.concat(result, ignore_index=True)

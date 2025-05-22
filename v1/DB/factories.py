@@ -1,6 +1,6 @@
 from dev.v1.DB.databases import SQLiteDB
 from dev.v1.DB.repositories import SQLiteRepository
-
+from dev.v1.config import DB_PATH
 
 class DatabaseFactory:
     @staticmethod
@@ -14,7 +14,8 @@ class DatabaseFactory:
 class RepositoryFactory:
     @staticmethod
     def get_repository(db_type='sqlite', **kwargs):
-        db = DatabaseFactory.get_database(db_type, db_name='D:\\AirFitCloud\\dev\\v1\\DB\\airfit.db', **kwargs)
+        print(f'{DB_PATH}')
+        db = DatabaseFactory.get_database(db_type, db_name=f'{DB_PATH}', **kwargs)
 
         if db_type == 'sqlite':
             return SQLiteRepository(db)

@@ -102,7 +102,7 @@ class BasicWorkout(ABC):
         rounds = 0
         wo_intensity = self.rnd_gen.normal(3.25, 0.125, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
-        while intensity < wo_intensity and rounds < 100:
+        while intensity < wo_intensity and rounds < 50:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
 
             weights = 1/(e_weight.squeeze()[:e_length])
