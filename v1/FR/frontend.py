@@ -3,12 +3,13 @@ from flask import Flask, render_template, request
 
 from dev.v1.DB.factories import RepositoryFactory
 from dev.v1.WO import WorkoutFactory
+from dev.v1.config import TEMPLATES_DIR
 
 import json
 
 class AirFitApp:
     def __init__(self):
-        self.app = Flask('AirFit')
+        self.app = Flask('AirFit', template_folder=str(TEMPLATES_DIR))
         self.repo = RepositoryFactory.get_repository('sqlite')
 
         self.app.add_url_rule('/', 'create_workout', self.create_workout)
