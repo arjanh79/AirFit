@@ -14,7 +14,6 @@ class DatabaseFactory:
 class RepositoryFactory:
     @staticmethod
     def get_repository(db_type='sqlite', **kwargs):
-        print(f'{DB_PATH}')
         db = DatabaseFactory.get_database(db_type, db_name=f'{DB_PATH}', **kwargs)
 
         if db_type == 'sqlite':
