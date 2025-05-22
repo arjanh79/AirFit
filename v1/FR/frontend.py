@@ -24,6 +24,7 @@ class AirFitApp:
         intensity = result['rating']
         workout_id = result['workout_id']
         self.repo.save_workout_intensity(workout_id, intensity)
+        self.general_workout()
         return f'{workout_id}, {intensity}'
 
     def general_workout(self):
