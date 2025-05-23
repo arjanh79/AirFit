@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-from dev.v1.WO.BasicWorkout import BasicWorkout
+from v1.WO.BasicWorkout import BasicWorkout
 
 
 class ClassicWorkout(BasicWorkout):

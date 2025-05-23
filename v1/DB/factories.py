@@ -1,6 +1,6 @@
-from dev.v1.DB.databases import SQLiteDB
-from dev.v1.DB.repositories import SQLiteRepository
-from dev.v1.config import DB_PATH
+from v1.DB.databases import SQLiteDB
+from v1.DB.repositories import SQLiteRepository
+from v1.config import DB_PATH
 
 class DatabaseFactory:
     @staticmethod

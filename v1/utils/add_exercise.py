@@ -1,7 +1,7 @@
 import torch
 
-from dev.v1.AI.biLSTM import AirFitBiLSTM
-from dev.v1.DB.factories import RepositoryFactory
+from v1.AI.biLSTM import AirFitBiLSTM
+from v1.DB.factories import RepositoryFactory
 
 repo = RepositoryFactory.get_repository('sqlite')
 db_mappings = repo.get_mapping()[0]

@@ -6,8 +6,8 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from datetime import datetime
 
-from dev.v1.DB.factories import RepositoryFactory
-from dev.v1.AI.biLSTM import AirFitBiLSTM
+from v1.DB.factories import RepositoryFactory
+from v1.AI.biLSTM import AirFitBiLSTM
 
 class EmbeddingsPlot:
     def __init__(self):

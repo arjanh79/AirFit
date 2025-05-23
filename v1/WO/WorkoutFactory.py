@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from dev.v1.WO import (
+from v1.WO import (
     BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout, HeartWorkout, SingleWorkout, Workout404,
 )
 

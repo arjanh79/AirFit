@@ -1,6 +1,6 @@
 import pandas as pd
 
-from dev.v1.WO.BasicWorkout import BasicWorkout
+from v1.WO.BasicWorkout import BasicWorkout
 
 class ForgeWorkout(BasicWorkout):
     def __init__(self):

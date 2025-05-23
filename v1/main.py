@@ -1,7 +1,7 @@
 
 import logging
 
-from dev.v1.FR.frontend import AirFitApp
+from v1.FR.frontend import AirFitApp
 
 if __name__ == '__main__':
         logging.basicConfig(level=logging.INFO)

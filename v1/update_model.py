@@ -1,7 +1,7 @@
-from dev.v1.AI.biLSTM import AirFitBiLSTM
-from dev.v1.AI.data_preprocessing import WorkoutPreprocessor
-from dev.v1.AI.dataset import WorkoutDataset
-from dev.v1.AI.train import ModelTraining
+from v1.AI.biLSTM import AirFitBiLSTM
+from v1.AI.data_preprocessing import WorkoutPreprocessor
+from v1.AI.dataset import WorkoutDataset
+from v1.AI.train import ModelTraining
 
 
 pre = WorkoutPreprocessor()

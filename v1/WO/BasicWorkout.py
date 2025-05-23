@@ -5,10 +5,10 @@ import numpy as np
 import pandas as pd
 import torch
 
-from dev.v1.AI.biLSTM import AirFitBiLSTM
-from dev.v1.AI.dataset import WorkoutDataset
-from dev.v1.AI.train import ModelTraining
-from dev.v1.DB.factories import RepositoryFactory
+from v1.AI.biLSTM import AirFitBiLSTM
+from v1.AI.dataset import WorkoutDataset
+from v1.AI.train import ModelTraining
+from v1.DB.factories import RepositoryFactory
 
 
 

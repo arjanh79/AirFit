@@ -1,7 +1,7 @@
 
 import pandas as pd
-import random
-from dev.v1.WO.BasicWorkout import BasicWorkout
+
+from v1.WO.BasicWorkout import BasicWorkout
 
 
 class HeartWorkout(BasicWorkout):

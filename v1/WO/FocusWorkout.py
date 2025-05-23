@@ -3,7 +3,7 @@ import pandas as pd
 
 from sklearn.cluster import KMeans
 
-from dev.v1.WO.BasicWorkout import BasicWorkout
+from v1.WO.BasicWorkout import BasicWorkout
 
 class FocusWorkout(BasicWorkout):
     def __init__(self):
