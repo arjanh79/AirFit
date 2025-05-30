@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import os
 
 from sklearn.cluster import KMeans
 
@@ -8,6 +9,7 @@ from v1.WO.BasicWorkout import BasicWorkout
 class FocusWorkout(BasicWorkout):
     def __init__(self):
         super().__init__()
+        os.environ['OMP_NUM_THREADS'] = '1'
 
 
 
