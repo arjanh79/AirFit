@@ -30,7 +30,6 @@ class ComboWorkout(BasicWorkout):
 
         result = []
         for _ in range(3):
-            random.shuffle(block)
             result.extend(block)
 
         result = pd.concat(result, ignore_index=True)

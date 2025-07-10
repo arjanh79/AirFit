@@ -23,8 +23,6 @@ class BosuWorkout(BasicWorkout):
     def get_core(self, warming_up, finale):
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
         e1 = df[df['name'].str.contains('Bosu')].sample(n=3)
-        e2 = df[df['name'].str.contains('Bosu')].sample(n=3)
-        e3 = df[df['name'].str.contains('Bosu')].sample(n=3)
 
-        result = pd.concat([e1, e2, e3], ignore_index=True)
+        result = pd.concat([e1, e1, e1], ignore_index=True)
         return result
