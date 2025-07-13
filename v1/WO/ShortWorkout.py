@@ -1,9 +1,10 @@
 import pandas as pd
 
 from v1.WO.BasicWorkout import BasicWorkout
+import random
 
 
-class SingleWorkout(BasicWorkout):
+class ShortWorkout(BasicWorkout):
     def __init__(self):
         super().__init__()
 
@@ -21,9 +22,19 @@ class SingleWorkout(BasicWorkout):
 
     def get_core(self, warming_up, finale):
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-        e = df.sample(n=1)
-        result = [e] * 3
+        weights = pd.DataFrame(self.repo.get_exercise_count()[0], columns=self.repo.get_exercise_count()[1])
+        weights = weights.fillna(0.01)
+        weights['WC'] = 1 / weights['WC']
+        weights['total'] = weights['WC'] / weights['WC'].sum()
 
+        exercises = weights['name'].sample(weights = weights['total'], n=3, replace = False)
 
+        result = []
+
+        for e in exercises:
+            x = df[df['name'] == e].sample(n=1)
+            result.append(x)
+
+        random.shuffle(result)
         result = pd.concat(result, ignore_index=True)
         return result

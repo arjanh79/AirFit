@@ -3,7 +3,7 @@ import numpy as np
 
 from v1.WO import (
     BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout,
-    HeartWorkout, SingleWorkout, Workout404, CoreWorkout
+    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout
 )
 
 
@@ -19,6 +19,7 @@ def workout_factory(workout_type):
         'workout404': Workout404,
         'heart': HeartWorkout,
         'core': CoreWorkout,
+        'short': ShortWorkout
     }
 
     type_list = list(WORKOUT_MAP.keys()) + ['random']

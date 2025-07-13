@@ -76,6 +76,13 @@ class GenericRepository:
         sql = 'UPDATE Workout SET intensity = (?), timestamp = (?) WHERE w_id = (?);'
         self.db.execute_insert(sql, (intensity, now, w_id))
 
+    def get_exercise_count(self):
+        sql = ('select E.name, W.WC '
+               'from (select E.name from Exercise E group by E.name) E '
+               'left outer join (select E.name, count(E.name) WC from Exercise E join WorkoutExercise W on W.e_id = E.e_id group by E.name) W '
+               'on E.name = W.name;')
+        return self.db.execute_query(sql)
+
 
 
 
