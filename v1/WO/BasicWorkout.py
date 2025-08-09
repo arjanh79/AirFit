@@ -82,7 +82,7 @@ class BasicWorkout(ABC):
     def get_workout(self, warming_up, core, finale):
         workout = pd.concat([warming_up, core, finale], ignore_index=True)
         # Set  values for reps
-        workout['reps'] = 10 # default value, leave this even!
+        workout['reps'] = 8 # default value, leave this even!
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
@@ -102,7 +102,7 @@ class BasicWorkout(ABC):
         rounds = 0
         wo_intensity = self.rnd_gen.normal(3.25, 0.125, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
-        while intensity < wo_intensity and rounds < 50:
+        while intensity < wo_intensity and rounds < 20:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
 
             weights = 1/(e_weight.squeeze()[:e_length])

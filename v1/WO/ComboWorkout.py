@@ -20,6 +20,16 @@ class ComboWorkout(BasicWorkout):
         self.estimate_intensity(workout_model, print_output=True)
         self.save_workout(workout)
 
+    def get_finale(self):
+
+        df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
+        e1 = df[df['name'] == 'Bosu Clean and Press'].sample(n=1)
+        block = [e1, e1, e1]
+
+        result = pd.concat(block, ignore_index=True)
+        return result
+
+
     def get_core(self, warming_up, finale):
 
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
@@ -29,7 +39,7 @@ class ComboWorkout(BasicWorkout):
         block = [e1, e2, e3]
 
         result = []
-        for _ in range(3):
+        for _ in range(4):
             result.extend(block)
 
         result = pd.concat(result, ignore_index=True)
