@@ -23,7 +23,7 @@ class ComboWorkout(BasicWorkout):
     def get_finale(self):
 
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-        e1 = df[df['name'] == 'Bosu Clean and Press'].sample(n=1)
+        e1 = df[df['name'] == 'Bosu Finale'].sample(n=1)
         block = [e1, e1, e1]
 
         result = pd.concat(block, ignore_index=True)
