@@ -1,9 +1,10 @@
 
 import numpy as np
+from datetime import datetime
 
 from v1.WO import (
     BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout,
-    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout
+    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout, RunningWorkout
 )
 
 
@@ -19,7 +20,8 @@ def workout_factory(workout_type):
         'workout404': Workout404,
         'heart': HeartWorkout,
         'core': CoreWorkout,
-        'short': ShortWorkout
+        'short': ShortWorkout,
+        'running': RunningWorkout
     }
 
     type_list = list(WORKOUT_MAP.keys()) + ['random']
@@ -31,9 +33,20 @@ def workout_factory(workout_type):
     print(f'Workout type: {workout_type}')
 
     if workout_type == 'random':
+        match datetime.today().weekday():
+            case 1 | 3:
+                workout_type = 'running'
+            case 0 | 2:
+                workout_type = 'combo'
+            case 4 | 5:
+                workout_type = 'short'
+            # 6 remains random
+
+    if workout_type == 'random':
         rnd_gen = np.random.default_rng()
         workout_type = rnd_gen.choice(list(WORKOUT_MAP.keys()), 1)[0]
         print(f'Workout type update: {workout_type}')
+
 
     WorkoutClass = WORKOUT_MAP.get(workout_type, Workout404)
 

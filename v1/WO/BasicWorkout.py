@@ -84,7 +84,7 @@ class BasicWorkout(ABC):
         # Set  values for reps
         workout['reps'] = 8 # default value, leave this even!
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
-        workout.loc[workout['name'].str.contains('Dead', case=False), 'reps'] = 45
+        workout.loc[workout['name'].str.contains('Dead Bug', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
         workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 10
 
@@ -106,7 +106,7 @@ class BasicWorkout(ABC):
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
 
             weights = 1/(e_weight.squeeze()[:e_length])
-            weights[:5] = weights[:5] * 1.25
+            weights[:5] = weights[:5] * 0.75
 
             to_increase = workout.sample(n=1, weights=weights)
 

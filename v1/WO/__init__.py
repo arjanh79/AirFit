@@ -8,3 +8,4 @@ from .SingleWorkout import SingleWorkout
 from .Workout404 import Workout404
 from .CoreWorkout import CoreWorkout
 from .ShortWorkout import ShortWorkout
+from .RunningWorkout import RunningWorkout
