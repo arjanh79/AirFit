@@ -51,7 +51,7 @@ class BasicWorkout(ABC):
         return mappings
 
     def get_warming_up(self):
-        min_exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
+        min_exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])   
         min_exercises = min_exercises.groupby('name').min().reset_index()
         min_exercises = min_exercises[~min_exercises['name'].str.contains('Plank')]
 

@@ -24,7 +24,7 @@ def workout_factory(workout_type):
         'running': RunningWorkout
     }
 
-    type_list = list(WORKOUT_MAP.keys()) + ['random']
+    type_list = list(WORKOUT_MAP.keys()) + ['random'] + ['schedule']
 
     if workout_type not in type_list:
         print(f'Invalid Workout type: {workout_type}, falling back to \'workout404\'.')
@@ -32,7 +32,7 @@ def workout_factory(workout_type):
 
     print(f'Workout type: {workout_type}')
 
-    if workout_type == 'random':
+    if workout_type == 'schedule':
         match datetime.today().weekday():
             case 1 | 3:
                 workout_type = 'running'
@@ -40,7 +40,10 @@ def workout_factory(workout_type):
                 workout_type = 'combo'
             case 4 | 5:
                 workout_type = 'short'
-            # 6 remains random
+            case 6:
+                workout_type = 'random'
+        print(f'Workout type update: {workout_type}')
+
 
     if workout_type == 'random':
         rnd_gen = np.random.default_rng()
