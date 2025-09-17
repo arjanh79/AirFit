@@ -24,7 +24,7 @@ class EmbeddingsPlot:
     def get_pca(self):
         pca = PCA(n_components=2)
         x = pca.fit_transform(self.get_embeddings())
-        print(pca.explained_variance_ratio_)
+        print(f'Explained Variance:    {pca.explained_variance_ratio_}')
         return x
 
     def get_tsne(self):
@@ -56,6 +56,9 @@ class EmbeddingsPlot:
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_visible(False)
         ax.spines['bottom'].set_visible(False)
+
+        ax.set_xlim(-4, 4)
+        ax.set_ylim(-4, 4)
 
         plt.grid(True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
 

@@ -82,11 +82,11 @@ class BasicWorkout(ABC):
     def get_workout(self, warming_up, core, finale):
         workout = pd.concat([warming_up, core, finale], ignore_index=True)
         # Set  values for reps
-        workout['reps'] = 8 # default value, leave this even!
+        workout['reps'] = 6 # default value, leave this even!
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
-        workout.loc[workout['name'].str.contains('Dead Bug', case=False), 'reps'] = 45
+        workout.loc[workout['name'].str.contains('Dead Bug', case=False), 'reps'] = 60
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
-        workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 10
+        workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 15
 
         workout['seq_num'] = range(1, workout.shape[0]+1)
         workout_model = workout.reindex(range(20), fill_value=0)
@@ -102,11 +102,11 @@ class BasicWorkout(ABC):
         rounds = 0
         wo_intensity = self.rnd_gen.normal(3.25, 0.125, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
-        while intensity < wo_intensity and rounds < 20:
+        while intensity < wo_intensity and rounds < 50:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
 
             weights = 1/(e_weight.squeeze()[:e_length])
-            weights[:5] = weights[:5] * 0.75
+            weights[:5] = weights[:5] * 0.5
 
             to_increase = workout.sample(n=1, weights=weights)
 
