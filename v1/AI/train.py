@@ -12,11 +12,11 @@ class ModelTraining:
         self.model_location = 'AI/workout_model.pth'
         self.model_location_train = 'AI/workout_model_train.pth'
 
-        self.epochs = 8  # 5
+        self.epochs = 5  # 5
         self.batch_size = self.calc_batch_size()
         self.lr = 0.003 # 0.005
         self.safe_model = False # FALSE!!
-        self.load_model = False # FALSE!!
+        self.load_model = True # FALSE!!
 
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
@@ -53,7 +53,7 @@ class ModelTraining:
         optimizer = self.get_optimizer()
         self.model.train()
         for epoch in range(self.epochs):
-            for batch, (Xe, Xf, y, wl, _) in enumerate(dataloader, 1):
+            for batch, (Xe, Xf, y, wl) in enumerate(dataloader, 1):
                 optimizer.zero_grad()
                 output, _ = self.model(Xe, Xf)
                 loss = self.calculate_loss(output, y, wl)
@@ -78,7 +78,7 @@ class ModelTraining:
         self.model.eval()
         epoch_loss = 0
         with torch.no_grad():
-            for Xe, Xf, y, wl, _ in dataloader:
+            for Xe, Xf, y, wl in dataloader:
                 y_hat, _ = self.model(Xe, Xf)
                 loss = self.loss(y_hat, y) * wl
                 epoch_loss += loss.item()
@@ -124,7 +124,7 @@ class ModelTraining:
 
         result = []
         with torch.no_grad():
-            for Xe, Xf, y, wl, _ in dataloader:
+            for Xe, Xf, y, wl in dataloader:
                 y_hat, _ = self.model(Xe, Xf)
                 result.append((y.item(), round(y_hat.item(), 3), round(wl.item(), 3)))
 
