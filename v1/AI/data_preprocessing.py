@@ -34,6 +34,7 @@ class WorkoutPreprocessor:
         self.weighted_loss = (self.weighted_loss - self.weighted_loss.min()) / (self.weighted_loss.max() - self.weighted_loss.min())
         self.weighted_loss[0] = self.weighted_loss[1] / 2 # avoid 0 for now. Will go to 0 anyway.
 
+
         self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y, self.weighted_loss)
 
 

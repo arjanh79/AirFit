@@ -37,7 +37,7 @@ def workout_factory(workout_type):
             case 1 | 3:
                 workout_type = 'running'
             case 0 | 2:
-                workout_type = 'combo'
+                workout_type = 'forge'
             case 4 | 5:
                 workout_type = 'short'
             case 6:
