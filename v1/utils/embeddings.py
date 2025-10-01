@@ -5,6 +5,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from datetime import datetime
+import numpy as np
 
 from v1.DB.factories import RepositoryFactory
 from v1.AI.biLSTM import AirFitBiLSTM
@@ -25,7 +26,7 @@ class EmbeddingsPlot:
         pca = PCA(n_components=2)
         x = pca.fit_transform(self.get_embeddings())
         print(f'Explained Variance:    {pca.explained_variance_ratio_}')
-        return x
+        return x, np.round(np.sum(pca.explained_variance_ratio_), 5)
 
     def get_tsne(self):
         tsne = TSNE(n_components=2, perplexity=5, random_state=60279)
@@ -37,7 +38,7 @@ class EmbeddingsPlot:
         db_mappings = [(c+1, v[1]) for c, v in enumerate(db_mappings)]
         return db_mappings
 
-    def plot_embeddings(self, data, labels):
+    def plot_embeddings(self, data, labels, explained_variance_ratio):
 
         today = self.get_date()
 
@@ -49,7 +50,7 @@ class EmbeddingsPlot:
                          textcoords="offset points", xytext=(5, 2), ha='left', fontsize=8)
         plt.xlabel('Component 1')
         plt.ylabel('Component 2')
-        plt.title(f'Embeddings Plot - {today}')
+        plt.title(f'Embeddings Plot - {today} - {explained_variance_ratio}')
 
         ax = plt.gca()
         ax.spines['top'].set_visible(False)
@@ -68,9 +69,9 @@ class EmbeddingsPlot:
         return datetime.today().strftime('%Y%m%d')
 
     def run(self):
-        embeddings_2d = self.get_pca()
+        embeddings_2d, explained_variance_ratio = self.get_pca()
         labels = [i[1] for i in self.get_db_mappings()]
-        self.plot_embeddings(embeddings_2d, labels)
+        self.plot_embeddings(embeddings_2d, labels, explained_variance_ratio)
 
 
 

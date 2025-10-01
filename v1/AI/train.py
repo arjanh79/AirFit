@@ -43,9 +43,24 @@ class ModelTraining:
     def get_loss():
         return nn.MSELoss(reduction='none')
 
+    def param_groups_decay_only_embeddings(self, wd=1e-4):
+        emb_params, other_params = [], []
+        for n, p in self.model.named_parameters():
+            if not p.requires_grad:
+                continue
+            if n.endswith("embedding.weight") or "embedding.weight" in n:
+                emb_params.append(p)
+            else:
+                other_params.append(p)
+        return [
+            {"params": emb_params, "weight_decay": wd},
+            {"params": other_params, "weight_decay": 0.0},
+        ]
 
     def get_optimizer(self):
-        return optim.NAdam(self.model.parameters(), lr=self.lr)
+        # return optim.AdamW(self.model.parameters(), lr=self.lr, weight_decay=0.03)
+        groups = self.param_groups_decay_only_embeddings(wd=1e-3)
+        return torch.optim.AdamW(groups, lr=3e-3)
 
 
     def train_model(self):
