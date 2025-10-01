@@ -106,6 +106,7 @@ class BasicWorkout(ABC):
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
 
             weights = 1/(e_weight.squeeze()[:e_length])
+            weights[:5] *= 10
 
             to_increase = workout.sample(n=1, weights=weights)
 

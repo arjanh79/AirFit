@@ -2,11 +2,10 @@ from torch.utils.data import Dataset
 
 class WorkoutDataset(Dataset):
     def __init__(self, Xe, Xf, y, wl):
-        self.Xe = Xe
-        self.Xf = Xf
-        self.y = y
-        self.wl = wl
-
+        self.Xe = Xe.flip(dims=(0, ))
+        self.Xf = Xf.flip(dims=(0, ))
+        self.y = y.flip(dims=(0, ))
+        self.wl = wl.flip(dims=(0, ))
 
     def __len__(self):
         return len(self.Xe)
