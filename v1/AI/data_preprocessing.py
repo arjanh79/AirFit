@@ -32,8 +32,7 @@ class WorkoutPreprocessor:
         self.weighted_loss = torch.tensor(np.cumprod([1.15] * (self.data_x.shape[0] - 1)), dtype=torch.float32)
         self.weighted_loss = torch.cat((torch.ones(1), self.weighted_loss))
         self.weighted_loss = (self.weighted_loss - self.weighted_loss.min()) / (self.weighted_loss.max() - self.weighted_loss.min())
-        self.weighted_loss[0] = self.weighted_loss[1] / 2 # avoid 0 for now. Will go to 0 anyway.
-
+        self.weighted_loss = torch.clip(self.weighted_loss, 0.01, 1)
 
         self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y, self.weighted_loss)
 
