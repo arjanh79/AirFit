@@ -34,7 +34,9 @@ def workout_factory(workout_type):
 
     if workout_type == 'schedule':
         match datetime.today().weekday():
-            case 1 | 3 | 6:  
+            case 1:
+                workout_type = 'focus'
+            case 3 | 6:
                 workout_type = 'random'
             case 0 | 2:
                 workout_type = 'forge'
