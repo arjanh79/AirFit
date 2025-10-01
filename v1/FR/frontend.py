@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from v1.DB.factories import RepositoryFactory
 from v1.WO import WorkoutFactory
 from v1.config import TEMPLATES_DIR
+from v1.utils import tools
 
 import json
 
@@ -28,7 +29,13 @@ class AirFitApp:
         return f'{workout_id}, {intensity}'
 
     def general_workout(self):
+
+        if not tools.get_workout_date():
+            # Delete workout if it does not match the day of week.
+            self.repo.delete_unrated_workouts()
+
         # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+
         workout = self.repo.get_available_workout()
         if len(workout[0]) < 5:
             self.repo.delete_unrated_workouts()

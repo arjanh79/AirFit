@@ -70,6 +70,15 @@ class GenericRepository:
                'ORDER BY WE.e_sequence')
         return self.db.execute_query(sql)
 
+    def get_available_workout_dow(self):
+        workout = self.get_available_workout()
+        if len(workout[0]) < 5:
+            return -1
+        wid = workout[0][0][0]
+        sql = f'''SELECT timestamp FROM Workout WHERE w_id = '{wid}' '''
+        result = self.db.execute_query(sql)[0][0][0]
+        return result
+
 
     def save_workout_intensity(self, w_id, intensity):
         now = int(time.time())
