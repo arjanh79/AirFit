@@ -41,9 +41,9 @@ class ModelTraining:
 
     @staticmethod
     def get_loss():
-        return nn.MSELoss(reduction='none')
+        return nn.HuberLoss(reduction='none', delta=1.0)
 
-    def param_groups_decay_only_embeddings(self, wd=0.001):
+    def param_groups_decay_only_embeddings(self):
         emb_params, other_params = [], []
         for n, p in self.model.named_parameters():
             if not p.requires_grad:
@@ -53,12 +53,12 @@ class ModelTraining:
             else:
                 other_params.append(p)
         return [
-            {'params': emb_params, 'weight_decay': wd},
-            {'params': other_params, 'weight_decay': 0.0},
+            {'params': emb_params, 'weight_decay': 0.003},
+            {'params': other_params, 'weight_decay': 0.001},
         ]
 
     def get_optimizer(self):
-        groups = self.param_groups_decay_only_embeddings(wd=0.001)
+        groups = self.param_groups_decay_only_embeddings()
         return torch.optim.AdamW(groups, lr=self.lr)
 
 
