@@ -39,7 +39,7 @@ class AirFitApp:
         workout = self.repo.get_available_workout()
         if len(workout[0]) < 5:
             self.repo.delete_unrated_workouts()
-            WorkoutFactory.workout_factory('schedule').generate()  # 'schedule'
+            WorkoutFactory.workout_factory('challenge').generate()  # 'schedule'
             workout = self.repo.get_available_workout()
         workout_id = workout[0][0][0]
         workout = [(w[1], '-' if w[2] == 0 else w[2], w[3]) for w in workout[0]]

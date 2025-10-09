@@ -4,7 +4,7 @@ from datetime import datetime
 
 from v1.WO import (
     BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout,
-    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout, RunningWorkout
+    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout, RunningWorkout, ChallengeWorkout
 )
 
 
@@ -21,7 +21,8 @@ def workout_factory(workout_type):
         'heart': HeartWorkout,
         'core': CoreWorkout,
         'short': ShortWorkout,
-        'running': RunningWorkout
+        'running': RunningWorkout,
+        'challenge': ChallengeWorkout
     }
 
     type_list = list(WORKOUT_MAP.keys()) + ['random'] + ['schedule']
