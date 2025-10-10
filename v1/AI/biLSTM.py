@@ -30,6 +30,7 @@ class AirFitBiLSTM(nn.Module):
 
         self.attn = nn.Linear(self.hidden_size * 2, 1)
         self.relu = nn.ReLU()
+        self.layer_norm = nn.LayerNorm(3)
 
 
     def forward(self, e, f):
@@ -37,8 +38,10 @@ class AirFitBiLSTM(nn.Module):
         f = f.reshape((-1, 20, 3)) # Reshape f, create a 3 vector per exercise
         mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
         f = self.features(f)
+        f = self.layer_norm(f)
 
         x = torch.cat((e, f), dim=2) # Output: torch.Size([batch, 20, 6])
+
         lstm_out, _ = self.lstm(x)
 
         attn_scores = self.attn(lstm_out).squeeze(-1)

@@ -31,6 +31,6 @@ class ChallengeWorkout(BasicWorkout):
 
 
 
-        block = [e1, e2, e3, e4, e5, e6] * 2
+        block = [e1, e2, e3, e4, e5, e6] * 2 + [e1, e2, e3]
         result = pd.concat(block, ignore_index=True)
         return result
