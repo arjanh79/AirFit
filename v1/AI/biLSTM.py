@@ -13,7 +13,7 @@ class AirFitBiLSTM(nn.Module):
 
         self.num_exercises = 24 # 23 Different exercises... + 1 UNK
         self.embeddings_dim = 5 # Use a 3D representation per exercise
-        self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim)
+        self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim, max_norm=3.0)
 
         self.features = nn.Linear(3, 3)
 

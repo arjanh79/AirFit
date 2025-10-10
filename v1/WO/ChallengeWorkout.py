@@ -24,8 +24,13 @@ class ChallengeWorkout(BasicWorkout):
 
         e1 = df[df['name'] == 'Deadlift'].sample(n=1)
         e2 = df[df['name'] == 'Squats'].sample(n=1)
+        e4 = df[df['name'] == 'Bent-Over Row'].sample(n=1)
+        e5 = df[df['name'] == 'Bicep Curl'].sample(n=1)
         e3 = df[df['name'] == 'Push Ups'].sample(n=1)
+        e6 = df[df['name'] == 'Ab Crunches'].sample(n=1)
 
-        block = [e1, e2, e3] * 5
+
+
+        block = [e1, e2, e3, e4, e5, e6] * 2
         result = pd.concat(block, ignore_index=True)
         return result
