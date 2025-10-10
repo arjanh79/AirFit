@@ -10,6 +10,7 @@ from v1.AI.dataset import WorkoutDataset
 from v1.AI.train import ModelTraining
 from v1.DB.factories import RepositoryFactory
 
+from v1.utils.tools import get_weight_decay
 
 
 class BasicWorkout(ABC):
@@ -82,7 +83,7 @@ class BasicWorkout(ABC):
     def get_workout(self, warming_up, core, finale):
         workout = pd.concat([warming_up, core, finale], ignore_index=True)
         # Set  values for reps
-        workout['reps'] = 6 # default value, leave this even!
+        workout['reps'] = 8 # default value, leave this even!
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead Bug', case=False), 'reps'] = 60
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
@@ -106,7 +107,8 @@ class BasicWorkout(ABC):
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
 
             weights = 1/(e_weight.squeeze()[:e_length])
-            # weights[:5] *= 0.8
+            weights_factor = get_weight_decay(e_length)
+            weights = weights * weights_factor
 
             to_increase = workout.sample(n=1, weights=weights)
 

@@ -32,7 +32,8 @@ class AirFitApp:
 
         if not tools.get_workout_date():
             # Delete workout if it does not match today's day of week.
-            self.repo.delete_unrated_workouts()
+            # self.repo.delete_unrated_workouts()
+            pass
 
         # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 

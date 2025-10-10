@@ -22,9 +22,9 @@ class ChallengeWorkout(BasicWorkout):
     def get_core(self, warming_up, finale):
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
 
-        e1 = df[df['name'] == 'Push Ups'].sample(n=1)
+        e1 = df[df['name'] == 'Deadlift'].sample(n=1)
         e2 = df[df['name'] == 'Squats'].sample(n=1)
-        e3 = df[df['name'] == 'Deadlift'].sample(n=1)
+        e3 = df[df['name'] == 'Push Ups'].sample(n=1)
 
         block = [e1, e2, e3] * 5
         result = pd.concat(block, ignore_index=True)
