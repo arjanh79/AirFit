@@ -16,10 +16,10 @@ class AirFitBiLSTM(nn.Module):
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim, max_norm=3.0)
 
         self.seq_len = 21
-        self.seq_dim = 2
+        self.seq_dim = 3
         self.seq_embedding = nn.Embedding(self.seq_len, self.seq_dim, max_norm=3.0)
 
-        self.features = nn.Linear(4, 3)
+        self.features = nn.Linear(5, 3)
 
         with torch.no_grad():
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
