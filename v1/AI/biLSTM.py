@@ -46,7 +46,6 @@ class AirFitBiLSTM(nn.Module):
         f = torch.cat((f[:, :, :-1], seq_nums), dim=2)
 
         f = self.features(f)
-        f = self.layer_norm(f)
 
         x = torch.cat((e, f), dim=2) # Output: torch.Size([batch, 20, 6])
 

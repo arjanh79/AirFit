@@ -117,7 +117,7 @@ class BasicWorkout(ABC):
             to_increase = to_increase.squeeze()
             step_size = 1
             if to_increase['name'] in ['Step Ups', 'Ab Twist', 'Bosu Mountain Climbers',
-                                       'Shoulder Taps', 'Front - Side', 'Around the World']:
+                                       'Shoulder Taps', 'Front - Side', 'Around the World', 'Ab Crunches']:
                 step_size = 2
             if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x', 'Dead Bug - Static']:
                 step_size = 5

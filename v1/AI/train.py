@@ -12,7 +12,7 @@ class ModelTraining:
         self.model_location = 'AI/workout_model.pth'
         self.model_location_train = 'AI/workout_model_train.pth'
 
-        self.epochs = 5  # 5
+        self.epochs = 10  # 5
         self.batch_size = self.calc_batch_size()
         self.lr = 0.003 # 0.005
         self.safe_model = False # FALSE!!
