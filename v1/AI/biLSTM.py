@@ -15,7 +15,11 @@ class AirFitBiLSTM(nn.Module):
         self.embeddings_dim = 5 # Use a 3D representation per exercise
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim, max_norm=3.0)
 
-        self.features = nn.Linear(3, 3)
+        self.seq_len = 21
+        self.seq_dim = 2
+        self.seq_embedding = nn.Embedding(self.seq_len, self.seq_dim, max_norm=3.0)
+
+        self.features = nn.Linear(4, 3)
 
         with torch.no_grad():
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
@@ -28,7 +32,6 @@ class AirFitBiLSTM(nn.Module):
             bidirectional=True
         )
 
-        self.attn = nn.Linear(self.hidden_size * 2, 1)
         self.relu = nn.ReLU()
         self.layer_norm = nn.LayerNorm(3)
 
@@ -37,6 +40,11 @@ class AirFitBiLSTM(nn.Module):
         e = self.embedding(e)
         f = f.reshape((-1, 20, 3)) # Reshape f, create a 3 vector per exercise
         mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
+
+        seq_nums = self.seq_embedding(f[:, :, -1].int())
+        seq_nums = seq_nums.squeeze(-1)
+        f = torch.cat((f[:, :, :-1], seq_nums), dim=2)
+
         f = self.features(f)
         f = self.layer_norm(f)
 
@@ -44,11 +52,7 @@ class AirFitBiLSTM(nn.Module):
 
         lstm_out, _ = self.lstm(x)
 
-        attn_scores = self.attn(lstm_out).squeeze(-1)
-        attn_scores = attn_scores.masked_fill(mask == 0, -1e9)
-        attn_scores = self.relu(attn_scores).unsqueeze(-1)
-
-        intensity_per_exercise = self.relu(attn_scores * lstm_out)
+        intensity_per_exercise = self.relu(lstm_out)
         intensity_per_exercise = intensity_per_exercise.sum(dim=2)
         intensity_per_exercise = intensity_per_exercise * mask
 

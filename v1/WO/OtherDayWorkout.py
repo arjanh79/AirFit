@@ -25,8 +25,8 @@ class OtherDayWorkout(BasicWorkout):
         e1 = df[df['name'] == 'Clean and Press'].sample(n=1)
         e2 = df[df['name'] == 'Step Ups'].sample(n=1)
         e3 = df[df['name'] == 'Push Ups'].sample(n=1)
-        e4 = df[df['name'] == 'Bosu Mountain Climbers'].sample(n=1)
-        e5 = df[df['name'] == 'Front - Side'].sample(n=1)
+        e5 = df[df['name'] == 'Bosu Mountain Climbers'].sample(n=1)
+        e4 = df[df['name'] == 'Front - Side'].sample(n=1)
         e6 = df[df['name'] == 'Sit Up - Ball'].sample(n=1)
 
 

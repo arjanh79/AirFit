@@ -14,7 +14,7 @@ class ModelTraining:
 
         self.epochs = 5  # 5
         self.batch_size = self.calc_batch_size()
-        self.lr = 0.003 # 0.005
+        self.lr = 0.001 # 0.005
         self.safe_model = False # FALSE!!
         self.load_model = True # FALSE!!
 
@@ -48,7 +48,7 @@ class ModelTraining:
         for n, p in self.model.named_parameters():
             if not p.requires_grad:
                 continue
-            if n == 'embedding.weight':
+            if n in ['embedding.weight', 'seq_embedding.weight']:
                 emb_params.append(p)
             else:
                 other_params.append(p)
@@ -63,6 +63,8 @@ class ModelTraining:
 
 
     def train_model(self):
+        best_loss = float('inf')
+        best_model = False
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=self.batch_size, shuffle=False)
         optimizer = self.get_optimizer()
         self.model.train()
@@ -75,10 +77,15 @@ class ModelTraining:
                 loss.backward()
                 optimizer.step()
                 print(f'   Epoch {epoch + 1:03d}, Batch {batch:03d}: {loss.item():>8.5f} ({len(y)})')
+                if batch == 1 and loss.item() < best_loss:
+                    best_loss = loss.item()
+                    best_model = True
             epoch_loss = self.calculate_epoch_loss()
             print(f'=> Epoch {epoch + 1:03d}       Loss: {epoch_loss:>8.5f}\n')
-        if self.safe_model:
-            torch.save(self.model.state_dict(), self.model_location)
+            if self.safe_model and best_model:
+                torch.save(self.model.state_dict(), self.model_location)
+                print('### Best model saved.')
+                best_model = False
         torch.save(self.model.state_dict(), self.model_location_train)
 
 

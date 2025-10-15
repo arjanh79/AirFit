@@ -36,8 +36,7 @@ def workout_factory(workout_type):
     print(f'Workout type: {workout_type}')
 
     if workout_type == 'schedule':
-        if datetime.today().weekday() % 2 == 0:
-            workout_type = 'otherday' if datetime.today().weekday() % 2 == 0 else 'challenge'
+        workout_type = 'challenge' if datetime.today().weekday() % 2 == 1 else 'otherday'
         print(f'Workout type update: {workout_type}')
 
 
