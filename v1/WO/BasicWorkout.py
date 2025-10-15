@@ -115,12 +115,14 @@ class BasicWorkout(ABC):
 
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
-            step_size = 1
-            if to_increase['name'] in ['Step Ups', 'Ab Twist', 'Bosu Mountain Climbers',
-                                       'Shoulder Taps', 'Front - Side', 'Around the World', 'Ab Crunches']:
-                step_size = 2
+            step_size = 2
             if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x', 'Dead Bug - Static']:
                 step_size = 5
+
+            # 5% random to increase with 10 -> Bonus! and to push the AI in the correct direction...
+            if self.rnd_gen.random() < 0.05:
+                step_size = 10
+
 
             workout.loc[index, 'reps'] += step_size
             workout_model.loc[index, 'reps'] += step_size
