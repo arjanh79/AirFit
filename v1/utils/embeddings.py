@@ -58,8 +58,8 @@ class EmbeddingsPlot:
         ax.spines['left'].set_visible(False)
         ax.spines['bottom'].set_visible(False)
 
-        ax.set_xlim(-4, 4)
-        ax.set_ylim(-4, 4)
+        ax.set_xlim(-3, 3)
+        ax.set_ylim(-3, 3)
 
         plt.grid(True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
 

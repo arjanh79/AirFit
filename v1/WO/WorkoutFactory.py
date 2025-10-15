@@ -4,7 +4,8 @@ from datetime import datetime
 
 from v1.WO import (
     BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout,
-    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout, RunningWorkout, ChallengeWorkout
+    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout, RunningWorkout, ChallengeWorkout,
+    OtherDayWorkout
 )
 
 
@@ -22,7 +23,8 @@ def workout_factory(workout_type):
         'core': CoreWorkout,
         'short': ShortWorkout,
         'running': RunningWorkout,
-        'challenge': ChallengeWorkout
+        'challenge': ChallengeWorkout,
+        'otherday': OtherDayWorkout
     }
 
     type_list = list(WORKOUT_MAP.keys()) + ['random'] + ['schedule']
@@ -34,15 +36,8 @@ def workout_factory(workout_type):
     print(f'Workout type: {workout_type}')
 
     if workout_type == 'schedule':
-        match datetime.today().weekday():
-            case 1:
-                workout_type = 'focus'
-            case 3 | 6:
-                workout_type = 'random'
-            case 0 | 2:
-                workout_type = 'forge'
-            case 4 | 5:
-                workout_type = 'short'
+        if datetime.today().weekday() % 2 == 0:
+            workout_type = 'otherday' if datetime.today().weekday() % 2 == 0 else 'challenge'
         print(f'Workout type update: {workout_type}')
 
 

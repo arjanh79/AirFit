@@ -10,3 +10,4 @@ from .CoreWorkout import CoreWorkout
 from .ShortWorkout import ShortWorkout
 from .RunningWorkout import RunningWorkout
 from .ChallengeWorkout import ChallengeWorkout
+from .OtherDayWorkout import OtherDayWorkout
