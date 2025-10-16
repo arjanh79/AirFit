@@ -39,6 +39,7 @@ class AirFitBiLSTM(nn.Module):
     def forward(self, e, f):
         e = self.embedding(e)
         f = f.reshape((-1, 20, 3)) # Reshape f, create a 3 vector per exercise
+        f[:, :, 0] = torch.pow(f[:, :, 0], 2)
         mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
 
         seq_nums = self.seq_embedding(f[:, :, -1].int())

@@ -6,6 +6,7 @@ import numpy as np
 
 from v1.AI.dataset import WorkoutDataset
 from v1.DB.factories import RepositoryFactory
+from v1.utils.tools import get_loss_decay
 
 
 class WorkoutPreprocessor:
@@ -29,10 +30,7 @@ class WorkoutPreprocessor:
         self.embeddings_x, self.data_x = self.create_dnn_data_x()
 
         # Calculate weight factor for loss
-        self.weighted_loss = torch.tensor(np.cumprod([1.15] * (self.data_x.shape[0] - 1)), dtype=torch.float32)
-        self.weighted_loss = torch.cat((torch.ones(1), self.weighted_loss))
-        self.weighted_loss = (self.weighted_loss - self.weighted_loss.min()) / (self.weighted_loss.max() - self.weighted_loss.min())
-        self.weighted_loss = torch.clip(self.weighted_loss, 0.01, 1)
+        self.weighted_loss = get_loss_decay(self.data_x.shape[0])
 
         self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y, self.weighted_loss)
 
