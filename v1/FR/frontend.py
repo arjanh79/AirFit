@@ -36,7 +36,7 @@ class AirFitApp:
             # Delete workout if it does not match today's day of week.
             self.repo.delete_unrated_workouts()
 
-        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         workout = self.repo.get_available_workout()
         if len(workout[0]) < 5:

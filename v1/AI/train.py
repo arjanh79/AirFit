@@ -12,7 +12,7 @@ class ModelTraining:
         self.model_location = 'AI/workout_model.pth'
         self.model_location_train = 'AI/workout_model_train.pth'
 
-        self.epochs = 5  # 5
+        self.epochs = 10  # 5
         self.batch_size = self.calc_batch_size()
         self.lr = 0.003
         self.safe_model = False # FALSE!!
@@ -22,7 +22,7 @@ class ModelTraining:
             self.model.load_state_dict(torch.load(self.model_location))
 
         self.loss = self.get_loss()
-        self.optimizer = self.get_optimizer()
+
 
 
     def calc_batch_size(self):
@@ -66,6 +66,7 @@ class ModelTraining:
         best_loss = float('inf')
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=self.batch_size, shuffle=False)
         optimizer = self.get_optimizer()
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
         for epoch in range(self.epochs):
             for batch, (Xe, Xf, y, wl) in enumerate(dataloader, 1):
                 self.model.train()
@@ -76,8 +77,10 @@ class ModelTraining:
                 loss.backward()
                 optimizer.step()
                 print(f'   Epoch {epoch + 1:03d}, Batch {batch:03d}: {loss.item():>8.5f} ({len(y)})')
+            scheduler.step()
             epoch_loss = self.calculate_epoch_loss()
             print(f'=> Epoch {epoch + 1:03d}       Loss: {epoch_loss:>8.5f}\n')
+            print(f' LR: {scheduler.get_last_lr()[0]:.6f}')
             if self.safe_model and epoch_loss < best_loss:
                 best_loss = epoch_loss
                 torch.save(self.model.state_dict(), self.model_location)
