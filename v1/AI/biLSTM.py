@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_sequence
+
 
 class AirFitBiLSTM(nn.Module):
     def __init__(self):
@@ -21,6 +23,9 @@ class AirFitBiLSTM(nn.Module):
 
         self.features = nn.Linear(5, 3)
 
+        self.intensity_head = nn.Linear(self.hidden_size * 2, 1, bias=False)
+        torch.nn.init.normal_(self.intensity_head.weight, mean=0.5, std=0.05)
+
         with torch.no_grad():
             self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
 
@@ -37,25 +42,37 @@ class AirFitBiLSTM(nn.Module):
 
 
     def forward(self, e, f):
+
+        B, T = e.shape[:2]
+
         e = self.embedding(e)
-        f = f.reshape((-1, 20, 3)) # Reshape f, create a 5 vector per exercise
-        f[:, :, 0] = torch.pow(f[:, :, 0], 2)
-        mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
+        f = f.view(B, T, -1)
 
-        seq_nums = self.seq_embedding(f[:, :, -1].int())
-        seq_nums = seq_nums.squeeze(-1)
-        f = torch.cat((f[:, :, :-1], seq_nums), dim=2)
+        lengths = torch.count_nonzero(f[:, :, 1], dim=1).clamp_min(1)
+        f0_sq = f[:, :, 0:1] * f[:, :, 0:1]
 
-        f = self.features(f)
+        seq_idx = f[:, :, -1].to(torch.long)
+        seq_emb = self.seq_embedding(seq_idx)
 
-        x = torch.cat((e, f), dim=2) # Output: torch.Size([batch, 20, 6])
+        f_cat = torch.cat((f0_sq, f[:, :, 1:-1], seq_emb), dim=2)
 
-        lstm_out, _ = self.lstm(x)
+        f_feat = self.features(f_cat)
 
-        intensity_per_exercise = self.relu(lstm_out)
-        intensity_per_exercise = intensity_per_exercise.sum(dim=2)
-        intensity_per_exercise = intensity_per_exercise * mask
 
-        total_intensity = intensity_per_exercise.sum(dim=1).unsqueeze(-1)
+        x = torch.cat((e, f_feat), dim=2)
+
+        if torch.all(lengths == T):
+            lstm_out, _ = self.lstm(x)
+        else:
+            packed = torch.nn.utils.rnn.pack_padded_sequence(
+                x, lengths=lengths.cpu(), batch_first=True, enforce_sorted=False
+            )
+            packed_out, _ = self.lstm(packed)
+            lstm_out, _ = torch.nn.utils.rnn.pad_packed_sequence(
+                packed_out, batch_first=True, total_length=T
+            )
+
+        intensity_per_exercise = self.intensity_head(lstm_out).squeeze(-1)
+        total_intensity = intensity_per_exercise.sum(dim=1, keepdim=True)
 
         return total_intensity, intensity_per_exercise
