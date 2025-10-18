@@ -9,10 +9,10 @@ class AirFitBiLSTM(nn.Module):
         # LSTM params
         self.input_size = 8
         self.hidden_size = 10
-        self.num_layers = 2
+        self.num_layers = 5
 
         self.num_exercises = 24 # 23 Different exercises... + 1 UNK
-        self.embeddings_dim = 5 # Use a 3D representation per exercise
+        self.embeddings_dim = 5 # Use a 5D representation per exercise
         self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim, max_norm=3.0)
 
         self.seq_len = 21
@@ -29,16 +29,16 @@ class AirFitBiLSTM(nn.Module):
             hidden_size=self.hidden_size,
             num_layers=self.num_layers,
             batch_first=True,
-            bidirectional=True
+            bidirectional=True,
+            dropout=0.1
         )
 
         self.relu = nn.ReLU()
-        self.layer_norm = nn.LayerNorm(3)
 
 
     def forward(self, e, f):
         e = self.embedding(e)
-        f = f.reshape((-1, 20, 3)) # Reshape f, create a 3 vector per exercise
+        f = f.reshape((-1, 20, 3)) # Reshape f, create a 5 vector per exercise
         f[:, :, 0] = torch.pow(f[:, :, 0], 2)
         mask = torch.tensor(np.where(f[:, :, 1] == 0, 0, 1))
 

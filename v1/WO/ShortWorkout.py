@@ -28,7 +28,7 @@ class ShortWorkout(BasicWorkout):
         weights['total'] = weights['WC'] / weights['WC'].sum()
         print(weights)
 
-        exercises = weights['name'].sample(weights = weights['total'], n=3, replace = False)
+        exercises = weights['name'].sample(weights = weights['total'], n=9, replace = False)
 
         result = []
 

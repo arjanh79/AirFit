@@ -104,7 +104,7 @@ class BasicWorkout(ABC):
         rounds = 0
         wo_intensity = self.rnd_gen.normal(3.25, 0.125, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
-        while intensity < wo_intensity and rounds < 50:
+        while intensity < wo_intensity and rounds < 20:
             e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
 
             weights = 1/(e_weight.squeeze()[:e_length])
@@ -116,12 +116,12 @@ class BasicWorkout(ABC):
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
             step_size = 2
-            if to_increase['name'] in ['Plank', 'Bosu Plank', 'Flutter Kicks 4x', 'Dead Bug - Static']:
+            if to_increase['name'] in ['Plank', 'Bosu Plank', 'Dead Bug - Static']:
                 step_size = 5
 
             # 5% random to increase with 10 -> Bonus! and to push the AI in the correct direction...
-            if self.rnd_gen.random() < 0.05:
-                step_size = 10
+            # if self.rnd_gen.random() < 0.05:
+            #    step_size = 10
 
 
             workout.loc[index, 'reps'] += step_size

@@ -12,10 +12,10 @@ class ModelTraining:
         self.model_location = 'AI/workout_model.pth'
         self.model_location_train = 'AI/workout_model_train.pth'
 
-        self.epochs = 10  # 5
+        self.epochs = 5  # 5
         self.batch_size = self.calc_batch_size()
-        self.lr = 0.003 # 0.005
-        self.safe_model = False # FALSE!!
+        self.lr = 0.001 # 0.005
+        self.safe_model = True # FALSE!!
         self.load_model = True # FALSE!!
 
         if self.load_model:
@@ -41,7 +41,7 @@ class ModelTraining:
 
     @staticmethod
     def get_loss():
-        return nn.HuberLoss(reduction='none', delta=1.0)
+        return nn.HuberLoss(reduction='none', delta=0.5)
 
     def param_groups_decay_only_embeddings(self):
         emb_params, other_params = [], []
@@ -66,9 +66,9 @@ class ModelTraining:
         best_loss = float('inf')
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=self.batch_size, shuffle=False)
         optimizer = self.get_optimizer()
-        self.model.train()
         for epoch in range(self.epochs):
             for batch, (Xe, Xf, y, wl) in enumerate(dataloader, 1):
+                self.model.train()
                 optimizer.zero_grad()
                 output, _ = self.model(Xe, Xf)
                 loss = self.calculate_loss(output, y, wl)
@@ -92,6 +92,7 @@ class ModelTraining:
 
     def calculate_epoch_loss(self):
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=1, shuffle=False)
+        model_state_train = self.model.training
         self.model.eval()
         epoch_loss = 0
         with torch.no_grad():
@@ -100,6 +101,8 @@ class ModelTraining:
                 loss = self.loss(y_hat, y) * wl
                 epoch_loss += loss.item()
         epoch_loss = epoch_loss / len(dataloader)
+        if model_state_train:
+            self.model.train()
         return epoch_loss
 
 
@@ -121,15 +124,20 @@ class ModelTraining:
 
     def eval_workout(self):
         self.model.load_state_dict(torch.load(self.model_location))
+        model_state_train = self.model.training
+        if model_state_train:
+            self.model.eval()
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=1, shuffle=False)
 
         if not len(dataloader) == 1:
             return -1
 
-        self.model.eval()
         with torch.no_grad():
             Xe, Xf, _, _ = next(iter(dataloader))
             y_hat = self.model(Xe, Xf)
+
+        if model_state_train:
+            self.model.train()
         return y_hat
 
 

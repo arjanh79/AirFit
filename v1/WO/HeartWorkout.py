@@ -10,7 +10,7 @@ class HeartWorkout(BasicWorkout):
 
     def generate(self):
         warming_up = self.get_warming_up()
-        finale = self.get_finale()
+        finale = None  # self.get_finale()
         core = self.get_core(warming_up, finale)
 
         workout, workout_model = self.get_workout(warming_up, core, finale)
@@ -29,11 +29,7 @@ class HeartWorkout(BasicWorkout):
         e3 = df[(df['name'] == 'Clean and Press') & (df['weight'] == 16)].sample(n=1)
 
 
-        block = [e1, e2, e3]
-
-        result = []
-        for _ in range(3):
-            result.extend(block)
+        result = [e1, e2, e3] * 5
 
         result = pd.concat(result, ignore_index=True)
         return result
