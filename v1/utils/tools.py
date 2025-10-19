@@ -27,7 +27,7 @@ def get_weight_decay(len_workout):
 
 
 def get_loss_decay(total_workouts):
-    weighted_loss = torch.tensor(np.cumprod([1.075] * (total_workouts - 1)), dtype=torch.float32)
+    weighted_loss = torch.tensor(np.cumprod([1.05] * (total_workouts - 1)), dtype=torch.float32)
     weighted_loss = torch.cat((torch.ones(1), weighted_loss))
     weighted_loss = (weighted_loss - weighted_loss.min()) / (weighted_loss.max() - weighted_loss.min())
     weighted_loss = torch.clip(weighted_loss, 0.01, 1)

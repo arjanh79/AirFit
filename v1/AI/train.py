@@ -15,7 +15,7 @@ class ModelTraining:
         self.epochs = 10  # 5
         self.batch_size = self.calc_batch_size()
         self.lr = 0.003
-        self.safe_model = False # FALSE!!
+        self.safe_model = True # FALSE!!
         self.load_model = True # FALSE!!
 
         if self.load_model:
@@ -80,7 +80,6 @@ class ModelTraining:
             scheduler.step()
             epoch_loss = self.calculate_epoch_loss()
             print(f'=> Epoch {epoch + 1:03d}       Loss: {epoch_loss:>8.5f}\n')
-            print(f' LR: {scheduler.get_last_lr()[0]:.6f}')
             if self.safe_model and epoch_loss < best_loss:
                 best_loss = epoch_loss
                 torch.save(self.model.state_dict(), self.model_location)

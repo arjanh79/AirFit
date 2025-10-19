@@ -35,7 +35,7 @@ class AirFitBiLSTM(nn.Module):
             num_layers=self.num_layers,
             batch_first=True,
             bidirectional=True,
-            dropout=0.1
+            dropout=0.2
         )
 
         self.relu = nn.ReLU()
@@ -43,26 +43,34 @@ class AirFitBiLSTM(nn.Module):
 
     def forward(self, e, f):
 
-        B, T = e.shape[:2]
+        B, T = e.shape[:2]   # Batch, Training length
 
         e = self.embedding(e)
         f = f.view(B, T, -1)
 
-        lengths = torch.count_nonzero(f[:, :, 1], dim=1).clamp_min(1)
+        lengths = torch.count_nonzero(f[:, :, 1], dim=1).clamp_min(1)  # Find the true length of the workout.
+        # square the weights of the dumbbells, 1kg extra add more intensity compared to 1 extra rep.
         f0_sq = f[:, :, 0:1] * f[:, :, 0:1]
 
+        # Create embeddings for the sequence numbers.
         seq_idx = f[:, :, -1].to(torch.long)
         seq_emb = self.seq_embedding(seq_idx)
 
+        # Merge weights, reps and seq_nums
         f_cat = torch.cat((f0_sq, f[:, :, 1:-1], seq_emb), dim=2)
 
+        # proprocess the output of the previous step
         f_feat = self.features(f_cat)
 
-
+        # Merge the output of the feature with the embeddings of the exercise.
         x = torch.cat((e, f_feat), dim=2)
 
+        # Process the workouts in an LSTM with variable workout lengths.
+
+        # If all workouts in the batch have the same length, nothing to worry about.
         if torch.all(lengths == T):
             lstm_out, _ = self.lstm(x)
+        # If not, we use PackedSequence to handle the difference in lengths
         else:
             packed = torch.nn.utils.rnn.pack_padded_sequence(
                 x, lengths=lengths.cpu(), batch_first=True, enforce_sorted=False
@@ -72,6 +80,7 @@ class AirFitBiLSTM(nn.Module):
                 packed_out, batch_first=True, total_length=T
             )
 
+        # This works magic, init at .5 without bias. Sum is to get the total workout intensity.
         intensity_per_exercise = self.intensity_head(lstm_out).squeeze(-1)
         total_intensity = intensity_per_exercise.sum(dim=1, keepdim=True)
 
