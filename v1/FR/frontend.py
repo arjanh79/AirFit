@@ -30,7 +30,7 @@ class AirFitApp:
 
     def general_workout(self):
 
-        workout_type = 'otherday'
+        workout_type = 'heart'
 
         if not tools.get_workout_date() and workout_type == 'schedule':
             # Delete workout if it does not match today's day of week.

@@ -35,10 +35,12 @@ class AirFitBiLSTM(nn.Module):
             num_layers=self.num_layers,
             batch_first=True,
             bidirectional=True,
-            dropout=0.2
+            dropout=0.1
         )
 
         self.relu = nn.ReLU()
+        self.selu = nn.SELU()
+        self.dropout = nn.Dropout(0.1)
 
 
     def forward(self, e, f):
@@ -46,6 +48,8 @@ class AirFitBiLSTM(nn.Module):
         B, T = e.shape[:2]   # Batch, Training length
 
         e = self.embedding(e)
+        e = self.selu(e)
+
         f = f.view(B, T, -1)
 
         lengths = torch.count_nonzero(f[:, :, 1], dim=1).clamp_min(1)  # Find the true length of the workout.
@@ -61,6 +65,7 @@ class AirFitBiLSTM(nn.Module):
 
         # proprocess the output of the previous step
         f_feat = self.features(f_cat)
+        f_feat = self.selu(f_feat)
 
         # Merge the output of the feature with the embeddings of the exercise.
         x = torch.cat((e, f_feat), dim=2)
@@ -79,6 +84,10 @@ class AirFitBiLSTM(nn.Module):
             lstm_out, _ = torch.nn.utils.rnn.pad_packed_sequence(
                 packed_out, batch_first=True, total_length=T
             )
+
+        # Now we have overfitting, adding some dropout
+
+        lstm_out = self.dropout(lstm_out)
 
         # This works magic, init at .5 without bias. Sum is to get the total workout intensity.
         intensity_per_exercise = self.intensity_head(lstm_out).squeeze(-1)
