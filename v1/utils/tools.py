@@ -20,9 +20,8 @@ def get_workout_date():
 
 
 def get_weight_decay(len_workout):
-    weights = 1.05 ** np.arange(1, len_workout-1)
+    weights = np.cumprod(1.1 ** np.ones(len_workout))
     weights = 1 + (weights - weights.min()) / (weights.max() - weights.min())
-    weights = np.pad(weights, (0, len_workout - len(weights)), mode='edge')
     return weights
 
 
@@ -32,3 +31,5 @@ def get_loss_decay(total_workouts):
     weighted_loss = (weighted_loss - weighted_loss.min()) / (weighted_loss.max() - weighted_loss.min())
     weighted_loss = torch.clip(weighted_loss, 0.01, 1)
     return weighted_loss
+
+get_weight_decay(20)

@@ -21,7 +21,8 @@ class AirFitBiLSTM(nn.Module):
         self.seq_dim = 3
         self.seq_embedding = nn.Embedding(self.seq_len, self.seq_dim, max_norm=3.0)
 
-        self.features = nn.Linear(5, 3)
+        self.features_1 = nn.Linear(5, 5)
+        self.features_2 = nn.Linear(5, 3)
 
         self.intensity_head = nn.Linear(self.hidden_size * 2, 1, bias=False)
         torch.nn.init.normal_(self.intensity_head.weight, mean=0.5, std=0.05)
@@ -41,6 +42,7 @@ class AirFitBiLSTM(nn.Module):
         self.relu = nn.ReLU()
         self.selu = nn.SELU()
         self.dropout = nn.Dropout(0.1)
+        self.norm = nn.LayerNorm(5)
 
 
     def forward(self, e, f):
@@ -53,8 +55,8 @@ class AirFitBiLSTM(nn.Module):
         f = f.view(B, T, -1)
 
         lengths = torch.count_nonzero(f[:, :, 1], dim=1).clamp_min(1)  # Find the true length of the workout.
-        # square the weights of the dumbbells, 1kg extra add more intensity compared to 1 extra rep.
-        f0_sq = f[:, :, 0:1] * f[:, :, 0:1]
+        f0_sq = f[:, :, 0:1] ** 2
+        f0_sq = torch.log1p(f0_sq)
 
         # Create embeddings for the sequence numbers.
         seq_idx = f[:, :, -1].to(torch.long)
@@ -62,9 +64,12 @@ class AirFitBiLSTM(nn.Module):
 
         # Merge weights, reps and seq_nums
         f_cat = torch.cat((f0_sq, f[:, :, 1:-1], seq_emb), dim=2)
+        f_cat = self.norm(f_cat)
 
-        # proprocess the output of the previous step
-        f_feat = self.features(f_cat)
+        # preprocess the output of the previous step
+        f_feat = self.features_1(f_cat)
+        f_feat = self.selu(f_feat)
+        f_feat = self.features_2(f_feat)
         f_feat = self.selu(f_feat)
 
         # Merge the output of the feature with the embeddings of the exercise.

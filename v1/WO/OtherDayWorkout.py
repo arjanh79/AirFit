@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 
 from v1.WO.BasicWorkout import BasicWorkout
 
@@ -22,14 +23,17 @@ class OtherDayWorkout(BasicWorkout):
     def get_core(self, warming_up, finale):
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
 
-        e1 = df[df['name'] == 'Clean and Press'].sample(n=1)
-        e2 = df[df['name'] == 'Step Ups'].sample(n=1)
-        e3 = df[df['name'] == 'Push Ups'].sample(n=1)
-        e5 = df[df['name'] == 'Bosu Mountain Climbers'].sample(n=1)
-        e4 = df[df['name'] == 'Front - Side'].sample(n=1)
-        e6 = df[df['name'] == 'Sit Up - Ball'].sample(n=1)
+        # Make step-ups and clean-and-press the same weight! Check this in SQL!
+        target_weight = random.choice([10, 16, 20, 24])
+        df = df[~((df['name'].isin(['Step Ups', 'Clean and Press'])) & (df['weight'] != target_weight))]
 
 
+        e1 = df[df['name'] == 'Step Ups'] # .sample(n=1)
+        e2 = df[df['name'] == 'Push Ups'].sample(n=1)
+        e3 = df[df['name'] == 'Clean and Press'] # .sample(n=1)
+        e4 = df[df['name'] == 'Sit Up - Ball'].sample(n=1)
+        e5 = df[df['name'] == 'Front - Side'].sample(n=1)
+        e6 = df[df['name'] == 'Bosu Mountain Climbers'].sample(n=1)
 
         block = [e1, e2, e3, e4, e5, e6] * 2 + [e1, e2, e3]
         result = pd.concat(block, ignore_index=True)

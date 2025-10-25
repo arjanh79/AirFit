@@ -52,10 +52,11 @@ class BasicWorkout(ABC):
         return mappings
 
     def get_warming_up(self):
-        min_exercises = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])   
-        min_exercises = min_exercises.groupby('name').min().reset_index()
-        min_exercises = min_exercises[~min_exercises['name'].str.contains('Plank')]
-        min_exercises = min_exercises[~min_exercises['name'].str.contains('Combi')]
+        min_exercises = (pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
+                         .groupby('name', as_index=False)
+                         .min())
+        mask = ~min_exercises['name'].str.contains('Plank|Combi|World|Flutter|Twist')
+        min_exercises = min_exercises[mask]
 
         exercises = self.rnd_gen.choice(len(min_exercises), size=5, replace=False)
         exercises = min_exercises.iloc[exercises, :]
@@ -104,25 +105,17 @@ class BasicWorkout(ABC):
         rounds = 0
         wo_intensity = self.rnd_gen.normal(3.25, 0.125, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
-        while intensity < wo_intensity and rounds < 20:
-            e_weight = np.where(e_weight < 0.001, 0.001, e_weight)
+        while intensity < wo_intensity and rounds < 25:
 
-            weights = 1/(e_weight.squeeze()[:e_length])
             weights_factor = get_weight_decay(e_length)
-            weights = weights * weights_factor
-
-            to_increase = workout.sample(n=1, weights=weights)
+            print(weights_factor)
+            to_increase = workout.sample(n=1, weights=weights_factor)
 
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
             step_size = 2
             if to_increase['name'] in ['Plank', 'Bosu Plank', 'Dead Bug - Static']:
                 step_size = 5
-
-            # 5% random to increase with 10 -> Bonus! and to push the AI in the correct direction...
-            # if self.rnd_gen.random() < 0.05:
-            #    step_size = 10
-
 
             workout.loc[index, 'reps'] += step_size
             workout_model.loc[index, 'reps'] += step_size

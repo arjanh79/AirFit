@@ -2,6 +2,8 @@
 import numpy as np
 from datetime import datetime
 
+from matplotlib.style.core import available
+
 from v1.WO import (
     BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout,
     HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout, RunningWorkout, ChallengeWorkout,
@@ -10,6 +12,7 @@ from v1.WO import (
 
 
 def workout_factory(workout_type):
+    rnd_gen = np.random.default_rng()
 
     WORKOUT_MAP = {
         'classic': ClassicWorkout,
@@ -36,12 +39,13 @@ def workout_factory(workout_type):
     print(f'Workout type: {workout_type}')
 
     if workout_type == 'schedule':
-        workout_type = 'challenge' if datetime.today().weekday() % 2 == 1 else 'otherday'
+        types = ['challenge', 'otherday', 'heart']
+        workout_type = rnd_gen.choice(types, 1)[0]
+
         print(f'Workout type update: {workout_type}')
 
 
     if workout_type == 'random':
-        rnd_gen = np.random.default_rng()
         workout_type = rnd_gen.choice(list(WORKOUT_MAP.keys()), 1)[0]
         print(f'Workout type update: {workout_type}')
 
