@@ -1,7 +1,5 @@
 import torch
 import torch.nn as nn
-import numpy as np
-from torch.nn.utils.rnn import pad_sequence, pack_padded_sequence, pad_packed_sequence
 
 
 class AirFitBiLSTM(nn.Module):
@@ -15,20 +13,16 @@ class AirFitBiLSTM(nn.Module):
 
         self.num_exercises = 24 # 23 Different exercises... + 1 UNK
         self.embeddings_dim = 5 # Use a 5D representation per exercise
-        self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim, max_norm=3.0)
+        self.embedding = nn.Embedding(self.num_exercises, self.embeddings_dim, padding_idx=0, max_norm=3.0)
 
         self.seq_len = 21
         self.seq_dim = 3
         self.seq_embedding = nn.Embedding(self.seq_len, self.seq_dim, max_norm=3.0)
 
-        self.features_1 = nn.Linear(5, 5)
-        self.features_2 = nn.Linear(5, 3)
+        self.features_1 = nn.Linear(5, 3)
 
         self.intensity_head = nn.Linear(self.hidden_size * 2, 1, bias=False)
         torch.nn.init.normal_(self.intensity_head.weight, mean=0.5, std=0.05)
-
-        with torch.no_grad():
-            self.embedding.weight[0] = torch.zeros(self.embeddings_dim)
 
         self.lstm = nn.LSTM(
             input_size=self.input_size,
@@ -42,12 +36,13 @@ class AirFitBiLSTM(nn.Module):
         self.relu = nn.ReLU()
         self.selu = nn.SELU()
         self.dropout = nn.Dropout(0.1)
+        self.dropout_feat = nn.AlphaDropout(0.1)
         self.norm = nn.LayerNorm(5)
 
 
     def forward(self, e, f):
 
-        B, T = e.shape[:2]   # Batch, Training length
+        B, T = e.shape[:2]   # Batch, Training
 
         e = self.embedding(e)
         e = self.selu(e)
@@ -55,7 +50,7 @@ class AirFitBiLSTM(nn.Module):
         f = f.view(B, T, -1)
 
         lengths = torch.count_nonzero(f[:, :, 1], dim=1).clamp_min(1)  # Find the true length of the workout.
-        f0_sq = f[:, :, 0:1] ** 2
+        f0_sq = f[:, :, 0:1]
         f0_sq = torch.log1p(f0_sq)
 
         # Create embeddings for the sequence numbers.
@@ -68,9 +63,9 @@ class AirFitBiLSTM(nn.Module):
 
         # preprocess the output of the previous step
         f_feat = self.features_1(f_cat)
+        f_feat = self.dropout_feat(f_feat)
         f_feat = self.selu(f_feat)
-        f_feat = self.features_2(f_feat)
-        f_feat = self.selu(f_feat)
+
 
         # Merge the output of the feature with the embeddings of the exercise.
         x = torch.cat((e, f_feat), dim=2)

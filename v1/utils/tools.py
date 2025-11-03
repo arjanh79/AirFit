@@ -32,4 +32,3 @@ def get_loss_decay(total_workouts):
     weighted_loss = torch.clip(weighted_loss, 0.01, 1)
     return weighted_loss
 
-get_weight_decay(20)
