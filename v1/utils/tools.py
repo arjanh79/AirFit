@@ -22,7 +22,7 @@ def get_workout_date():
 def get_weight_decay(len_workout):
     weights = np.cumprod(1.1 ** np.ones(len_workout))
     weights = 1 + (weights - weights.min()) / (weights.max() - weights.min())
-    return weights
+    return torch.tensor(weights)
 
 
 def get_loss_decay(total_workouts):
