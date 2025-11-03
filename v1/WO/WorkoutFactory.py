@@ -1,13 +1,8 @@
+import datetime
 
 import numpy as np
-from datetime import datetime
-
-from matplotlib.style.core import available
-
 from v1.WO import (
-    BosuWorkout, ClassicWorkout, ComboWorkout, FocusWorkout, ForgeWorkout,
-    HeartWorkout, SingleWorkout, Workout404, CoreWorkout, ShortWorkout, RunningWorkout, ChallengeWorkout,
-    OtherDayWorkout
+    HeartWorkout, Workout404, ChallengeWorkout, OtherDayWorkout
 )
 
 
@@ -15,17 +10,8 @@ def workout_factory(workout_type):
     rnd_gen = np.random.default_rng()
 
     WORKOUT_MAP = {
-        'classic': ClassicWorkout,
-        'focus': FocusWorkout,
-        'forge': ForgeWorkout,
-        'combo': ComboWorkout,
-        'bosu': BosuWorkout,
-        'single': SingleWorkout,
         'workout404': Workout404,
         'heart': HeartWorkout,
-        'core': CoreWorkout,
-        'short': ShortWorkout,
-        'running': RunningWorkout,
         'challenge': ChallengeWorkout,
         'otherday': OtherDayWorkout
     }
@@ -40,7 +26,12 @@ def workout_factory(workout_type):
 
     if workout_type == 'schedule':
         types = ['challenge', 'otherday', 'heart']
-        workout_type = rnd_gen.choice(types, 1)[0]
+        # workout_type = rnd_gen.choice(types, 1)[0]
+        match datetime.datetime.today().weekday():
+            case 6: workout_type = 'otherday'
+            case 1: workout_type = 'heart'
+            case 3: workout_type = 'challenge'
+            case _: workout_type = 'workout404'
 
         print(f'Workout type update: {workout_type}')
 

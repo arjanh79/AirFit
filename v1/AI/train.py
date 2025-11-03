@@ -15,7 +15,7 @@ class ModelTraining:
         self.epochs = 5  # 5
         self.batch_size = self.calc_batch_size()
         self.lr = 0.003 # 0.003
-        self.safe_model = False # FALSE!!
+        self.safe_model = True # FALSE!!
         self.load_model = True # FALSE!!
 
         if self.load_model:

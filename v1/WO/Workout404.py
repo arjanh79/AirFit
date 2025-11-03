@@ -11,7 +11,7 @@ class Workout404(BasicWorkout):
 
     def generate(self):
         warming_up = self.get_warming_up()
-        finale = self.get_finale()
+        finale = None
         core = self.get_core(warming_up, finale)
 
         workout, workout_model = self.get_workout(warming_up, core, finale)
@@ -23,11 +23,11 @@ class Workout404(BasicWorkout):
 
     def get_core(self, warming_up, finale):
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-        e1 = df[df['name'].str.contains('Push Ups')].sample(n=1)
-        e2 = df[df['name'].str.contains('Step Ups')].sample(n=1)
-        e3 = df[df['name'].str.contains('Ab Crunches')].sample(n=1)
-        result = [e1, e2, e3]
-        random.shuffle(result)
+
+        e1 = df[(df['name'] == 'Step Ups') & (df['weight'] == 12)].sample(n=1)
+        e2 = df[df['name'].str.contains('Ab Crunches') & (df['weight'] == 5)].sample(n=1)
+        e3 = df[df['name'].str.contains('Push Ups')].sample(n=1)
+        result = [e1, e2, e3] * 2
 
         result = pd.concat(result, ignore_index=True)
         return result

@@ -105,10 +105,18 @@ class BasicWorkout(ABC):
         rounds = 0
         wo_intensity = self.rnd_gen.normal(3.0, 0.25, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
-        while intensity < wo_intensity and rounds < 50:
+        while intensity < wo_intensity and rounds < 25:
 
-            weights_factor = get_weight_decay(e_length)
+            weights_factor_seq = get_weight_decay(e_length)
+
+            weights_factor_e = 1 / e_weight.squeeze().numpy()[:e_length]
+            weights_factor_e = 1 + (weights_factor_e - weights_factor_e.min()) / (weights_factor_e.max() - weights_factor_e.min())
+
+            weights_factor = (weights_factor_seq + weights_factor_e) * 0.5
+            weights_factor = torch.softmax(torch.tensor(weights_factor), dim=0)
+
             to_increase = workout.sample(n=1, weights=weights_factor)
+
 
             index = to_increase.index.item()
             to_increase = to_increase.squeeze()
