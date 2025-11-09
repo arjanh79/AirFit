@@ -25,12 +25,8 @@ def workout_factory(workout_type):
     print(f'Workout type: {workout_type}')
 
     if workout_type == 'schedule':
-        types = ['challenge', 'otherday', 'heart']
-        # workout_type = rnd_gen.choice(types, 1)[0]
         match datetime.datetime.today().weekday():
-            case 6: workout_type = 'otherday'
-            case 1: workout_type = 'heart'
-            case 3: workout_type = 'challenge'
+            case 0, 2: workout_type = 'random'
             case _: workout_type = 'workout404'
 
         print(f'Workout type update: {workout_type}')
