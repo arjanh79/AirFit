@@ -2,7 +2,7 @@ import datetime
 
 import numpy as np
 from v1.WO import (
-    HeartWorkout, Workout404, ChallengeWorkout, OtherDayWorkout
+    HeartWorkout, Workout404, ChallengeWorkout, OtherDayWorkout, PowerbagWorkout
 )
 
 
@@ -13,7 +13,8 @@ def workout_factory(workout_type):
         'workout404': Workout404,
         'heart': HeartWorkout,
         'challenge': ChallengeWorkout,
-        'otherday': OtherDayWorkout
+        'otherday': OtherDayWorkout,
+        'powerbag': PowerbagWorkout,
     }
 
     type_list = list(WORKOUT_MAP.keys()) + ['random'] + ['schedule']
@@ -26,14 +27,15 @@ def workout_factory(workout_type):
 
     if workout_type == 'schedule':
         match datetime.datetime.today().weekday():
-            case 0, 2: workout_type = 'random'
-            case _: workout_type = 'workout404'
+            case 0: workout_type = 'otherday'
+            case 2: workout_type = 'challenge'
+            case _: workout_type = 'random'
 
         print(f'Workout type update: {workout_type}')
 
 
     if workout_type == 'random':
-        workout_type = rnd_gen.choice(list(WORKOUT_MAP.keys()), 1)[0]
+        workout_type = rnd_gen.choice(['workout404', 'heart', 'powerbag'], 1)[0]
         print(f'Workout type update: {workout_type}')
 
 
