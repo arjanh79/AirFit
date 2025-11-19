@@ -31,6 +31,7 @@ class EmbeddingsPlot:
     def get_tsne(self):
         tsne = TSNE(n_components=2, perplexity=5, random_state=60279)
         x = tsne.fit_transform(self.get_embeddings())
+        print(x)
         return x
 
     def get_db_mappings(self):
@@ -38,7 +39,7 @@ class EmbeddingsPlot:
         db_mappings = [(c+1, v[1]) for c, v in enumerate(db_mappings)]
         return db_mappings
 
-    def plot_embeddings(self, data, labels, explained_variance_ratio):
+    def plot_embeddings(self, data, labels):
 
         today = self.get_date()
 
@@ -50,7 +51,7 @@ class EmbeddingsPlot:
                          textcoords="offset points", xytext=(5, 2), ha='left', fontsize=8)
         plt.xlabel('Component 1')
         plt.ylabel('Component 2')
-        plt.title(f'Embeddings Plot - {today} - {explained_variance_ratio}')
+        plt.title(f'Embeddings Plot - {today}')
 
         ax = plt.gca()
         ax.spines['top'].set_visible(False)
@@ -58,8 +59,8 @@ class EmbeddingsPlot:
         ax.spines['left'].set_visible(False)
         ax.spines['bottom'].set_visible(False)
 
-        ax.set_xlim(-3, 3)
-        ax.set_ylim(-3, 3)
+        # ax.set_xlim(-3, 3)
+        # ax.set_ylim(-3, 3)
 
         plt.grid(True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
 
@@ -69,9 +70,10 @@ class EmbeddingsPlot:
         return datetime.today().strftime('%Y%m%d')
 
     def run(self):
-        embeddings_2d, explained_variance_ratio = self.get_pca()
+        # embeddings_2d, explained_variance_ratio = self.get_tsne()
+        embeddings_2d = self.get_tsne()
         labels = [i[1] for i in self.get_db_mappings()]
-        self.plot_embeddings(embeddings_2d, labels, explained_variance_ratio)
+        self.plot_embeddings(embeddings_2d, labels)
 
 
 
