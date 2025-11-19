@@ -107,7 +107,7 @@ class BasicWorkout(ABC):
         intensity, e_weight = self.estimate_intensity(workout_model, print_output=False)
         e_length = workout.shape[0]
         rounds = 0
-        wo_intensity = self.rnd_gen.normal(3.0, 0.25, 1)[0]
+        wo_intensity = self.rnd_gen.normal(3.25, 0.1, 1)[0]
         print(f'Target intensity: {wo_intensity:.3f}')
 
         weights_factor_seq = get_weight_decay(e_length)

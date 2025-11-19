@@ -30,10 +30,8 @@ class HeartWorkout(BasicWorkout):
         e4 = df[(df['name'] == 'Bent-Over Row') & (df['weight'] == 8)].sample(n=1)
         e5 = df[(df['name'] == 'Bosu Push Up')].sample(n=1)
         e6 = df[(df['name'] == 'Flutter Kicks 4x')].sample(n=1)
-        e7 = df[(df['name'] == 'Squats') & (df['weight'] == 12)].sample(n=1)
-        e8 = df[(df['name'] == 'Bosu Clean and Press')].sample(n=1)
 
-        result = [e1, e2, e3, e4, e5, e6] * 2 + [e7, e5, e8]
+        result = [e1, e2, e3, e4, e5, e6] * 2 + [e1, e2, e3]
 
         result = pd.concat(result, ignore_index=True)
         return result
