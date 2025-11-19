@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 
 from v1.WO.BasicWorkout import BasicWorkout
 
@@ -22,12 +23,15 @@ class ChallengeWorkout(BasicWorkout):
     def get_core(self, warming_up, finale):
         df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
 
-        e1 = df[df['name'] == 'Deadlift'].sample(n=1)
-        e2 = df[df['name'] == 'Squats'].sample(n=1)
-        e4 = df[df['name'] == 'Bent-Over Row'].sample(n=1)
-        e5 = df[df['name'] == 'Bicep Curl'].sample(n=1)
-        e3 = df[df['name'] == 'Push Ups'].sample(n=1)
-        e6 = df[df['name'] == 'Ab Crunches'].sample(n=1)
+        a_weight = random.choice([10, 12, 16])
+        b_weight = random.choice([5, 8])
+
+        e1 = df[(df['name'] == 'Step Ups') & (df['weight'] == a_weight)].sample(n=1)
+        e2 = df[(df['name'] == 'Squats') & (df['weight'] == a_weight)].sample(n=1)
+        e4 = df[(df['name'] == 'Bent-Over Row') & (df['weight'] == a_weight)].sample(n=1)
+        e5 = df[(df['name'] == 'Bicep Curl') & (df['weight'] == b_weight)].sample(n=1)
+        e3 = df[(df['name'] == 'Dumbbell Press') & (df['weight'] == a_weight)].sample(n=1)
+        e6 = df[(df['name'] == 'Ab Crunches') & (df['weight'] == b_weight)].sample(n=1)
 
 
 

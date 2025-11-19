@@ -32,3 +32,9 @@ def get_loss_decay(total_workouts):
     weighted_loss = torch.clip(weighted_loss, 0.01, 1)
     return weighted_loss
 
+
+def get_cosine_decay(total_workouts):
+    step_size = torch.pi/(total_workouts *2)
+    steps = torch.arange(0, torch.pi/2, step=step_size)
+    return torch.cos(steps)
+

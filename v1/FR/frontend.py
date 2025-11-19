@@ -30,13 +30,13 @@ class AirFitApp:
 
     def general_workout(self):
 
-        workout_type = 'heart'
+        workout_type = 'workout404'
 
         if not tools.get_workout_date() and workout_type == 'schedule':
             # Delete workout if it does not match today's day of week.
             self.repo.delete_unrated_workouts()
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         workout = self.repo.get_available_workout()
         if len(workout[0]) < 5:

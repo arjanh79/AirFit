@@ -6,7 +6,7 @@ import numpy as np
 
 from v1.AI.dataset import WorkoutDataset
 from v1.DB.factories import RepositoryFactory
-from v1.utils.tools import get_loss_decay
+from v1.utils.tools import get_loss_decay, get_cosine_decay
 
 
 class WorkoutPreprocessor:
@@ -31,6 +31,7 @@ class WorkoutPreprocessor:
 
         # Calculate weight factor for loss
         self.weighted_loss = get_loss_decay(self.data_x.shape[0])
+        # self.weighted_loss = get_cosine_decay(self.data_x.shape[0])
 
         self.ds = WorkoutDataset(self.embeddings_x, self.data_x, self.data_y, self.weighted_loss)
 

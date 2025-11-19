@@ -12,11 +12,11 @@ class ModelTraining:
         self.model_location = 'AI/workout_model.pth'
         self.model_location_train = 'AI/workout_model_train.pth'
 
-        self.epochs = 50  # 5
+        self.epochs = 5  # 5
         self.batch_size = self.calc_batch_size()
         self.lr = 0.005 # 0.003
         self.safe_model = False # FALSE!!
-        self.load_model = False # FALSE!!
+        self.load_model = True # FALSE!!
 
         if self.load_model:
             self.model.load_state_dict(torch.load(self.model_location))
@@ -66,7 +66,7 @@ class ModelTraining:
         best_loss = float('inf')
         dataloader = torch.utils.data.DataLoader(self.dataset, batch_size=self.batch_size, shuffle=False)
         optimizer = self.get_optimizer()
-        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
+        scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.975)
         for epoch in range(self.epochs):
             for batch, (Xe, Xf, y, wl) in enumerate(dataloader, 1):
                 self.model.train()

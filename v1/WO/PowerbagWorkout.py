@@ -25,9 +25,10 @@ class PowerbagWorkout(BasicWorkout):
         e2 = df[(df['name'] == 'Deadlift') & (df['weight'] == 25)].sample(n=1)
         e3 = df[(df['name'] == 'Clean and Press') & (df['weight'] == 25)].sample(n=1)
 
-        f1 = df[(df['name'] == 'Push Ups')]
+        f1 = df[(df['name'] == 'Dumbbell Press') & (df['weight'] == 16)].sample(n=1)
 
         result = [e1, e2, e3] * 4 + [f1] * 3
 
         result = pd.concat(result, ignore_index=True)
+
         return result

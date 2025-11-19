@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 import pandas as pd
 import torch
+import random
 
 from v1.AI.biLSTM import AirFitBiLSTM
 from v1.AI.dataset import WorkoutDataset
@@ -52,16 +53,19 @@ class BasicWorkout(ABC):
         return mappings
 
     def get_warming_up(self):
-        min_exercises = (pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
-                         .groupby('name', as_index=False)
-                         .min())
-        mask = ~min_exercises['name'].str.contains('Plank|Combi|World|Flutter|Twist')
-        min_exercises = min_exercises[mask]
+        df = pd.DataFrame(self.all_exercises[0], columns=self.all_exercises[1])
 
-        exercises = self.rnd_gen.choice(len(min_exercises), size=5, replace=False)
-        exercises = min_exercises.iloc[exercises, :]
+        a_weight = random.choice([10, 12])
 
-        return exercises
+        e1 = df[(df['name'] == 'Step Ups') & (df['weight'] == a_weight)].sample(n=1)
+        e2 = df[(df['name'] == 'Squats') & (df['weight'] == a_weight)].sample(n=1)
+        e3 = df[df['name'] == 'Plank'].sample(n=1)
+        e4 = df[(df['name'] == 'Bent-Over Row') & (df['weight'] == a_weight)].sample(n=1)
+        e5 = df[(df['name'] == 'Dumbbell Press') & (df['weight'] == a_weight)].sample(n=1)
+
+        block = [e1, e2, e3, e4, e5]
+        result = pd.concat(block, ignore_index=True)
+        return result
 
 
     def get_finale(self):
@@ -85,11 +89,11 @@ class BasicWorkout(ABC):
     def get_workout(self, warming_up, core, finale):
         workout = pd.concat([warming_up, core, finale], ignore_index=True)
         # Set  values for reps
-        workout['reps'] = 10 # default value, leave this even!
+        workout['reps'] = 8 # default value, leave this even!
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead Bug', case=False), 'reps'] = 60
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
-        workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 15
+        workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 10
 
         workout['seq_num'] = range(1, workout.shape[0]+1)
         workout_model = workout.reindex(range(20), fill_value=0)
@@ -107,13 +111,15 @@ class BasicWorkout(ABC):
         print(f'Target intensity: {wo_intensity:.3f}')
 
         weights_factor_seq = get_weight_decay(e_length)
-        while intensity < wo_intensity and rounds < 25:
+        while intensity < wo_intensity and rounds < 50:
 
             weights_factor_e = 1 / e_weight.squeeze()[:e_length]
             weights_factor_e = 1 + (weights_factor_e - weights_factor_e.min()) / (weights_factor_e.max() - weights_factor_e.min())
             weights_factor = weights_factor_seq + weights_factor_e
 
-            tau = max(0.1, 1.0 - rounds * 0.02)  # Explore -> Exploit
+            weights_factor = torch.log(weights_factor)
+
+            tau = max(0.1, 1.0 - rounds * 0.01)  # Explore -> Exploit
             weights_factor = torch.softmax(weights_factor / tau, dim=0)
 
             to_increase = workout.sample(n=1, weights=weights_factor)
