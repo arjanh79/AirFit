@@ -93,7 +93,7 @@ class BasicWorkout(ABC):
         workout.loc[workout['name'].str.contains('Plank', case=False), 'reps'] = 45
         workout.loc[workout['name'].str.contains('Dead Bug', case=False), 'reps'] = 60
         workout.loc[workout['name'].str.contains('Ab', case=False), 'reps'] = 20
-        workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 10
+        workout.loc[workout['name'].str.contains('Flutter', case=False), 'reps'] = 5
 
         workout['seq_num'] = range(1, workout.shape[0]+1)
         workout_model = workout.reindex(range(20), fill_value=0)

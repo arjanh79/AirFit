@@ -2,11 +2,10 @@
 import torch
 
 import pandas as pd
-import numpy as np
 
 from v1.AI.dataset import WorkoutDataset
 from v1.DB.factories import RepositoryFactory
-from v1.utils.tools import get_loss_decay, get_cosine_decay
+from v1.utils.tools import get_loss_decay
 
 
 class WorkoutPreprocessor:
