@@ -12,6 +12,7 @@ class GenericRepository:
 
 
 
+
 class SQLiteRepository(GenericRepository):
     def __init__(self, db):
         super().__init__(db)
