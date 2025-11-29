@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>AirFit Workout</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #0f172a;
+            color: #e5e7eb;
+            margin: 0;
+            padding: 1.5rem;
+        }
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        .subtitle {
+            color: #9ca3af;
+            margin-bottom: 1.5rem;
+        }
+        .blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .block {
+            background: #020617;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+            border: 1px solid #1f2937;
+        }
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+        }
+        .block-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .block-subtitle {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            font-weight: 700;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 0.3rem 0.2rem;
+            text-align: left;
+        }
+        th {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #9ca3af;
+            border-bottom: 1px solid #1f2937;
+        }
+        tr:nth-child(even) td {
+            background: rgba(15, 23, 42, 0.75);
+        }
+        .seq {
+            width: 2rem;
+            text-align: center;
+            color: #9ca3af;
+        }
+        .name {
+            font-weight: 700;
+        }
+        .equipment {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.1rem 0.4rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            border: 1px solid #374151;
+            font-weight: 400;
+        }
+        .badge-dumbbells {
+            border-color: #14532d;
+            color: #86efac;
+        }
+        .badge-bosu {
+            border-color: #0f4c75;
+            color: #7dd3fc;
+        }
+        .badge-bodyweight {
+            border-color: #7c2d12;
+            color: #fdba74;
+        }
+        .footer-note {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <h1>AirFit</h1>
+
+    <div class="blocks">
+        {% for block in blocks %}
+            <div class="block">
+                <div class="block-header">
+                    <div class="block-title">{{ block.title }}</div>
+                    <div class="block-subtitle">{{ block.subtitle }}</div>
+                </div>
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="seq">#</th>
+                        <th>Oefening</th>
+                        <th>Gewicht</th>
+                        <th>Reps</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for ex in block.exercises %}
+                        <tr>
+                            <td class="seq">{{ ex.seq }}</td>
+                            <td class="name">
+                                {{ ex.name }}<br>
+                                <span class="equipment">
+                                    {% set eq = ex.equipment|lower %}
+                                    {% if "dumbbell" in eq %}
+                                        <span class="badge badge-dumbbells">Dumbbells</span>
+                                    {% elif "bosu" in eq %}
+                                        <span class="badge badge-bosu">Bosu</span>
+                                    {% elif "bodyweight" in eq or ex.weight == 0 %}
+                                        <span class="badge badge-bodyweight">Bodyweight</span>
+                                    {% else %}
+                                        <span class="badge">{{ ex.equipment }}</span>
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                {% if ex.weight and ex.weight > 0 %}
+                                    {{ ex.weight }} kg
+                                {% else %}
+                                    –
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ex.name|lower in ["plank", "dead bug - static", "bosu plank"] or ex.reps > 20 %}
+                                    {{ ex.reps }} secs
+                                {% else %}
+                                    {{ ex.reps }} reps
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

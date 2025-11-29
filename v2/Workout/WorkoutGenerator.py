@@ -21,12 +21,33 @@ class Weight:
 class WorkoutGenerator:
     def __init__(self):
         self.repo = RepositoryFactory.get_repository('sqlite')
-        self.workout = self.get_blocks()
-        self.weights = self.get_exercise_weights()
 
-        self.complete_workout = self.compose()
+        # self.repo.delete_unrated_workouts()
 
-        print(self.complete_workout)
+        if not self.has_existing_workout():
+            self.workout = self.get_blocks()
+            self.weights = self.get_exercise_weights()
+            self.complete_workout = self.compose()
+            self.save_basic_workout()
+
+        self.print_workout()
+
+
+    def has_existing_workout(self):
+        return bool(self.repo.get_existing_workout())
+
+    def print_workout(self):
+        print(self.get_clean_workout())
+
+    def get_clean_workout(self):
+        workout = self.repo.get_workout()
+        df = pd.DataFrame(data=workout[0], columns=workout[1])
+        df.columns = ['block', 'seq', 'exercise', 'weight', 'reps', 'equipment']
+        return df
+
+
+    def save_basic_workout(self):
+        self.repo.save_workout(self.complete_workout)
 
     def compose(self):
         combined_workout = []
@@ -41,9 +62,13 @@ class WorkoutGenerator:
         return pd.concat(combined_workout, ignore_index=True)
 
 
-    def get_block(self, block_type):
-        block_ids, _ = self.repo.get_all_blocks(block_type)
-        block_id = random.choice(block_ids)[0]
+    def get_block(self, block_type, block_id=None):
+
+        if not block_id:
+            block_ids, _ = self.repo.get_all_blocks(block_type)
+            block_id = random.choice(block_ids)[0]
+
+
         block, _ = self.repo.get_block(block_id)
 
         exercise_ids = [exercise_id[0] for exercise_id in block]
@@ -51,8 +76,8 @@ class WorkoutGenerator:
 
     def get_blocks(self)    :
         return [
-            self.get_block(0),
-            self.get_block(1)
+            self.get_block(block_type=0, block_id=5),
+            self.get_block(block_type=1, block_id=None)
         ]
 
 
@@ -95,8 +120,3 @@ class WorkoutGenerator:
 
         weights = {k: v.pop() for k, v in weights.items()}
         return Weight(block_type, weights)
-
-
-
-
-wg = WorkoutGenerator()
