@@ -76,7 +76,7 @@ class WorkoutGenerator:
 
     def get_blocks(self)    :
         return [
-            self.get_block(block_type=0, block_id=5),
+            self.get_block(block_type=0, block_id=None),
             self.get_block(block_type=1, block_id=None)
         ]
 

@@ -26,9 +26,9 @@ def df_to_blocks(df: pd.DataFrame) -> list[dict]:
             )
 
         if core_value == 0:
-            subtitle = "Full Body"
+            subtitle = "Block A"
         else:
-            subtitle = "Core"
+            subtitle = "Block B"
 
         blocks.append(
             {
