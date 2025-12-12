@@ -89,6 +89,10 @@ class GenericRepository:
         unrated_workouts = self.db.execute_query('SELECT workout_id FROM Workout WHERE workout_intensity IS NULL;')
         return len(unrated_workouts[0])
 
+    def get_exercise_ids(self):
+        sql = 'SELECT exercise_id, name FROM Exercise;'
+        return self.db.execute_query(sql)
+
 
 class SQLiteRepository(GenericRepository):
     def __init__(self, db):

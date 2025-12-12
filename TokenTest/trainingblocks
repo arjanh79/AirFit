@@ -1,0 +1,66 @@
+1	1	Core Block A	11	Clean and Press
+1	2	Core Block A	10	Bosu Push Up
+1	3	Core Block A	22	Squats
+1	4	Core Block A	4	Bent-Over Row
+1	5	Core Block A	9	Bosu Plank
+1	6	Core Block A	8	Bosu Mountain Climbers
+2	1	Core Block B	14	Dumbbell Press
+2	2	Core Block B	5	Bicep Curl
+2	3	Core Block B	19	Reverse Fly
+2	4	Core Block B	20	Shoulder Taps
+2	5	Core Block B	12	Dead Bug - Static
+2	6	Core Block B	2	Ab Twist
+3	1	Core Block C	13	Deadlift
+3	2	Core Block C	23	Step Ups
+3	3	Core Block C	6	Bosu Clean and Press
+3	4	Core Block C	21	Sit Up - Ball
+3	5	Core Block C	15	Flutter Kicks 4x
+3	6	Core Block C	9	Bosu Plank
+4	1	Core Block D	14	Dumbbell Press
+4	2	Core Block D	4	Bent-Over Row
+4	3	Core Block D	24	Reverse Lunge
+4	4	Core Block D	13	Deadlift
+4	5	Core Block D	11	Clean and Press
+4	6	Core Block D	8	Bosu Mountain Climbers
+5	5	Generic Block A	23	Step Ups
+5	4	Generic Block A	22	Squats
+5	6	Generic Block A	17	Plank
+5	3	Generic Block A	4	Bent-Over Row
+5	2	Generic Block A	14	Dumbbell Press
+5	1	Generic Block A	13	Deadlift
+6	1	Rowing Block	12	Dead Bug - Static
+6	2	Rowing Block	19	Reverse Fly
+6	3	Rowing Block	14	Dumbbell Press
+6	4	Rowing Block	5	Bicep Curl
+6	5	Rowing Block	25	Dumbbell Snatch
+6	6	Rowing Block	8	Bosu Mountain Climbers
+7	1	Generic Block B	11	Clean and Press
+7	2	Generic Block B	4	Bent-Over Row
+7	3	Generic Block B	19	Reverse Fly
+7	4	Generic Block B	2	Ab Twist
+7	5	Generic Block B	23	Step Ups
+7	6	Generic Block B	25	Dumbbell Snatch
+8	1	Core Block E	12	Dead Bug - Static
+8	2	Core Block E	3	Around the World
+8	3	Core Block E	10	Bosu Push Up
+8	4	Core Block E	16	Front - Side
+8	5	Core Block E	24	Reverse Lunge
+8	6	Core Block E	8	Bosu Mountain Climbers
+9	1	AI_3DhpOY7g	11	Clean and Press
+9	2	AI_3DhpOY7g	23	Step Ups
+9	3	AI_3DhpOY7g	25	Dumbbell Snatch
+9	4	AI_3DhpOY7g	4	Bent-Over Row
+9	5	AI_3DhpOY7g	19	Reverse Fly
+9	6	AI_3DhpOY7g	2	Ab Twist
+10	1	AI_ptRFauCO	13	Deadlift
+10	2	AI_ptRFauCO	14	Dumbbell Press
+10	3	AI_ptRFauCO	4	Bent-Over Row
+10	4	AI_ptRFauCO	24	Reverse Lunge
+10	5	AI_ptRFauCO	11	Clean and Press
+10	6	AI_ptRFauCO	8	Bosu Mountain Climbers
+11	1	AI_Rn4ShUSh	12	Dead Bug - Static
+11	2	AI_Rn4ShUSh	19	Reverse Fly
+11	3	AI_Rn4ShUSh	14	Dumbbell Press
+11	4	AI_Rn4ShUSh	25	Dumbbell Snatch
+11	5	AI_Rn4ShUSh	5	Bicep Curl
+11	6	AI_Rn4ShUSh	8	Bosu Mountain Climbers

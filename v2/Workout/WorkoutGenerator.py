@@ -22,7 +22,7 @@ class WorkoutGenerator:
     def __init__(self):
         self.repo = RepositoryFactory.get_repository('sqlite')
 
-        # self.repo.delete_unrated_workouts()
+        self.repo.delete_unrated_workouts()
 
         if not self.has_existing_workout():
             self.workout = self.get_blocks()
@@ -62,29 +62,47 @@ class WorkoutGenerator:
         return pd.concat(combined_workout, ignore_index=True)
 
 
-    def get_block(self, block_type, block_id=None):
+    def get_block(self, block_type, block_id=None, block_a=None):
+
+        block_ids, _ = self.repo.get_all_blocks(block_type)
 
         if not block_id:
-            block_ids, _ = self.repo.get_all_blocks(block_type)
             block_id = random.choice(block_ids)[0]
-
-
         block, _ = self.repo.get_block(block_id)
-
         exercise_ids = [exercise_id[0] for exercise_id in block]
+
+        if block_a:
+            base_overlap = 0
+            max_tries = 30
+
+            for attempt in range(max_tries):
+                allowed_overlap = base_overlap + (attempt // 5)
+                block_id = random.choice(block_ids)[0]
+                block, _ = self.repo.get_block(block_id)
+                exercise_ids = [exercise_id[0] for exercise_id in block]
+
+                if len(set(block_a.exercises) & set(exercise_ids)) <= allowed_overlap:
+                    print(block_a.exercises)
+                    print(exercise_ids)
+                    break
+
         return Block(block_type, block_id, exercise_ids)
 
+
     def get_blocks(self)    :
+
+        block_a = self.get_block(block_type=0, block_id=None, block_a=None)
+        block_b = self.get_block(block_type=1, block_id=None, block_a=block_a)
+
         return [
-            self.get_block(block_type=0, block_id=None),
-            self.get_block(block_type=1, block_id=None)
+            block_a, block_b
         ]
 
 
     def get_exercise_weights(self):
         return [
             self.get_exercise_weight(0),
-            self.get_exercise_weight(1),
+            self.get_exercise_weight(1)
         ]
 
     def get_exercise_weight(self, block_type):
