@@ -93,6 +93,14 @@ class GenericRepository:
         sql = 'SELECT exercise_id, name FROM Exercise;'
         return self.db.execute_query(sql)
 
+    def get_block_workouts(self ):
+        sql = ('SELECT BE.block_id, BE.seq, B.description, E.exercise_id, E.name, B.core '
+               'FROM BlockExercise BE '
+               'JOIN Block B on B.block_id = BE.block_id '
+               'JOIN Exercise E on E.exercise_id = BE.exercise_id '
+               'ORDER BY BE.block_id, seq;')
+        return self.db.execute_query(sql)
+
 
 class SQLiteRepository(GenericRepository):
     def __init__(self, db):
