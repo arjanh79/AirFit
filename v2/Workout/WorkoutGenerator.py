@@ -72,7 +72,7 @@ class WorkoutGenerator:
         exercise_ids = [exercise_id[0] for exercise_id in block]
 
         if block_a:
-            base_overlap = 0
+            base_overlap = 1
             max_tries = 30
 
             for attempt in range(max_tries):
@@ -82,9 +82,12 @@ class WorkoutGenerator:
                 exercise_ids = [exercise_id[0] for exercise_id in block]
 
                 if len(set(block_a.exercises) & set(exercise_ids)) <= allowed_overlap:
+                    print(f'ACCEPT - BLOCK A:{block_a.block_id}, BLOCK B:{block_id}')
+                    break
+                else:
+                    print('REJECT', attempt, allowed_overlap)
                     print(block_a.exercises)
                     print(exercise_ids)
-                    break
 
         return Block(block_type, block_id, exercise_ids)
 

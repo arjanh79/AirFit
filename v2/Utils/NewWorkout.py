@@ -39,9 +39,10 @@ class NewWorkout:
 
         for c, block in enumerate(self.exercise_ids):
             name = 'AI_' + ''.join(random.choices(chars, k=8))
-            print(f'''INSERT INTO Block(block_id, description, core) VALUES ({c+12}, '{name}', 1)''')
+            print(f'''INSERT INTO Block(block_id, description, core) VALUES ({c+17}, '{name}', 1);''')
             for d, exercise_id in enumerate(block):
-                print(f'INSERT INTO BlockExercise(block_id, seq, exercise_id) VALUES ({c+12}, {d+1}, {exercise_id})')
+                print(f'INSERT INTO BlockExercise(block_id, seq, exercise_id) VALUES ({c+17}, {d+1}, {exercise_id});')
 
 
 nw = NewWorkout('new_workouts')
+nw.generate_sql()

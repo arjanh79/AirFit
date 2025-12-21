@@ -18,7 +18,7 @@
 3	6	Core Block C	9	Bosu Plank
 4	1	Core Block D	14	Dumbbell Press
 4	2	Core Block D	4	Bent-Over Row
-4	3	Core Block D	24	Reverse Lunge
+4	3	Core Block D	24	Static Lunge
 4	4	Core Block D	13	Deadlift
 4	5	Core Block D	11	Clean and Press
 4	6	Core Block D	8	Bosu Mountain Climbers
@@ -44,7 +44,7 @@
 8	2	Core Block E	3	Around the World
 8	3	Core Block E	10	Bosu Push Up
 8	4	Core Block E	16	Front - Side
-8	5	Core Block E	24	Reverse Lunge
+8	5	Core Block E	24	Static Lunge
 8	6	Core Block E	8	Bosu Mountain Climbers
 9	1	AI_3DhpOY7g	11	Clean and Press
 9	2	AI_3DhpOY7g	23	Step Ups
@@ -55,7 +55,7 @@
 10	1	AI_ptRFauCO	13	Deadlift
 10	2	AI_ptRFauCO	14	Dumbbell Press
 10	3	AI_ptRFauCO	4	Bent-Over Row
-10	4	AI_ptRFauCO	24	Reverse Lunge
+10	4	AI_ptRFauCO	24	Static Lunge
 10	5	AI_ptRFauCO	11	Clean and Press
 10	6	AI_ptRFauCO	8	Bosu Mountain Climbers
 11	1	AI_Rn4ShUSh	12	Dead Bug - Static
@@ -64,3 +64,57 @@
 11	4	AI_Rn4ShUSh	25	Dumbbell Snatch
 11	5	AI_Rn4ShUSh	5	Bicep Curl
 11	6	AI_Rn4ShUSh	8	Bosu Mountain Climbers
+12	1	AI_1IWYgsIS	11	Clean and Press
+12	2	AI_1IWYgsIS	25	Dumbbell Snatch
+12	3	AI_1IWYgsIS	17	Plank
+12	4	AI_1IWYgsIS	20	Shoulder Taps
+12	5	AI_1IWYgsIS	12	Dead Bug - Static
+12	6	AI_1IWYgsIS	2	Ab Twist
+13	1	AI_K7OfLwGQ	10	Bosu Push Up
+13	2	AI_K7OfLwGQ	16	Front - Side
+13	3	AI_K7OfLwGQ	24	Static Lunge
+13	4	AI_K7OfLwGQ	8	Bosu Mountain Climbers
+13	5	AI_K7OfLwGQ	25	Dumbbell Snatch
+13	6	AI_K7OfLwGQ	4	Bent-Over Row
+14	1	AI_qkcLTIGd	23	Step Ups
+14	2	AI_qkcLTIGd	12	Dead Bug - Static
+14	3	AI_qkcLTIGd	6	Bosu Clean and Press
+14	4	AI_qkcLTIGd	10	Bosu Push Up
+14	5	AI_qkcLTIGd	9	Bosu Plank
+14	6	AI_qkcLTIGd	24	Static Lunge
+15	1	AI_fn5D7hgG	14	Dumbbell Press
+15	2	AI_fn5D7hgG	4	Bent-Over Row
+15	3	AI_fn5D7hgG	13	Deadlift
+15	4	AI_fn5D7hgG	24	Static Lunge
+15	5	AI_fn5D7hgG	11	Clean and Press
+15	6	AI_fn5D7hgG	8	Bosu Mountain Climbers
+16	1	AI_qaxo1c1l	25	Dumbbell Snatch
+16	2	AI_qaxo1c1l	17	Plank
+16	3	AI_qaxo1c1l	20	Shoulder Taps
+16	4	AI_qaxo1c1l	12	Dead Bug - Static
+16	5	AI_qaxo1c1l	2	Ab Twist
+16	6	AI_qaxo1c1l	6	Bosu Clean and Press
+17	1	AI_SW62KJSo	11	Clean and Press
+17	2	AI_SW62KJSo	14	Dumbbell Press
+17	3	AI_SW62KJSo	22	Squats
+17	4	AI_SW62KJSo	10	Bosu Push Up
+17	5	AI_SW62KJSo	1	Ab Crunches
+17	6	AI_SW62KJSo	15	Flutter Kicks 4x
+18	1	AI_9eI7OMnt	6	Bosu Clean and Press
+18	2	AI_9eI7OMnt	14	Dumbbell Press
+18	3	AI_9eI7OMnt	23	Step Ups
+18	4	AI_9eI7OMnt	10	Bosu Push Up
+18	5	AI_9eI7OMnt	2	Ab Twist
+18	6	AI_9eI7OMnt	20	Shoulder Taps
+19	1	AI_bxfIIvsU	13	Deadlift
+19	2	AI_bxfIIvsU	4	Bent-Over Row
+19	3	AI_bxfIIvsU	25	Dumbbell Snatch
+19	4	AI_bxfIIvsU	24	Static Lunge
+19	5	AI_bxfIIvsU	19	Reverse Fly
+19	6	AI_bxfIIvsU	12	Dead Bug - Static
+20	1	AI_JQfvslYv	13	Deadlift
+20	2	AI_JQfvslYv	4	Bent-Over Row
+20	3	AI_JQfvslYv	3	Around the World
+20	4	AI_JQfvslYv	24	Static Lunge
+20	5	AI_JQfvslYv	17	Plank
+20	6	AI_JQfvslYv	19	Reverse Fly

@@ -1,0 +1,3 @@
+SELECT BE.block_id, BE.seq, B.description, E.exercise_id, E.name, B.core FROM BlockExercise BE
+JOIN Block B on B.block_id = BE.block_id
+JOIN Exercise E on E.exercise_id = BE.exercise_id

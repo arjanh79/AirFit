@@ -23,6 +23,7 @@ class WorkoutGeneratorRNN:
         df = df[['block_id', 'seq', 'name']]
         df = df.sort_values(['block_id', 'seq'])
 
+
         exercise_count = df['name'].value_counts().reset_index()
         total_count = exercise_count['count'].sum()
         exercise_count['rel_count'] = exercise_count['count'] / total_count
@@ -52,6 +53,7 @@ class WorkoutDataset(Dataset):
     def __init__(self, workouts, window_size=2):
         self.window_size = window_size
         self.samples = [(workout[i:i + self.window_size], workout[i + self.window_size]) for workout in workouts for i in range(len(workout) - window_size)]
+        print(self.samples)
 
     def __len__(self):
         return len(self.samples)
@@ -105,11 +107,13 @@ class Trainer:
 
         self.model = MyModel(self.num_embeddings)
 
-        self.epochs = 500
+        self.epochs = 5000
         self.optimizer = torch.optim.NAdam(self.model.parameters(), lr=0.001)
         self.loss = nn.CrossEntropyLoss()
 
     def train(self):
+        best_eval_loss = float('inf')
+        no_improvement = 0
         for epoch in range(self.epochs):
             self.model.train()
             for batch, (x, y) in enumerate(self.dl):
@@ -118,8 +122,14 @@ class Trainer:
                 loss = self.loss(y_pred, y)
                 loss.backward()
                 self.optimizer.step()
-                print(f'Epoch: {epoch+1}, batch: {batch+1}, loss: {loss.item():.5f}')
-            self.eval()
+                print(f'Epoch: {epoch+1}, batch: {batch+1}, loss: {loss.item():.5f}, ({len(y)})')
+            eval_loss = self.eval()
+            if eval_loss < best_eval_loss:
+                best_eval_loss = eval_loss
+            else:
+                no_improvement += 1
+                if no_improvement >= 5:
+                    break
 
     def eval(self):
         self.model.eval()
@@ -131,7 +141,9 @@ class Trainer:
                 loss = self.loss(y_pred, y)
                 total_loss += (loss.item() * len(y))
                 samples += len(y)
-        print(f'               EVAL LOSS: {(total_loss / samples):.5f}\n')
+        eval_loss = total_loss / samples
+        print(f'               EVAL LOSS: {eval_loss:.5f}\n')
+        return eval_loss
 
     def create_workout(self, length=6):
         tokens = self.wg.tokenize()
@@ -169,5 +181,7 @@ class Trainer:
 
 
 t = Trainer()
-t.train()
-t.create_workout(length=6)
+# t.train()
+# for _ in range(5):
+#    t.create_workout(length=12)
+#    print('-'*10)
