@@ -43,8 +43,7 @@ class WorkoutCombinator:
         a_blocks: list[Block] = []
         b_blocks: list[Block] = []
 
-        seen_exercise_sets: dict[frozenset[int], int] = {}
-
+        seen_exercise_sets: set[frozenset] = set()
 
         for row in grouped.itertuples(index=False):
             block = Block(block_type=int(row.core),
@@ -56,10 +55,9 @@ class WorkoutCombinator:
 
             exercises = frozenset(block.exercises)
             if exercises in seen_exercise_sets:
-                raise ValueError(f'Duplicate exercises {sorted(exercises)} in block {block.block_id}.'
-                                 f' This block is a duplicate of block {seen_exercise_sets[exercises]}.')
+                raise ValueError(f'Duplicate exercises {sorted(exercises)} in block {block.block_id}.')
             else:
-                seen_exercise_sets[exercises] = block.block_id
+                seen_exercise_sets.add(frozenset(block.exercises))
 
             if block.block_type == 0:
                 a_blocks.append(block)
@@ -70,7 +68,6 @@ class WorkoutCombinator:
 
 
     def match_blocks(self, max_overlap=1) -> dict[int, list[int]]:
-
         allowed: DefaultDict[int, list[int]] = defaultdict(list)
 
         for a in self.a_blocks:
@@ -82,7 +79,6 @@ class WorkoutCombinator:
 
 
     def create_workouts(self) -> list[list[int]]:
-
         ab_pairs = ((a_id, b_id)
                     for a_id, b_ids in self.allowed_combinations.items()
                     for b_id in b_ids)
@@ -99,6 +95,3 @@ class WorkoutCombinator:
 
         return workouts
 
-
-
-mt2 = WorkoutCombinator()
