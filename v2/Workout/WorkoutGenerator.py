@@ -22,7 +22,7 @@ class WorkoutGenerator:
     def __init__(self):
         self.repo = RepositoryFactory.get_repository('sqlite')
 
-        self.repo.delete_unrated_workouts()
+        # self.repo.delete_unrated_workouts()
 
         if not self.has_existing_workout():
             self.workout = self.get_blocks()

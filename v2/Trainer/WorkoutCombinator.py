@@ -11,7 +11,7 @@ class Block:
     block_id: int
     exercises: set[int]
 
-class MyTokens2:
+class WorkoutCombinator:
     def __init__(self):
         self.repo = RepositoryFactory.get_repository('sqlite')
 
@@ -101,4 +101,4 @@ class MyTokens2:
 
 
 
-mt2 = MyTokens2()
+mt2 = WorkoutCombinator()
