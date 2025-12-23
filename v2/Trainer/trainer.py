@@ -16,11 +16,26 @@ class WorkoutTrainer:
         self.ds = dataset
         self.dl = DataLoader(self.ds, batch_size=16, shuffle=True)
 
-        self.model = WorkoutTransformer(len(self.ds.ex_to_id) + 2, d_model=8, n_head=2, num_layers=2, max_len=13)
+        self.model_params = self.get_model_parameters()
+
+        self.model = WorkoutTransformer(self.model_params['vocab_size'],
+                                        self.model_params['d_model'],
+                                        self.model_params['n_head'],
+                                        self.model_params['num_layers'],
+                                        self.model_params['max_len'])
 
         self.optimizer = optim.NAdam(self.model.parameters(), lr=1e-3)
         self.loss_fn = nn.CrossEntropyLoss()
 
+
+    def get_model_parameters(self) -> dict[str, int]:
+        model_params = dict()
+        model_params['vocab_size'] = len(self.ds.ex_to_id) + 2
+        model_params['d_model'] = 8
+        model_params['n_head'] = 2
+        model_params['num_layers'] = 2
+        model_params['max_len'] = 13
+        return model_params
 
     def train_one_epoch(self) -> float:
         self.model.train()
@@ -58,9 +73,10 @@ class WorkoutTrainer:
                 print(' New best model saved')
             else:
                 epochs_without_improve += 1
-                if epochs_without_improve >= patience:
-                    print(f'\n*** Early stopping at epoch {epoch+1} ***')
-                    break
+
+            if epochs_without_improve >= patience:
+                print(f'\n*** Early stopping at epoch {epoch+1} ***')
+                break
 
             print('-'*24)
 
@@ -74,7 +90,6 @@ class WorkoutTrainer:
                 loss = self.loss_fn(logits.reshape(-1, logits.size(-1)), y.reshape(-1))
                 total_loss += loss.item()
         return total_loss / len(self.dl)
-
 
 
     def save_model(self, tag) -> None:

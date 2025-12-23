@@ -14,6 +14,7 @@ def main() -> None:
     combinator = WorkoutCombinator()
     workouts = combinator.create_workouts()
     ds = WorkoutDataset(workouts)
+    trainer = WorkoutTrainer(combinator, ds)
 
     exercise_mappings, _ = repo.get_exercise_ids()
     exercise_mappings = {k: v for k, v in exercise_mappings}
@@ -21,8 +22,8 @@ def main() -> None:
     save_data('ex_to_id.json', ds.ex_to_id)
     save_data('id_to_ex.json', ds.id_to_ex)
     save_data('exercise_ids.json', exercise_mappings)
+    save_data('model_params.json', trainer.model_params)
 
-    trainer = WorkoutTrainer(combinator, ds)
     trainer.fit(epochs=5000)
     trainer.save_model('last')
 
