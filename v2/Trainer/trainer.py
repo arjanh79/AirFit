@@ -40,11 +40,42 @@ class WorkoutTrainer:
         return loss
 
 
-    def fit(self, epochs: int=100) -> None:
-        for epoch in range(epochs):
+    def fit(self, epochs: int=100, patience:int=10) -> None:
+        epochs_without_improve = 0
+        best_eval_loss = float('inf')
+
+        for epoch in range(1, epochs+1):
             print(f'Epoch {epoch+1}')
+
             self.train_one_epoch()
+            eval_loss = self.eval()
+            print(f' Eval loss: {eval_loss:.5f}')
+
+            if eval_loss < best_eval_loss:
+                best_eval_loss = eval_loss
+                epochs_without_improve = 0
+                self.save_model("best")
+                print(' New best model saved')
+            else:
+                epochs_without_improve += 1
+                if epochs_without_improve >= patience:
+                    print(f'\n*** Early stopping at epoch {epoch+1} ***')
+                    break
+
+            print('-'*24)
 
 
-    def save_model(self) -> None:
-        torch.save(self.model.state_dict(), MODEL_PATH / 'airfit_model.pth')
+    def eval(self):
+        self.model.eval()
+        total_loss = 0.0
+        with torch.no_grad():
+            for x, y in self.dl:
+                logits = self.model(x)
+                loss = self.loss_fn(logits.reshape(-1, logits.size(-1)), y.reshape(-1))
+                total_loss += loss.item()
+        return total_loss / len(self.dl)
+
+
+
+    def save_model(self, tag) -> None:
+        torch.save(self.model.state_dict(), MODEL_PATH / f'airfit_model_{tag}.pth')

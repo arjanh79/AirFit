@@ -23,8 +23,8 @@ def main() -> None:
     save_data('exercise_ids.json', exercise_mappings)
 
     trainer = WorkoutTrainer(combinator, ds)
-    trainer.fit(epochs=5)
-    trainer.save_model()
+    trainer.fit(epochs=5000)
+    trainer.save_model('last')
 
 
 def save_data(filename: str, data: dict) -> None:
