@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pandas as pd
 from typing import DefaultDict
 
-from v2.Database.factories import RepositoryFactory
+from v2.Data.factories import RepositoryFactory
 
 @dataclass
 class Block:

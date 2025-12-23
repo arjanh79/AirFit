@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import pandas as pd
 
-from v2.Workout.WorkoutGenerator import WorkoutGenerator
+from v2.Workout.workout_generator import WorkoutGenerator
 
 app = Flask(__name__)
 

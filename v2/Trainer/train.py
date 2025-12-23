@@ -1,56 +1,30 @@
+from v2.Trainer.trainer import WorkoutTrainer
+from v2.config import MODEL_PATH
+from v2.Domain.workout_combinator import WorkoutCombinator
+from v2.Data.workout_dataset import WorkoutDataset
 
-import torch
-import torch.optim as optim
-import torch.nn as nn
-from torch.utils.data import DataLoader
-
-from workout_dataset import WorkoutDataset
-from workout_combinator import WorkoutCombinator
-from workout_model import WorkoutTransformer
+import json
 
 
-class WorkoutTrainer:
-    def __init__(self):
-        self.wc = WorkoutCombinator()
-        self.ds = WorkoutDataset(self.wc.workouts)
-        self.dl = DataLoader(self.ds, batch_size=16, shuffle=True)
+def main() -> None:
 
-        self.model = WorkoutTransformer(len(self.ds.ex_to_id) + 2, d_model=8, n_head=2, num_layers=2, max_len=13)
+    combinator = WorkoutCombinator()
+    workouts = combinator.create_workouts()
+    ds = WorkoutDataset(workouts)
 
-        self.optimizer = optim.AdamW(self.model.parameters(), lr=1e-3)
-        self.loss_fn = nn.CrossEntropyLoss()
+    save_token_mappings('ex_to_id.json', ds.ex_to_id)
+    save_token_mappings('id_to_ex.json', ds.id_to_ex)
+
+    trainer = WorkoutTrainer(combinator, ds)
+    trainer.fit(epochs=50)
+    trainer.save_model()
 
 
-    def train_one_epoch(self) -> float:
-        self.model.train()
-        total_loss = 0.0
-        for batch, (x, y) in enumerate(self.dl):
-            self.optimizer.zero_grad()
-            logits = self.model(x)  # (B, T, vocab)
+def save_token_mappings(filename: str, data: dict) -> None:
+    with open(MODEL_PATH / filename, 'w') as f:
+        json.dump(data, f)
 
-            loss = self.loss_fn(logits.reshape(-1, logits.size(-1)), y.reshape(-1))
 
-            loss.backward()
-            self.optimizer.step()
-            total_loss += loss.item()
-            print(f'Batch: {batch}, loss: {loss.item()}')
 
-        loss = total_loss / max(1, len(self.dl))
-        return loss
-
-    def predict_next(self, prefix: list[int]) -> int:
-        self.model.eval()
-        temperature = 0.85
-
-        logits_mask = [0, 1] + prefix
-
-        x = torch.tensor(prefix, dtype=torch.long).unsqueeze(0)
-        logits = self.model(x)
-        logits = logits[0, -1] / temperature
-        logits[logits_mask] = float('-inf')
-
-        probs = torch.softmax(logits, dim=-1)
-
-        next_token = int(torch.multinomial(probs, num_samples=1).item())
-
-        return next_token
+if __name__ == "__main__":
+    main()

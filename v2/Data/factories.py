@@ -1,5 +1,5 @@
-from v2.Database.databases import SQLiteDB
-from v2.Database.repositories import SQLiteRepository
+from v2.Data.databases import SQLiteDB
+from v2.Data.repositories import SQLiteRepository
 from v2.config import DB_PATH
 
 class DatabaseFactory:
