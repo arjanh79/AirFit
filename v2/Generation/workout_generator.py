@@ -1,9 +1,12 @@
 import json
 from dataclasses import dataclass
 from typing import Any
+from collections import Counter, defaultdict
+import random
 
 import torch
 
+from v2.Data.factories import RepositoryFactory
 from v2.Trainer.workout_model import WorkoutTransformer
 from v2.config import MODEL_PATH
 
@@ -18,6 +21,9 @@ class ModelParams:
 
 class WorkoutGenerator:
     def __init__(self, model_dir=MODEL_PATH, weights_file='airfit_model_best.pth'):
+
+        # Create database connection
+        self.repo = RepositoryFactory.get_repository('sqlite')
 
         # File locations
         self.model_dir = model_dir
@@ -67,5 +73,84 @@ class WorkoutGenerator:
         self.model.load_state_dict(state)
 
 
+    def generate(self):
+        exercise_ids = self.select_exercises()
+        weights_ids = self.get_weights(exercise_ids)
+        workout = self.merge_exercise_weights(exercise_ids, weights_ids)
+        print(workout)
+
+
+    def merge_exercise_weights(self, exercise_ids: list[int], weights_ids: dict[int, int]) -> list[tuple[int, int]]:
+        return [(eid, weights_ids[eid]) for eid in exercise_ids]
+
+
+    def select_exercises(self, length: int=12, temperature: float=1.5) -> list[int]:
+        tokens = [1]
+        with torch.no_grad():
+            for _ in range(length):
+                x = torch.tensor(tokens, dtype=torch.long).unsqueeze(0)
+                logits = self.model(x)[0, -1] / temperature
+
+                logits = logits.clone()
+                logits[0] = float('-inf') # No padding allowed
+                logits[tokens] = float('-inf')  # Including start token
+
+                probs = torch.softmax(logits, dim=-1)
+                next_token = int(torch.multinomial(probs, 1).item())
+                tokens.append(next_token)
+            return self._translate_to_eid(tokens[1:])
+
+
+    def _translate_to_eid(self, tokens: list[int]) -> list[int]:
+        return [self.id_to_ex[token] for token in tokens]
+
+
+    def get_weights(self, exercise_ids: list[int]) -> dict[int, int]:
+        pairs, _ = self.repo.get_exercises(exercise_ids)
+        # ['exercise_id', 'weight_id']
+
+        exercise_weight = defaultdict(list)
+        for eid, wid in pairs:
+            exercise_weight[eid].append(wid)
+
+        chosen_wids = []
+        removed_wid = True
+
+        # --- START LOOP HERE
+
+        while removed_wid:
+            removed_wid = False
+            all_wids = [wid for wids in exercise_weight.values() for wid in wids]
+            all_wids = [wid for wid in all_wids if wid not in chosen_wids]
+
+            wid_counter = Counter(all_wids)
+            if len(wid_counter) > 0:
+                most_common = self.most_common_with_ties(wid_counter)
+            else:
+                most_common = -1
+            chosen_wids.append(most_common)
+
+            exercise_weight_temp = defaultdict(list)
+            for eid, wids in exercise_weight.items():
+                if most_common in wids:
+                    removed_wid = True
+                    exercise_weight_temp[eid] = [most_common]
+                else:
+                    exercise_weight_temp[eid] = wids
+            exercise_weight = exercise_weight_temp
+
+        exercise_weight = {k: v[0] for k, v in exercise_weight.items()}
+        return exercise_weight
+
+
+    def most_common_with_ties(self, counter: Counter) -> int:
+
+        # Returns the weight_id which occurs most, using random as a tie-breaker.
+        max_count = max(counter.values())
+        items = [k for k, v in counter.items() if v == max_count]
+        return random.choice(items)
+
+
 
 wg = WorkoutGenerator()
+wg.generate()
