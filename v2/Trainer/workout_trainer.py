@@ -109,4 +109,4 @@ class WorkoutTrainer:
 
 
     def save_model(self, tag) -> None:
-        torch.save(self.model.state_dict(), MODEL_PATH / f'airfit_model_{tag}.pth')
+        torch.save(self.model.state_dict(), MODEL_PATH / f'workout_model_{tag}.pth')

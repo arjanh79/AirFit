@@ -6,7 +6,6 @@ import random
 import pandas as pd
 
 import torch
-from matplotlib.style.core import available
 
 from v2.Data.factories import RepositoryFactory
 from v2.Trainer.workout_model import WorkoutTransformer
@@ -23,7 +22,7 @@ class ModelParams:
     max_len: int
 
 class WorkoutGenerator:
-    def __init__(self, model_dir=MODEL_PATH, weights_file='airfit_model_best.pth'):
+    def __init__(self, model_dir=MODEL_PATH, weights_file='workout_model_best.pth'):
 
         # Create database connection
         self.repo = RepositoryFactory.get_repository('sqlite')
@@ -180,7 +179,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
