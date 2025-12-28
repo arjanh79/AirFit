@@ -5,13 +5,6 @@ class GenericRepository:
     def __init__(self, db):
         self.db = db
 
-    def get_all_blocks(self, core):
-        sql = 'SELECT block_id FROM Block WHERE core = ?;'
-        return self.db.execute_query(sql, (core, ))
-
-    def get_block(self, block_id):
-        sql = 'SELECT exercise_id FROM BlockExercise WHERE block_id = ? ORDER BY seq;'
-        return self.db.execute_query(sql, (block_id, ))
 
     def get_exercises(self, exercise_ids):
         params = ','.join(['?' for _ in exercise_ids])
@@ -24,26 +17,6 @@ class GenericRepository:
 
         return self.db.execute_query(sql, exercise_ids)
 
-    def get_workout_compose(self, block_id, where_pairs):
-
-        conditions = " OR ".join(
-            "(BE.exercise_id = ? AND EW.weight_id = ?)"
-            for _ in where_pairs
-        )
-
-        sql = (f'SELECT B.block_id, B.core, BE.seq, BE.exercise_id, E.default_value, W.weight_id, EQ.equipment_id '
-               f'FROM BlockExercise BE '
-               f'JOIN Block B ON BE.block_id = B.block_id '
-               f'JOIN Exercise E ON BE.exercise_id = E.exercise_id '
-               f'JOIN ExerciseWeight EW ON BE.exercise_id = EW.exercise_id '
-               f'JOIN Weight W ON EW.weight_id = W.weight_id '
-               f'JOIN Equipment EQ on W.equipment_id = EQ.equipment_id '
-               f'WHERE B.block_id = ? AND ({conditions}) ORDER BY seq')
-
-        where_pairs = [item for i in where_pairs for item in i]
-        where_pairs = [block_id] + where_pairs
-
-        return self.db.execute_query(sql,where_pairs)
 
     def save_workout(self, workout):
         self.delete_unrated_workouts()
@@ -62,8 +35,21 @@ class GenericRepository:
 
     def save_workout_body(self, workout, workout_id):
         for row in workout.itertuples(index=False):
-            sql = 'INSERT INTO WorkoutExercise(workout_id, exercise_id, exercise_sequence, weight_id, reps, block_id, core, equipment_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-            self.db.execute_insert(sql, (workout_id, row[3], row[2], row[5], row[4], row[0], row[1], row[6]))
+            sql = 'INSERT INTO WorkoutExercise(workout_id, exercise_id, exercise_sequence, weight_id, reps, core, equipment_id) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            self.db.execute_insert(sql, (workout_id, row[0], row[1], row[2], row[3], row[4], row[5]))
+
+
+    def get_workout_details(self, workout: list[tuple[int, int]]):
+        placeholders = ", ".join(["(?, ?)"] * len(workout))
+        condition = f"(E.exercise_id, W.weight_id) IN ({placeholders})"
+        params = [value for pair in workout for value in pair]
+
+        sql = (f'SELECT EW.exercise_id, W.weight_id, E.default_value, W.equipment_id FROM ExerciseWeight EW ' 
+               f'JOIN Exercise E on E.exercise_id = EW.exercise_id '
+               f'JOIN Weight W on W.weight_id = EW.weight_id WHERE {condition}')
+
+        return self.db.execute_query(sql, params)
+
 
 
     def delete_unrated_workouts(self):
@@ -85,13 +71,11 @@ class GenericRepository:
                'WHERE W.workout_intensity IS NULL;')
         return self.db.execute_query(sql)
 
-    def get_existing_workout(self):
-        unrated_workouts = self.db.execute_query('SELECT workout_id FROM Workout WHERE workout_intensity IS NULL;')
-        return len(unrated_workouts[0])
 
     def get_exercise_ids(self):
         sql = 'SELECT exercise_id, name FROM Exercise;'
         return self.db.execute_query(sql)
+
 
     def get_block_workouts(self):
         sql = ('SELECT BE.block_id, BE.seq, B.description, E.exercise_id, E.name, B.core '
@@ -99,6 +83,11 @@ class GenericRepository:
                'JOIN Block B on B.block_id = BE.block_id '
                'JOIN Exercise E on E.exercise_id = BE.exercise_id '
                'ORDER BY BE.block_id, seq;')
+        return self.db.execute_query(sql)
+
+
+    def check_available_workout(self):
+        sql = 'SELECT workout_id FROM Workout WHERE workout_intensity IS NULL;'
         return self.db.execute_query(sql)
 
 

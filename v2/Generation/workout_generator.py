@@ -3,12 +3,15 @@ from dataclasses import dataclass
 from typing import Any
 from collections import Counter, defaultdict
 import random
+import pandas as pd
 
 import torch
+from matplotlib.style.core import available
 
 from v2.Data.factories import RepositoryFactory
 from v2.Trainer.workout_model import WorkoutTransformer
 from v2.config import MODEL_PATH
+
 
 
 @dataclass(frozen=True)
@@ -77,14 +80,33 @@ class WorkoutGenerator:
         exercise_ids = self.select_exercises()
         weights_ids = self.get_weights(exercise_ids)
         workout = self.merge_exercise_weights(exercise_ids, weights_ids)
-        print(workout)
+        workout = self.get_workout_details(workout)
+        self.repo.save_workout(workout)
+
+
+    def get_workout_details(self, workout: list[tuple[int, int]]) -> pd.DataFrame:
+        data, cols = self.repo.get_workout_details(workout)
+        workout_order = [eid for eid, _ in workout]
+        df_workout = pd.DataFrame(data, columns=cols)
+        df_workout['exercise_id'] = pd.Categorical(
+            df_workout['exercise_id'],
+            categories=workout_order,
+            ordered=True
+        )
+        df_workout = df_workout.sort_values('exercise_id').reset_index(drop=True)
+        df_workout['exercise_sequence'] = ((pd.RangeIndex(start=0, stop=len(df_workout))) % 6) + 1
+        df_workout['core'] = [0] * (len(df_workout)//2) + [1] * (len(df_workout)//2)
+        df_workout.rename(columns={'default_value': 'reps'}, inplace=True)
+        df_workout = df_workout[['exercise_id', 'exercise_sequence', 'weight_id', 'reps', 'core', 'equipment_id']]
+
+        return df_workout
 
 
     def merge_exercise_weights(self, exercise_ids: list[int], weights_ids: dict[int, int]) -> list[tuple[int, int]]:
         return [(eid, weights_ids[eid]) for eid in exercise_ids]
 
 
-    def select_exercises(self, length: int=12, temperature: float=1.5) -> list[int]:
+    def select_exercises(self, length: int=12, temperature: float=1.75) -> list[int]:
         tokens = [1]
         with torch.no_grad():
             for _ in range(length):
@@ -93,7 +115,12 @@ class WorkoutGenerator:
 
                 logits = logits.clone()
                 logits[0] = float('-inf') # No padding allowed
-                logits[tokens] = float('-inf')  # Including start token
+                logits[tokens] = float('-inf') # Including start token
+                no_start_tokens = [11, 13, 24]
+                if len(tokens) == 1:
+                    logits[no_start_tokens] = float('-inf')
+                elif 3 <= len(tokens) <= 6:
+                    logits[no_start_tokens] *= 3
 
                 probs = torch.softmax(logits, dim=-1)
                 next_token = int(torch.multinomial(probs, 1).item())
@@ -151,6 +178,17 @@ class WorkoutGenerator:
         return random.choice(items)
 
 
+    def get_clean_workout(self):
 
-wg = WorkoutGenerator()
-wg.generate()
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+
+        data, _ = self.repo.check_available_workout()
+        available_workout = len(data)
+        if not available_workout:
+            print('No workout available, generating new workout.')
+            self.generate()
+
+        workout = self.repo.get_workout()
+        df = pd.DataFrame(data=workout[0], columns=workout[1])
+        df.columns = ['block', 'seq', 'exercise', 'weight', 'reps', 'equipment']
+        return df

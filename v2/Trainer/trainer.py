@@ -1,6 +1,7 @@
 import torch
 import torch.optim as optim
 import torch.nn as nn
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 
 from v2.Data.workout_dataset import WorkoutDataset
@@ -24,7 +25,8 @@ class WorkoutTrainer:
                                         self.model_params['num_layers'],
                                         self.model_params['max_len'])
 
-        self.optimizer = optim.NAdam(self.model.parameters(), lr=1e-3)
+        self.optimizer = optim.NAdam(self.model.parameters(), lr=5e-3)
+        self.scheduler = self.get_scheduler()
         self.loss_fn = nn.CrossEntropyLoss()
 
 
@@ -55,12 +57,12 @@ class WorkoutTrainer:
         return loss
 
 
-    def fit(self, epochs: int=100, patience:int=10) -> None:
+    def fit(self, epochs: int=100, patience:int=15) -> None:
         epochs_without_improve = 0
         best_eval_loss = float('inf')
 
         for epoch in range(1, epochs+1):
-            print(f'Epoch {epoch+1}')
+            print(f'Epoch {epoch}')
 
             self.train_one_epoch()
             eval_loss = self.eval()
@@ -75,11 +77,23 @@ class WorkoutTrainer:
                 epochs_without_improve += 1
 
             if epochs_without_improve >= patience:
-                print(f'\n*** Early stopping at epoch {epoch+1} ***')
+                print(f'\n*** Early stopping at epoch {epoch}. (loss: {best_eval_loss:.3f}) ***')
                 break
 
             print('-'*24)
 
+    def get_scheduler(self) -> ReduceLROnPlateau:
+        scheduler = ReduceLROnPlateau(
+            self.optimizer,
+            mode="min",
+            factor=0.5,
+            patience=4,
+            threshold_mode='rel',
+            threshold=1e-3,
+            min_lr=1e-6,
+            cooldown=3
+        )
+        return scheduler
 
     def eval(self):
         self.model.eval()
@@ -89,7 +103,9 @@ class WorkoutTrainer:
                 logits = self.model(x)
                 loss = self.loss_fn(logits.reshape(-1, logits.size(-1)), y.reshape(-1))
                 total_loss += loss.item()
-        return total_loss / len(self.dl)
+        eval_loss = total_loss / len(self.dl)
+        self.scheduler.step(eval_loss)
+        return eval_loss
 
 
     def save_model(self, tag) -> None:
