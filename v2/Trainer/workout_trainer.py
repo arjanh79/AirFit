@@ -33,7 +33,7 @@ class WorkoutTrainer:
     def get_model_parameters(self) -> dict[str, int]:
         model_params = dict()
         model_params['vocab_size'] = len(self.ds.ex_to_id) + 2
-        model_params['d_model'] = 8
+        model_params['d_model'] = 10
         model_params['n_head'] = 2
         model_params['num_layers'] = 2
         model_params['max_len'] = 13

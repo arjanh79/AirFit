@@ -77,6 +77,16 @@ class GenericRepository:
         return self.db.execute_query(sql)
 
 
+    def get_weight_ids(self):
+        sql = 'SELECT weight_id FROM Weight;'
+        return self.db.execute_query(sql)
+
+
+    def get_equipment_ids(self):
+        sql = 'SELECT equipment_id FROM Equipment;'
+        return self.db.execute_query(sql)
+
+
     def get_block_workouts(self):
         sql = ('SELECT BE.block_id, BE.seq, B.description, E.exercise_id, E.name, B.core '
                'FROM BlockExercise BE '
@@ -90,6 +100,16 @@ class GenericRepository:
         sql = 'SELECT workout_id FROM Workout WHERE workout_intensity IS NULL;'
         return self.db.execute_query(sql)
 
+
+    def get_training_data(self):
+        sql = ('SELECT W.timestamp, W.workout_id, W.workout_intensity, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
+               'FROM Workout W '
+               'JOIN WorkoutExercise WE on WE.workout_id = W.workout_id '
+               'JOIN Exercise E on E.exercise_id = WE.exercise_id '
+               'JOIN Weight G on WE.weight_id = G.weight_id '
+               'WHERE W.workout_intensity NOT NULL '
+               'ORDER BY W.timestamp, WE.core, WE.exercise_sequence')
+        return self.db.execute_query(sql)
 
 class SQLiteRepository(GenericRepository):
     def __init__(self, db):

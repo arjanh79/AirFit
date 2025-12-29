@@ -118,7 +118,7 @@ class WorkoutGenerator:
                 no_start_tokens = [11, 13, 24]
                 if len(tokens) == 1:
                     logits[no_start_tokens] = float('-inf')
-                elif 3 <= len(tokens) <= 6:
+                elif 3 <= len(tokens) <= 5:
                     logits[no_start_tokens] *= 3
 
                 probs = torch.softmax(logits, dim=-1)
