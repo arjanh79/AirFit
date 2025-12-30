@@ -125,8 +125,8 @@
                     <thead>
                     <tr>
                         <th class="seq">#</th>
-                        <th>Oefening</th>
-                        <th>Gewicht</th>
+                        <th>Exercise</th>
+                        <th>Weight</th>
                         <th>Reps</th>
                     </tr>
                     </thead>
@@ -157,7 +157,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if ex.name|lower in ["plank", "dead bug - static", "bosu plank"] or ex.reps > 20 %}
+                                {% if ex.name|lower in ["plank", "dead bug - static", "bosu plank"] %}
                                     {{ ex.reps }} secs
                                 {% else %}
                                     {{ ex.reps }} reps
