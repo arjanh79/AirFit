@@ -21,6 +21,7 @@ class ModelParams:
     num_layers: int
     max_len: int
 
+
 class WorkoutGenerator:
     def __init__(self, model_dir=MODEL_PATH, weights_file='workout_model_best.pth'):
 
@@ -105,7 +106,7 @@ class WorkoutGenerator:
         return [(eid, weights_ids[eid]) for eid in exercise_ids]
 
 
-    def select_exercises(self, length: int=12, temperature: float=1.75) -> list[int]:
+    def select_exercises(self, length: int=12, temperature: float=1.25) -> list[int]:
         tokens = [1]
         with torch.no_grad():
             for _ in range(length):
@@ -115,6 +116,13 @@ class WorkoutGenerator:
                 logits = logits.clone()
                 logits[0] = float('-inf') # No padding allowed
                 logits[tokens] = float('-inf') # Including start token
+
+                blocked_next_tokens = self.create_not_next_list(tokens)
+                logits[blocked_next_tokens] = float('-inf')
+
+                blocked_same_tokens = self.create_not_same_list(tokens)
+                logits[blocked_same_tokens] = float('-inf')
+
                 no_start_tokens = [11, 13, 24]
                 if len(tokens) == 1:
                     logits[no_start_tokens] = float('-inf')
@@ -125,6 +133,26 @@ class WorkoutGenerator:
                 next_token = int(torch.multinomial(probs, 1).item())
                 tokens.append(next_token)
             return self._translate_to_eid(tokens[1:])
+
+
+    def create_not_next_list(self, tokens: list[int]) -> list[int]:
+        not_next_tokens = [(13, 22)]
+        not_next_tokens = self.create_block_list(not_next_tokens)
+        blocked_tokens = [b for a, b in not_next_tokens if a == tokens[-1]]
+        return blocked_tokens
+
+
+    def create_not_same_list(self, tokens: list[int]) -> list[int]:
+        not_same_tokens = [(9, 17)]
+        not_same_tokens = self.create_block_list(not_same_tokens)
+        block_tokens = [b for a, b in not_same_tokens if a in tokens]
+        return block_tokens
+
+
+    def create_block_list(self, tokens: list[tuple[int, int]]) -> list[tuple[int, int]]:
+        reverse_next_tokens = [(b, a) for a, b in tokens]
+        tokens += reverse_next_tokens
+        return tokens
 
 
     def _translate_to_eid(self, tokens: list[int]) -> list[int]:
