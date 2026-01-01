@@ -111,6 +111,14 @@ class GenericRepository:
                'ORDER BY W.timestamp, WE.core, WE.exercise_sequence')
         return self.db.execute_query(sql)
 
+
+    def get_all_weights(self):
+        sql = ('SELECT W.weight, E.name, W.weight_id '
+               'FROM weight W '
+               'JOIN equipment E ON E.equipment_id = W.equipment_id '
+               'ORDER BY W.weight, E.name;')
+        return self.db.execute_query(sql)
+
 class SQLiteRepository(GenericRepository):
     def __init__(self, db):
         super().__init__(db)
