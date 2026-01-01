@@ -23,10 +23,13 @@ class BlockedTokens:
 
         not_same = [('Bosu Plank', 'Plank')]
 
+        not_start = ['Clean and Press', 'Deadlift', 'Dumbbell Snatch']
+
         self.exercise_tokens = Mappings().exercise_to_token  # All known mappings
 
         self.not_next = self.get_pairs((self.get_tokens(not_next)))
         self.not_same = self.get_pairs((self.get_tokens(not_same)))
+        self.not_start = self.get_start_tokens(not_start)
 
 
     def get_pairs(self, rule):
@@ -37,10 +40,16 @@ class BlockedTokens:
         return [(self.exercise_tokens[a], self.exercise_tokens[b]) for a, b in pairs]
 
 
+    def get_start_tokens(self, exercises):
+        return {self.exercise_tokens[name] for name in exercises}
+
+
     def get_blocked_tokens(self, tokens: list[int]) -> list[int]:
         # tokens always start with START_TOKEN 1
+
+        if len(tokens) == 1:
+            return list(self.not_start)
+
         next_blocked = {b for a, b in self.not_next if a == tokens[-1]}
         same_blocked = {b for a, b in self.not_same if a in tokens}
         return list(next_blocked | same_blocked)
-
-

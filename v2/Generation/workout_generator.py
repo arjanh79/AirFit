@@ -124,12 +124,6 @@ class WorkoutGenerator:
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
 
-                no_start_tokens = [11, 13, 24]
-                if len(tokens) == 1:
-                    logits[no_start_tokens] = float('-inf')
-                elif 2 <= len(tokens) <= 6:
-                    logits[no_start_tokens] *= 3
-
                 # Exploration!
                 logits = logits + 0.05 * torch.randn_like(logits)
 
@@ -195,7 +189,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
