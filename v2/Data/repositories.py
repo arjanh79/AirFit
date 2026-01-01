@@ -96,6 +96,13 @@ class GenericRepository:
         return self.db.execute_query(sql)
 
 
+    def get_new_blocks(self):
+        sql = ('SELECT WE.workout_id, WE.exercise_id, WE.core, WE.exercise_sequence '
+               'FROM WorkoutExercise WE '
+               'JOIN Workout W ON W.workout_id = WE.workout_id '
+               'WHERE W.workout_intensity NOT NULL')
+        return self.db.execute_query(sql)
+
     def check_available_workout(self):
         sql = 'SELECT workout_id FROM Workout WHERE workout_intensity IS NULL;'
         return self.db.execute_query(sql)

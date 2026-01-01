@@ -33,8 +33,8 @@ class WorkoutTrainer:
     def get_model_parameters(self) -> dict[str, int]:
         model_params = dict()
         model_params['vocab_size'] = len(self.ds.ex_to_id) + 2
-        model_params['d_model'] = 10
-        model_params['n_head'] = 2
+        model_params['d_model'] = 12
+        model_params['n_head'] = 4
         model_params['num_layers'] = 2
         model_params['max_len'] = 13
         return model_params
@@ -57,7 +57,7 @@ class WorkoutTrainer:
         return loss
 
 
-    def fit(self, epochs: int=100, patience:int=15) -> None:
+    def fit(self, epochs: int=100, patience:int=50) -> None:
         epochs_without_improve = 0
         best_eval_loss = float('inf')
 

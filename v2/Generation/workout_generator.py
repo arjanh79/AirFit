@@ -110,7 +110,7 @@ class WorkoutGenerator:
         return [(eid, weights_ids[eid]) for eid in exercise_ids]
 
 
-    def select_exercises(self, length: int=12, temperature: float=1.25) -> list[int]:
+    def select_exercises(self, length: int=12, temperature: float=1.5) -> list[int]:
         tokens = [1]
         with torch.no_grad():
             for _ in range(length):
@@ -125,7 +125,7 @@ class WorkoutGenerator:
                 logits[blocked_tokens] = float('-inf')
 
                 # Exploration!
-                logits = logits + 0.05 * torch.randn_like(logits)
+                logits = logits + 0.1 * torch.randn_like(logits)
 
 
                 probs = torch.softmax(logits, dim=-1)
