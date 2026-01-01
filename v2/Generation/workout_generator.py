@@ -8,6 +8,7 @@ import pandas as pd
 import torch
 
 from v2.Data.factories import RepositoryFactory
+from v2.Generation.blocklist_generator import BlockedTokens
 from v2.Trainer.workout_model import WorkoutTransformer
 from v2.config import MODEL_PATH
 
@@ -36,6 +37,9 @@ class WorkoutGenerator:
         self.ex_to_id = self._load_int_dict('ex_to_id.json')
         self.id_to_ex = self._load_int_dict('id_to_ex.json')
         self.exercise_ids = {int(k): v for k, v in self._load_json('exercise_ids.json').items()}
+
+        # Load block rules
+        self.block_rules = BlockedTokens()
 
         # Load the model.
         params = self._load_model_params('model_params.json')
@@ -117,17 +121,18 @@ class WorkoutGenerator:
                 logits[0] = float('-inf') # No padding allowed
                 logits[tokens] = float('-inf') # Including start token
 
-                blocked_next_tokens = self.create_not_next_list(tokens)
-                logits[blocked_next_tokens] = float('-inf')
-
-                blocked_same_tokens = self.create_not_same_list(tokens)
-                logits[blocked_same_tokens] = float('-inf')
+                blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
+                logits[blocked_tokens] = float('-inf')
 
                 no_start_tokens = [11, 13, 24]
                 if len(tokens) == 1:
                     logits[no_start_tokens] = float('-inf')
-                elif 3 <= len(tokens) <= 5:
+                elif 2 <= len(tokens) <= 6:
                     logits[no_start_tokens] *= 3
+
+                # Exploration!
+                logits = logits + 0.05 * torch.randn_like(logits)
+
 
                 probs = torch.softmax(logits, dim=-1)
                 next_token = int(torch.multinomial(probs, 1).item())
@@ -135,24 +140,7 @@ class WorkoutGenerator:
             return self._translate_to_eid(tokens[1:])
 
 
-    def create_not_next_list(self, tokens: list[int]) -> list[int]:
-        not_next_tokens = [(13, 22)]
-        not_next_tokens = self.create_block_list(not_next_tokens)
-        blocked_tokens = [b for a, b in not_next_tokens if a == tokens[-1]]
-        return blocked_tokens
 
-
-    def create_not_same_list(self, tokens: list[int]) -> list[int]:
-        not_same_tokens = [(9, 17)]
-        not_same_tokens = self.create_block_list(not_same_tokens)
-        block_tokens = [b for a, b in not_same_tokens if a in tokens]
-        return block_tokens
-
-
-    def create_block_list(self, tokens: list[tuple[int, int]]) -> list[tuple[int, int]]:
-        reverse_next_tokens = [(b, a) for a, b in tokens]
-        tokens += reverse_next_tokens
-        return tokens
 
 
     def _translate_to_eid(self, tokens: list[int]) -> list[int]:
