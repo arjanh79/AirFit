@@ -21,7 +21,10 @@ class BlockedTokens:
                     ('Bosu Plank', 'Bosu Mountain Climbers'),
                     ('Static Lunge', 'Deadlift'),
                     ('Dumbbell Press', 'Bosu Push Up'),
-                    ('Plank', 'Bosu Push Up')]
+                    ('Plank', 'Bosu Push Up'),
+                    ('Shoulder Taps', 'Bosu Push Up'),
+                    ('Squats', 'Step Ups'),
+                    ('Clean and Press', 'Dumbbell Snatch')]
 
         not_same = [('Bosu Plank', 'Plank')]
 

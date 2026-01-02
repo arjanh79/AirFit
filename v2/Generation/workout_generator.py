@@ -125,7 +125,7 @@ class WorkoutGenerator:
                 logits[blocked_tokens] = float('-inf')
 
                 # Exploration!
-                logits = logits + 0.1 * torch.randn_like(logits)
+                logits = logits + 0.5 * torch.randn_like(logits)
 
 
                 probs = torch.softmax(logits, dim=-1)

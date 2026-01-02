@@ -4,7 +4,7 @@ This document provides a high-level overview of the backend and summarizes devel
 
 ---
 
-## Available Workouts
+## Airfit
 
 **29-Dec-2025**
 - Working on v2.
