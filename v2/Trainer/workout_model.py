@@ -27,10 +27,10 @@ class WorkoutTransformer(nn.Module):
 
         h = self.tok_emb(x) + self.pos_emb(pos)
 
-        causal_mask = torch.triu(torch.ones(t, t, dtype=torch.bool), diagonal=1) # Disallow attending to future tokens
-        pad_mask = (x == self.pad_idx) # optional padding mask (True = pad positions to ignore)
+        causal_mask = torch.triu(torch.ones(t, t, dtype=torch.bool), diagonal=1) # Don't look ahead!
+        # pad_mask = (x == self.pad_idx) # No src_key_padding_mask needed, length of the workout is always 12.
 
-        h = self.encoder(h, mask=causal_mask, src_key_padding_mask=pad_mask)
+        h = self.encoder(h, mask=causal_mask)
         logits = self.lm_head(h)
 
         return logits
