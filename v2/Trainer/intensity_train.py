@@ -3,6 +3,7 @@ from torch.utils.data import DataLoader
 from v2.Data.factories import RepositoryFactory
 from v2.Data.intensity_dataset import IntensityDataset
 from v2.Domain.intensity_combinator import IntensityCombinator
+from v2.Trainer.intensity_trainer import IntensityTrainer
 
 
 def main() -> None:
@@ -11,7 +12,7 @@ def main() -> None:
     combinator = IntensityCombinator()
     workouts = combinator.get_data()
     ds = IntensityDataset(workouts)
-    dl = DataLoader(ds, batch_size=32, shuffle=True)
+    dl = DataLoader(ds, batch_size=16, shuffle=True)
 
     embedding_dims = {
         'exercise_id': len(repo.get_exercise_ids()[0]),
@@ -22,6 +23,7 @@ def main() -> None:
         'metric_type': 2
     }
 
+    trainer = IntensityTrainer(combinator=combinator, dataset=ds, embeddings_dim=embedding_dims)
 
 
 if __name__ == "__main__":
