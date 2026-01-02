@@ -12,7 +12,6 @@ def main() -> None:
     combinator = IntensityCombinator()
     workouts = combinator.get_data()
     ds = IntensityDataset(workouts)
-    dl = DataLoader(ds, batch_size=16, shuffle=True)
 
     embedding_dims = {
         'exercise_id': len(repo.get_exercise_ids()[0]),
@@ -23,7 +22,7 @@ def main() -> None:
         'metric_type': 2
     }
 
-    trainer = IntensityTrainer(combinator=combinator, dataset=ds, embeddings_dim=embedding_dims)
+    trainer = IntensityTrainer(combinator=combinator, dataset=ds, embeddings_dim=embedding_dims, col_names=ds.feature_cols)
 
 
 if __name__ == "__main__":
