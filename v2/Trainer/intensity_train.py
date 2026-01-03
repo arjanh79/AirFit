@@ -13,16 +13,17 @@ def main() -> None:
     workouts = combinator.get_data()
     ds = IntensityDataset(workouts)
 
-    embedding_dims = {
-        'exercise_id': len(repo.get_exercise_ids()[0]),
-        'weight_id': len(repo.get_weight_ids()[0]),
-        'equipment_id': len(repo.get_equipment_ids()[0]),
+    num_embedding = {
+        'exercise_id': len(repo.get_exercise_ids()[0]) + 1,
+        'weight_id': len(repo.get_weight_ids()[0]) + 1,
+        'equipment_id': len(repo.get_equipment_ids()[0]) + 1,
         'core': 2,
-        'exercise_sequence': 6,
+        'exercise_sequence': 6 * 2, # 2 blocks => 12 values
         'metric_type': 2
     }
 
-    trainer = IntensityTrainer(combinator=combinator, dataset=ds, embeddings_dim=embedding_dims, col_names=ds.feature_cols)
+    trainer = IntensityTrainer(combinator=combinator, dataset=ds, num_embeddings=num_embedding, col_names=ds.feature_cols)
+    trainer.fit(epochs=10)
 
 
 if __name__ == "__main__":

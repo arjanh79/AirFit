@@ -57,7 +57,7 @@ class WorkoutTrainer:
         return loss
 
 
-    def fit(self, epochs: int=100, patience:int=50) -> None:
+    def fit(self, epochs: int, patience:int=50) -> None:
         epochs_without_improve = 0
         best_eval_loss = float('inf')
 
@@ -71,7 +71,7 @@ class WorkoutTrainer:
             if eval_loss < best_eval_loss:
                 best_eval_loss = eval_loss
                 epochs_without_improve = 0
-                self.save_model("best")
+                self.save_model('best')
                 print(' New best model saved')
             else:
                 epochs_without_improve += 1
@@ -85,7 +85,7 @@ class WorkoutTrainer:
     def get_scheduler(self) -> ReduceLROnPlateau:
         scheduler = ReduceLROnPlateau(
             self.optimizer,
-            mode="min",
+            mode='min',
             factor=0.5,
             patience=4,
             threshold_mode='rel',
