@@ -44,7 +44,7 @@ class IntensityTransformer(nn.Module):
 
         enc_layer = nn.TransformerEncoderLayer(self.d_model, nhead=self.n_head, batch_first=True)
         self.encoder = nn.TransformerEncoder(enc_layer, num_layers=self.num_layers)
-        self.lm_head = nn.Linear(self.d_model, 1, bias=False)
+        self.lm_head = nn.Linear(self.d_model, 1, bias=True)
 
 
     def forward(self, x):
@@ -65,6 +65,5 @@ class IntensityTransformer(nn.Module):
         h = self.encoder(embeddings_all, mask=causal_mask)
         logits = self.lm_head(h) # (B, T, 1) intensity per exercise
         output = torch.sum(logits, dim=1)  # (B, 1) workout intensity from exercises
-
         return output
 

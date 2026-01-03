@@ -17,30 +17,31 @@ class IntensityTrainer:
 
         self.wc = combinator
         self.ds = dataset
-        self.dl = DataLoader(self.ds, batch_size=16, shuffle=True)
+        self.dl = DataLoader(self.ds, batch_size=16, shuffle=False) # FALSE!
         self.num_embeddings = num_embeddings
         self.col_names = col_names
 
         self.model = IntensityTransformer(num_embeddings=self.num_embeddings, col_names=self.col_names)
 
         self.optimizer = optim.NAdam(self.model.parameters(), lr=1e-3)
-        self.loss_fn = nn.MSELoss()
+        self.loss_fn = nn.MSELoss(reduction='none')
         self.scheduler = self.get_scheduler()
 
 
     def train_one_epoch(self, epoch_num) -> float:
         self.model.train()
         total_loss = 0.0
-        for batch, (x, y) in enumerate(self.dl):
+        for batch, (x, y, l) in enumerate(self.dl, start=1):
             self.optimizer.zero_grad()
             intensity = self.model(x)  # (B, 1)
 
             loss = self.loss_fn(intensity, y.unsqueeze(1))
+            loss = torch.mean(loss * l)
 
             loss.backward()
             self.optimizer.step()
             total_loss += loss.item()
-            print(f'    [TRN] Epoch: {epoch_num} - Batch: {batch}, Batch loss: {loss.item():.5f}')
+            print(f'    [TRN] Epoch: {epoch_num:03d} - Batch: {batch:03d} - MSE: {loss.item():.5f}')
 
         loss = total_loss / len(self.dl)
         return loss
@@ -49,9 +50,10 @@ class IntensityTrainer:
         self.model.eval()
         total_loss = 0.0
         with torch.no_grad():
-            for x, y in self.dl:
+            for x, y, l in self.dl:
                 intensity = self.model(x)
                 loss = self.loss_fn(intensity, y.unsqueeze(1))
+                loss = torch.mean(loss * l)
                 total_loss += loss.item()
         eval_loss = total_loss / len(self.dl)
         self.scheduler.step(eval_loss)
@@ -69,7 +71,7 @@ class IntensityTrainer:
         for epoch in range(1, epochs+1):
             _  = self.train_one_epoch(epoch)  # Output not yet needed
             eval_loss = self.eval()
-            print(f' >> [EVL] Epoch: {epoch} - Loss: {eval_loss:.5f}')
+            print(f' >> [EVL]              Epoch: {epoch:03d} - MSE: {eval_loss:.5f}')
 
             if eval_loss < best_eval_loss:
                 best_eval_loss = eval_loss
@@ -79,11 +81,11 @@ class IntensityTrainer:
             else:
                 epochs_without_improve += 1
 
-            print('-' * 53)
+            print('-' * 54)
 
             if epochs_without_improve >= patience:
                 print('\n'+'=' * 67)
-                print(f' *** Early stopping at Epoch {epoch}. Best loss: {best_eval_loss:.3f} @ Epoch {best_epoch} ***')
+                print(f' *** Early stopping at Epoch {epoch}. MSE: {best_eval_loss:.3f} @ Epoch {best_epoch} ***')
                 print('=' * 67)
                 break
 

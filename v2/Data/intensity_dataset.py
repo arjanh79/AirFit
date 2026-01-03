@@ -21,6 +21,8 @@ class IntensityDataset(Dataset):
         self.x = np.stack(self.x, axis=0).astype(np.int64)
         self.x = self.x.transpose((0, 2, 1))
 
+        self.weighted_loss = self.create_weighted_loss()
+
 
     def __len__(self):
         return len(self.workouts)
@@ -29,6 +31,14 @@ class IntensityDataset(Dataset):
     def __getitem__(self, idx):
         x = torch.from_numpy(self.x[idx]).long()
         y = torch.tensor(self.y[idx], dtype=torch.float32)
+        l = self.weighted_loss[idx]
 
-        return x, y
+        return x, y, l
 
+
+    def create_weighted_loss(self):
+        factor = 0.975
+        weighted_loss = [factor ** i for i in range(len(self.x))]
+        weighted_loss = torch.tensor(weighted_loss, dtype=torch.float32).unsqueeze(1)
+        weighted_loss = torch.clip(weighted_loss, 0.05, 1)
+        return weighted_loss
