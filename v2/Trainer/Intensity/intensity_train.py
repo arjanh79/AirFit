@@ -23,6 +23,7 @@ def main() -> None:
 
     trainer = IntensityTrainer(combinator=combinator, dataset=ds, num_embeddings=num_embedding, col_names=ds.feature_cols)
     trainer.fit(epochs=500)
+    trainer.save_model('last')
 
 
 if __name__ == "__main__":
