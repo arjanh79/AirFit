@@ -9,7 +9,7 @@ import torch
 
 from v2.Data.factories import RepositoryFactory
 from v2.Generation.blocklist_generator import BlockedTokens
-from v2.Trainer.workout_model import WorkoutTransformer
+from v2.Trainer.Workout.workout_model import WorkoutTransformer
 from v2.config import MODEL_PATH
 
 

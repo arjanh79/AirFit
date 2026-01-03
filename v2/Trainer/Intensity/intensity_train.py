@@ -1,9 +1,8 @@
-from torch.utils.data import DataLoader
 
 from v2.Data.factories import RepositoryFactory
 from v2.Data.intensity_dataset import IntensityDataset
 from v2.Domain.intensity_combinator import IntensityCombinator
-from v2.Trainer.intensity_trainer import IntensityTrainer
+from v2.Trainer.Intensity.intensity_trainer import IntensityTrainer
 
 
 def main() -> None:
@@ -18,12 +17,12 @@ def main() -> None:
         'weight_id': len(repo.get_weight_ids()[0]) + 1,
         'equipment_id': len(repo.get_equipment_ids()[0]) + 1,
         'core': 2,
-        'exercise_sequence': 6 * 2, # 2 blocks => 12 values
+        'exercise_sequence': 6 + 1,
         'metric_type': 2
     }
 
     trainer = IntensityTrainer(combinator=combinator, dataset=ds, num_embeddings=num_embedding, col_names=ds.feature_cols)
-    trainer.fit(epochs=10)
+    trainer.fit(epochs=500)
 
 
 if __name__ == "__main__":

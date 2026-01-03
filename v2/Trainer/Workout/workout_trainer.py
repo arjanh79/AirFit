@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from v2.Data.workout_dataset import WorkoutDataset
 from v2.Domain.workout_combinator import WorkoutCombinator
-from v2.Trainer.workout_model import WorkoutTransformer
+from v2.Trainer.Workout.workout_model import WorkoutTransformer
 from v2.config import MODEL_PATH
 
 

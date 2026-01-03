@@ -1,5 +1,5 @@
 from v2.Data.factories import RepositoryFactory
-from v2.Trainer.workout_trainer import WorkoutTrainer
+from v2.Trainer.Workout.workout_trainer import WorkoutTrainer
 from v2.config import MODEL_PATH
 from v2.Domain.workout_combinator import WorkoutCombinator
 from v2.Data.workout_dataset import WorkoutDataset

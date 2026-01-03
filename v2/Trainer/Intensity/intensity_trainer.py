@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from v2.Data.intensity_dataset import IntensityDataset
 from v2.Domain.intensity_combinator import IntensityCombinator
-from v2.Trainer.intensity_model import IntensityTransformer
+from v2.Trainer.Intensity.intensity_model import IntensityTransformer
 
 
 class IntensityTrainer:
@@ -27,7 +27,7 @@ class IntensityTrainer:
         self.scheduler = self.get_scheduler()
 
 
-    def train_one_epoch(self) -> float:
+    def train_one_epoch(self, epoch_num) -> float:
         self.model.train()
         total_loss = 0.0
         for batch, (x, y) in enumerate(self.dl):
@@ -39,19 +39,39 @@ class IntensityTrainer:
             loss.backward()
             self.optimizer.step()
             total_loss += loss.item()
-            print(f'Batch: {batch}, Batch loss: {loss.item():.5f}')
+            print(f'Epoch: {epoch_num} - Batch: {batch}, Batch loss: {loss.item():.5f}')
 
         loss = total_loss / max(1, len(self.dl))
         return loss
 
 
     def fit(self, epochs: int) -> None:
+
+        epochs_without_improve = 0
+        best_eval_loss = float('inf')
+        best_epoch = 0
+        patience = 20
+
         for epoch in range(1, epochs+1):
-            print(f'Epoch {epoch}')
-            _  = self.train_one_epoch()  # Output not yet needed
+            _  = self.train_one_epoch(epoch)  # Output not yet needed
             eval_loss = self.eval()
-            print(f'>> Epoch: {epoch}, Epoch loss: {eval_loss:.5f}')
-            print('-'*20)
+            print(f'>> Epoch: {epoch} - Loss: {eval_loss:.5f}')
+
+            if eval_loss < best_eval_loss:
+                best_eval_loss = eval_loss
+                epochs_without_improve = 0
+                best_epoch = epoch
+            else:
+                epochs_without_improve += 1
+
+            print('-' * 20)
+
+            if epochs_without_improve >= patience:
+                print('\n'+'=' * 67)
+                print(f' *** Early stopping at Epoch {epoch}. (Best loss: {best_eval_loss:.3f} @ Epoch {best_epoch}) ***')
+                print('=' * 67)
+                break
+
 
     def eval(self):
         self.model.eval()
