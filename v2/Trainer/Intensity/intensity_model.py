@@ -37,7 +37,7 @@ class IntensityTransformer(nn.Module):
         self.proj = nn.ModuleDict()
         for name, cfg in self.feature_cfg.items():
             if cfg['type'] == 'numeric':
-                self.proj[name] = nn.Linear(1, self.d_model)
+                self.proj[name] = nn.Linear(1, self.d_model, bias=False)
             else:
                 emb_dim = cfg['emb_dim']
                 self.proj[name] = nn.Identity() if emb_dim == self.d_model else nn.Linear(emb_dim, self.d_model)

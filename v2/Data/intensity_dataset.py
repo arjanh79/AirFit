@@ -19,10 +19,15 @@ class IntensityDataset(Dataset):
             self.x.append(np.vstack(row))
 
         self.x = np.stack(self.x, axis=0).astype(np.int64)
+
+        # fix if we only have 1 sample
+        if self.x.shape[0] == 12:
+            self.x = self.x.transpose((2, 1, 0))
+            self.y = np.ones(self.x.shape[0]) + 3.5
+
         self.x = self.x.transpose((0, 2, 1))
 
         self.weighted_loss = self.create_weighted_loss()
-
 
     def __len__(self):
         return len(self.workouts)
