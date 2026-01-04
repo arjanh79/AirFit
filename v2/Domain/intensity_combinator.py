@@ -8,8 +8,8 @@ class IntensityCombinator:
     def __init__(self):
         self.repository = RepositoryFactory.get_repository()
 
-    def get_data(self):
-        data, cols = self.repository.get_training_data()
+    def get_data(self, completed):
+        data, cols = self.repository.get_training_data(completed = completed)
         df = pd.DataFrame(data, columns=cols)
         df = df.sort_values(['timestamp', 'core' ,'exercise_sequence'])
 

@@ -81,12 +81,14 @@ class IntensityTrainer:
             else:
                 epochs_without_improve += 1
 
-            print('-' * 54)
+            sep_length = 50
+
+            print('-' * sep_length)
 
             if epochs_without_improve >= patience:
-                print('\n'+'=' * 67)
-                print(f' *** Early stopping at Epoch {epoch}. MSE: {best_eval_loss:.3f} @ Epoch {best_epoch} ***')
-                print('=' * 67)
+                print('\n'+'=' * sep_length)
+                print(f'  *** Early Stopping - Epoch: {best_epoch:03d} - MSE: {best_eval_loss:.5f}')
+                print('=' * sep_length)
                 break
 
 
@@ -96,7 +98,7 @@ class IntensityTrainer:
             self.optimizer,
             mode='min',
             factor=0.75,
-            patience=4,
+            patience=3,
             threshold_mode='rel',
             threshold=1e-3,
             min_lr=1e-6,

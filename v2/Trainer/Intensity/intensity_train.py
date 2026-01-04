@@ -9,7 +9,7 @@ def main() -> None:
 
     repo = RepositoryFactory.get_repository('sqlite')
     combinator = IntensityCombinator()
-    workouts = combinator.get_data()
+    workouts = combinator.get_data(completed = True)
     ds = IntensityDataset(workouts)
 
     num_embedding = {

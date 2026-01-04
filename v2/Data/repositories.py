@@ -108,14 +108,18 @@ class GenericRepository:
         return self.db.execute_query(sql)
 
 
-    def get_training_data(self):
-        sql = ('SELECT W.timestamp, W.workout_id, W.workout_intensity, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
-               'FROM Workout W '
-               'JOIN WorkoutExercise WE on WE.workout_id = W.workout_id '
-               'JOIN Exercise E on E.exercise_id = WE.exercise_id '
-               'JOIN Weight G on WE.weight_id = G.weight_id '
-               'WHERE W.workout_intensity NOT NULL '
-               'ORDER BY W.timestamp, WE.core, WE.exercise_sequence')
+    def get_training_data(self, completed):
+
+        where = 'NOT' if completed else 'IS'
+
+        sql = (f'SELECT W.timestamp, W.workout_id, W.workout_intensity, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
+               f'FROM Workout W '
+               f'JOIN WorkoutExercise WE on WE.workout_id = W.workout_id '
+               f'JOIN Exercise E on E.exercise_id = WE.exercise_id '
+               f'JOIN Weight G on WE.weight_id = G.weight_id '
+               f'WHERE W.workout_intensity {where} NULL '
+               f'ORDER BY W.timestamp, WE.core, WE.exercise_sequence')
+
         return self.db.execute_query(sql)
 
 
