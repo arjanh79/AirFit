@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 from v2.Data.factories import RepositoryFactory
 from v2.Data.intensity_dataset import IntensityDataset
@@ -23,6 +22,17 @@ class IntensityGenerator:
         self.ds = IntensityDataset(self.combinator.get_data(completed = False))
 
         self.model = self.rebuild_model()
+        self.reps = self.reps_gradient()
+        self.round_reps()
+
+
+    def round_reps(self):
+        exercises = self.ds[0][0][:, 0].tolist()
+        exercises = list(set(exercises))
+        data, cols = self.repo.get_exercise_steps(exercises)
+        print(data)
+        print(cols)
+
 
 
     def refresh_data(self) -> None:
@@ -66,7 +76,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 4.2 <= out.item() <= 4.8:  # Good enough
+            if 4.25 <= out.item() <= 4.75:  # Good enough
                 break
 
             loss = loss_fn(out, target)
@@ -79,10 +89,10 @@ class IntensityGenerator:
 
             if step % 100 == 0:
                 print(f'step {step:04d}: intensity={out.item():.3f}')
+        return reps
 
 
 
 
 ig = IntensityGenerator()
 ig.refresh_data()
-ig.reps_gradient()

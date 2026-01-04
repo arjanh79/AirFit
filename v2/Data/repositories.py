@@ -130,6 +130,17 @@ class GenericRepository:
                'ORDER BY W.weight, E.name;')
         return self.db.execute_query(sql)
 
+
+    def get_exercise_steps(self, exercise_ids):
+
+        exercise_ids = [str(e_id) for e_id in exercise_ids]
+        exercise_ids = ', '.join(exercise_ids)
+
+        sql = (f'SELECT exercise_id, increase_step FROM Exercise '
+               f'WHERE exercise_id IN ({exercise_ids});')
+
+        return self.db.execute_query(sql)
+
 class SQLiteRepository(GenericRepository):
     def __init__(self, db):
         super().__init__(db)
