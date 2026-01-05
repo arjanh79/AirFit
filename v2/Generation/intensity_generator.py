@@ -5,7 +5,6 @@ from v2.Data.factories import RepositoryFactory
 from v2.Data.intensity_dataset import IntensityDataset
 from v2.Domain.intensity_combinator import IntensityCombinator
 from v2.Generation.intensity_round import IntensityRounder
-from v2.Generation.workout_generator import WorkoutGenerator
 from v2.Trainer.Intensity.intensity_model import IntensityTransformer
 from v2.config import MODEL_PATH
 
@@ -19,7 +18,6 @@ class IntensityGenerator:
 
         self.repo = RepositoryFactory.get_repository('sqlite')
         self.combinator = IntensityCombinator()
-        self.workout_generator = WorkoutGenerator()
         self.workout_id = self.get_workout_id()
 
         self.ds = IntensityDataset(self.combinator.get_data(completed = False))
@@ -28,9 +26,11 @@ class IntensityGenerator:
         self.reps = self.reps_gradient()
 
         self.new_reps, self.intensity = IntensityRounder(self).apply()
-        print('\nNEW REPS:', self.new_reps.tolist())
         self.update_reps()
         self.update_intensity()
+
+        print(f'\nIntensity: {self.intensity:.3f} - Reps: {self.new_reps.tolist()}\n')
+
 
 
     def get_workout_id(self):
@@ -51,13 +51,6 @@ class IntensityGenerator:
 
     def update_intensity(self):
         self.repo.update_intensity(self.workout_id, np.round(self.intensity, decimals=2))
-
-
-
-    def refresh_data(self) -> None:
-        data, _ = self.repo.check_available_workout()
-        if len(data) == 0:
-            self.workout_generator.generate()
 
 
     def rebuild_model(self):
@@ -109,9 +102,3 @@ class IntensityGenerator:
             if step % 50 == 0:
                 print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')
         return reps
-
-
-
-
-ig = IntensityGenerator()
-ig.refresh_data()

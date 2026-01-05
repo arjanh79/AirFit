@@ -9,6 +9,7 @@ import torch
 
 from v2.Data.factories import RepositoryFactory
 from v2.Generation.blocklist_generator import BlockedTokens
+from v2.Generation.intensity_generator import IntensityGenerator
 from v2.Trainer.Workout.workout_model import WorkoutTransformer
 from v2.config import MODEL_PATH
 
@@ -189,13 +190,15 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
         if not available_workout:
             print('No workout available, generating new workout.')
             self.generate()
+            IntensityGenerator() # This needs an apply function!
+
 
         workout = self.repo.get_workout()
         df = pd.DataFrame(data=workout[0], columns=workout[1])
