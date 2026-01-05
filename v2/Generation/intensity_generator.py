@@ -1,8 +1,10 @@
+import numpy as np
 import torch
 
 from v2.Data.factories import RepositoryFactory
 from v2.Data.intensity_dataset import IntensityDataset
 from v2.Domain.intensity_combinator import IntensityCombinator
+from v2.Generation.intensity_round import IntensityRounder
 from v2.Generation.workout_generator import WorkoutGenerator
 from v2.Trainer.Intensity.intensity_model import IntensityTransformer
 from v2.config import MODEL_PATH
@@ -18,20 +20,37 @@ class IntensityGenerator:
         self.repo = RepositoryFactory.get_repository('sqlite')
         self.combinator = IntensityCombinator()
         self.workout_generator = WorkoutGenerator()
+        self.workout_id = self.get_workout_id()
 
         self.ds = IntensityDataset(self.combinator.get_data(completed = False))
 
         self.model = self.rebuild_model()
         self.reps = self.reps_gradient()
-        self.round_reps()
+
+        self.new_reps, self.intensity = IntensityRounder(self).apply()
+        print('\nNEW REPS:', self.new_reps.tolist())
+        self.update_reps()
+        self.update_intensity()
 
 
-    def round_reps(self):
-        exercises = self.ds[0][0][:, 0].tolist()
-        exercises = list(set(exercises))
-        data, cols = self.repo.get_exercise_steps(exercises)
-        print(data)
-        print(cols)
+    def get_workout_id(self):
+        data, cols = self.repo.check_available_workout()
+        return data[0][0]
+
+    def update_reps(self):
+        x = self.ds[0][0].clone()
+
+        reps_col = self.feature_cols.index('reps')
+        core_col = self.feature_cols.index('core')
+        seq_col = self.feature_cols.index('exercise_sequence')
+
+        x = x[:, [core_col, seq_col, reps_col]]
+        x[:, 2] = self.new_reps
+
+        self.repo.update_reps(self.workout_id, x)
+
+    def update_intensity(self):
+        self.repo.update_intensity(self.workout_id, np.round(self.intensity, decimals=2))
 
 
 
@@ -87,8 +106,8 @@ class IntensityGenerator:
             with torch.no_grad():
                 reps.clamp_(10, 120)
 
-            if step % 100 == 0:
-                print(f'step {step:04d}: intensity={out.item():.3f}')
+            if step % 50 == 0:
+                print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')
         return reps
 
 

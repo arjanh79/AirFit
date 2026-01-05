@@ -103,10 +103,21 @@ class GenericRepository:
                'WHERE W.workout_intensity NOT NULL')
         return self.db.execute_query(sql)
 
+
     def check_available_workout(self):
         sql = 'SELECT workout_id FROM Workout WHERE workout_intensity IS NULL;'
         return self.db.execute_query(sql)
 
+
+    def update_reps(self, workout_id, reps):
+        for rep in reps:
+            sql = 'UPDATE WorkoutExercise SET reps = ? WHERE workout_id = ? AND core = ? AND exercise_sequence = ?;'
+            self.db.execute_query_commit(sql, (rep[2].item(), workout_id, rep[0].item(), rep[1].item()))
+
+
+    def update_intensity(self, workout_id, intensity):
+        sql = 'UPDATE Workout SET expected_intensity = ? WHERE workout_id = ?;'
+        self.db.execute_query_commit(sql, (intensity, workout_id))
 
     def get_training_data(self, completed):
 
@@ -131,15 +142,10 @@ class GenericRepository:
         return self.db.execute_query(sql)
 
 
-    def get_exercise_steps(self, exercise_ids):
-
-        exercise_ids = [str(e_id) for e_id in exercise_ids]
-        exercise_ids = ', '.join(exercise_ids)
-
-        sql = (f'SELECT exercise_id, increase_step FROM Exercise '
-               f'WHERE exercise_id IN ({exercise_ids});')
-
+    def get_exercise_steps(self):
+        sql = (f'SELECT exercise_id, increase_step FROM Exercise')
         return self.db.execute_query(sql)
+
 
 class SQLiteRepository(GenericRepository):
     def __init__(self, db):
