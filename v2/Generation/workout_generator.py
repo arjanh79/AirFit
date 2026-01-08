@@ -149,9 +149,6 @@ class WorkoutGenerator:
             return self._translate_to_eid(tokens[1:])
 
 
-
-
-
     def _translate_to_eid(self, tokens: list[int]) -> list[int]:
         return [self.id_to_ex[token] for token in tokens]
 
