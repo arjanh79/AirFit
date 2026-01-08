@@ -64,7 +64,7 @@ class IntensityGenerator:
         }
 
         model = IntensityTransformer(num_embeddings = num_embedding, col_names=self.feature_cols)
-        model.load_state_dict(torch.load(MODEL_PATH / f'intensity_model_best.pth', weights_only=True))
+        model.load_state_dict(torch.load(MODEL_PATH / 'intensity_model_best.pth', weights_only=True))
         model.eval()
         return model
 
@@ -97,7 +97,7 @@ class IntensityGenerator:
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(10, 120)
+                reps.clamp_(6, 120)
 
             if step % 50 == 0:
                 print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')

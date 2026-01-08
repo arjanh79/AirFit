@@ -38,6 +38,7 @@ class WorkoutGenerator:
         self.ex_to_id = self._load_int_dict('ex_to_id.json')
         self.id_to_ex = self._load_int_dict('id_to_ex.json')
         self.exercise_ids = {int(k): v for k, v in self._load_json('exercise_ids.json').items()}
+        self.token_count = None
 
         # Load block rules
         self.block_rules = BlockedTokens()
@@ -48,6 +49,14 @@ class WorkoutGenerator:
         self._load_weights(self.weights_filename)
 
         self.model.eval()
+
+
+    def get_token_count(self):
+        data, _ = self.repo.get_exercise_count()# SQL sorts
+        data = [0 if i[1] is None else i[1] for i in data]
+        data = torch.tensor(data).float()
+        padding = torch.tensor([float('-inf'), float('-inf')]).float()
+        return torch.cat([padding, data])
 
 
     def _load_json(self, filename: str) -> Any:
@@ -111,7 +120,7 @@ class WorkoutGenerator:
         return [(eid, weights_ids[eid]) for eid in exercise_ids]
 
 
-    def select_exercises(self, length: int=12, temperature: float=1.5) -> list[int]:
+    def select_exercises(self, length: int=12, temperature: float=0.8) -> list[int]:
         tokens = [1]
         with torch.no_grad():
             for _ in range(length):
@@ -125,12 +134,17 @@ class WorkoutGenerator:
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
 
-                # Exploration!
-                logits = logits + 0.5 * torch.randn_like(logits)
+                lambda_ = 0.2
+                probs_count = self.token_count.clone() # How many workouts contain that token?
+                probs_count[tokens] = float('-inf')
+                probs_count[blocked_tokens] = float('-inf')
 
+                probs_count = torch.softmax(probs_count, dim=-1)
+                probs_logits = torch.softmax(logits, dim=-1)
 
-                probs = torch.softmax(logits, dim=-1)
-                next_token = int(torch.multinomial(probs, 1).item())
+                total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
+
+                next_token = int(torch.multinomial(total_probs, 1).item())
                 tokens.append(next_token)
             return self._translate_to_eid(tokens[1:])
 
@@ -190,12 +204,13 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
         if not available_workout:
             print('No workout available, generating new workout.')
+            self.token_count = self.get_token_count()
             self.generate()
             IntensityGenerator() # This needs an apply function!
 

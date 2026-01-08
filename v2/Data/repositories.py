@@ -143,7 +143,19 @@ class GenericRepository:
 
 
     def get_exercise_steps(self):
-        sql = (f'SELECT exercise_id, increase_step FROM Exercise')
+        sql = f'SELECT exercise_id, increase_step FROM Exercise'
+        return self.db.execute_query(sql)
+
+    def get_exercise_count(self):
+        sql = ('SELECT E.exercise_id, C.workouts '
+               'FROM Exercise E LEFT OUTER JOIN '
+                    '(SELECT WE.exercise_id, COUNT(*) workouts '
+                    'FROM Workout W '
+                    'LEFT OUTER JOIN WorkoutExercise WE ON WE.workout_id = W.workout_id '
+                    'WHERE workout_intensity IS NOT NULL '
+                    'GROUP BY WE.exercise_id) C '
+               'ON E.exercise_id = C.exercise_id '
+               'WHERE E.available = 1')
         return self.db.execute_query(sql)
 
 

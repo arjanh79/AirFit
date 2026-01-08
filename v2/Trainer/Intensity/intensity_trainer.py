@@ -18,10 +18,12 @@ class IntensityTrainer:
         self.wc = combinator
         self.ds = dataset
         self.dl = DataLoader(self.ds, batch_size=16, shuffle=False) # FALSE!
+
         self.num_embeddings = num_embeddings
         self.col_names = col_names
 
         self.model = IntensityTransformer(num_embeddings=self.num_embeddings, col_names=self.col_names)
+        self.model.load_state_dict(torch.load(MODEL_PATH / 'intensity_model_best.pth', weights_only=True))
 
         self.optimizer = optim.NAdam(self.model.parameters(), lr=1e-3)
         self.loss_fn = nn.MSELoss(reduction='none')
