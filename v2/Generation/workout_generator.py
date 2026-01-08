@@ -201,7 +201,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
