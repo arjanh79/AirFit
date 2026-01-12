@@ -24,3 +24,11 @@ class Mappings:
     def create_mappings(self) -> dict[str, int]:
         return {name: self.ex_to_id[exercise_id] for exercise_id, name in self.exercise_ids.items() if exercise_id in self.ex_to_id.keys()}
 
+
+
+if __name__ == '__main__':
+    m = Mappings()
+    print(m.exercise_to_token)
+    print(m.exercise_to_token['Deadlift'])
+    print(m.exercise_to_token['Bosu Push Up'])
+    print(m.exercise_to_token['Bent-Over Row'])

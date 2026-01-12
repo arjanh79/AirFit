@@ -128,6 +128,12 @@ class WorkoutGenerator:
                 logits = self.model(x)[0, -1] / temperature
 
                 logits = logits.clone()
+
+                # Prefer Deadlift, Bosu Push Up, Bent-Over Row and Ab Crunches
+                # Tokens; 13, 10, 5, 2
+                logits[[10, 13, 5, 2]] *= 10
+
+
                 logits[0] = float('-inf') # No padding allowed
                 logits[tokens] = float('-inf') # Including start token
 
