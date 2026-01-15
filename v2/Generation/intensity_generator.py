@@ -98,8 +98,8 @@ class IntensityGenerator:
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(8, 120)
+                reps.clamp_(10, 90)
 
             if step % 50 == 0:
-                print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')
+                print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int()}')
         return reps
