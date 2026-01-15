@@ -88,7 +88,8 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 4.25 <= out.item() <= 4.75:  # Good enough
+            if 4.5 <= out.item() <= 4.75:  # Good enough
+                print(f'step {step:04d}: intensity={out.item():.5f}')
                 break
 
             loss = loss_fn(out, target)
@@ -97,7 +98,7 @@ class IntensityGenerator:
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(6, 120)
+                reps.clamp_(8, 120)
 
             if step % 50 == 0:
                 print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')
