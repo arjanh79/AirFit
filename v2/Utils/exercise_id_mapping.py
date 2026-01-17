@@ -33,3 +33,6 @@ if __name__ == '__main__':
     print(m.exercise_to_token['Bosu Push Up'])
     print(m.exercise_to_token['Bent-Over Row'])
     print(m.exercise_to_token['Ab Crunches'])
+    print(m.exercise_to_token['Dumbbell Press'])
+    print(m.exercise_to_token['Clean and Press'])
+    print(m.exercise_to_token['Bosu Clean and Press'])

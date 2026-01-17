@@ -19,18 +19,20 @@ class BlockedTokens:
                     ('Bosu Plank', 'Shoulder Taps'),
                     ('Shoulder Taps', 'Plank'),
                     ('Bosu Plank', 'Bosu Mountain Climbers'),
-                    ('Static Lunge', 'Deadlift'),
+                    ('Split Squats', 'Deadlift'),
                     ('Dumbbell Press', 'Bosu Push Up'),
                     ('Plank', 'Bosu Push Up'),
                     ('Shoulder Taps', 'Bosu Push Up'),
                     ('Squats', 'Step Ups'),
                     ('Clean and Press', 'Dumbbell Snatch'),
                     ('Reverse Fly', 'Bent-Over Row'),
-                    ('Clean and Press', 'Deadlift')]
+                    ('Clean and Press', 'Deadlift'),
+                    ('Clean and Press', 'Bosu Clean and Press'),
+                    ('Split Squats', 'Step Ups')]
 
         not_same = [('Bosu Plank', 'Plank')]
 
-        not_start = ['Clean and Press', 'Deadlift', 'Dumbbell Snatch']
+        not_start = ['Clean and Press', 'Deadlift', 'Dumbbell Snatch', 'Split Squats']
 
         self.exercise_tokens = Mappings().exercise_to_token  # All known mappings
 

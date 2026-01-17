@@ -129,9 +129,8 @@ class WorkoutGenerator:
 
                 logits = logits.clone()
 
-                # Prefer Deadlift, Bosu Push Up, Bent-Over Row and Ab Crunches
-                # Tokens; 13, 10, 5, 2
-                logits[[10, 13, 5, 2]] *= 10
+                # 'Core workout'
+                logits[[10, 13, 5, 2, 14, 11]] *= 10
 
 
                 logits[0] = float('-inf') # No padding allowed
@@ -140,7 +139,7 @@ class WorkoutGenerator:
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
 
-                lambda_ = 0.2
+                lambda_ = 0.5
                 probs_count = self.token_count.clone() # How many workouts contain that token?
                 probs_count[tokens] = float('-inf')
                 probs_count[blocked_tokens] = float('-inf')
@@ -207,7 +206,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)

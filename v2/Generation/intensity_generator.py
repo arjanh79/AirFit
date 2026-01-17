@@ -80,7 +80,7 @@ class IntensityGenerator:
 
         loss_fn = torch.nn.MSELoss()
 
-        for step in range(100 + 1):
+        for step in range(250 + 1):
             optimizer.zero_grad()
 
             x_work = x.clone()
@@ -98,8 +98,8 @@ class IntensityGenerator:
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(10, 90)
+                reps.clamp_(8, 90)
 
             if step % 50 == 0:
-                print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int()}')
+                print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')
         return reps
