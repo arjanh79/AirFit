@@ -50,11 +50,12 @@ class NewWorkoutBlocks:
         for workout_id, core in self.found_blocks:
             block_name = 'AI_' + ''.join(random.sample(chars, 8))
             new_block = self.new_blocks[(self.new_blocks['workout_id'] == workout_id) & (self.new_blocks['core'] == core)]
-            sql = f"INSERT INTO Block(description, core) VALUES('{block_name}', {core});"
-            print(sql)
+
+            data, _ = self.repo.create_new_block(block_name, core)
+            block_id = data[0][0]
+
             for block in new_block.itertuples(name=None, index=False):
-                sql = f"INSERT INTO BlockExercise(block_id, seq, exercise_id) VALUES (, {block[3]}, {block[1]});"
-                print(sql)
+                self.repo.add_exercise_block(block_id, block[3], block[1])
 
 
 nwb = NewWorkoutBlocks()

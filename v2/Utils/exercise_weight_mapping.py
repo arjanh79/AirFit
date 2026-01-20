@@ -26,3 +26,9 @@ class WeightMappings:
     def print_exercises(self, name):
         print(f'\nExercise "{name}" - ID: {self.exercise_ids[name]}')
 
+
+
+if __name__ == '__main__':
+    m = WeightMappings()
+    m.print_exercises('Deadlift')
+    m.get_all_weights()

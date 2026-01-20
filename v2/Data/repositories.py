@@ -146,6 +146,7 @@ class GenericRepository:
         sql = f'SELECT exercise_id, increase_step FROM Exercise'
         return self.db.execute_query(sql)
 
+
     def get_exercise_count(self):
         sql = ('SELECT E.exercise_id, C.workouts '
                'FROM Exercise E LEFT OUTER JOIN '
@@ -157,6 +158,20 @@ class GenericRepository:
                'ON E.exercise_id = C.exercise_id '
                'WHERE E.available = 1')
         return self.db.execute_query(sql)
+
+
+    def create_new_block(self, block_name, core):
+        sql = 'INSERT INTO Block(description, core) VALUES(?, ?);'
+        self.db.execute_query_commit(sql, (block_name, core))
+
+        sql = 'SELECT block_id FROM Block WHERE description = ?;'
+        return self.db.execute_query(sql, (block_name, ))
+
+
+    def add_exercise_block(self, block_id, seq, exercise_id):
+        sql = f'INSERT INTO BlockExercise(block_id, seq, exercise_id) VALUES (?, ?, ?);'
+        self.db.execute_query_commit(sql, (block_id, seq, exercise_id))
+
 
 
 class SQLiteRepository(GenericRepository):
