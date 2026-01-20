@@ -36,7 +36,7 @@ class IntensityRounder:
 
         intensity = self.model(x_reps).item()
 
-        if intensity < 4.5:
+        if intensity < 4.25:
             reps += default_steps
             x_reps[:, :, self.reps_col] = reps
             intensity = self.model(x_reps).item()
