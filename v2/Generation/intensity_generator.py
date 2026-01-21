@@ -75,7 +75,7 @@ class IntensityGenerator:
 
         reps_col = self.feature_cols.index('reps')
         reps = torch.nn.Parameter(x[0, :, reps_col].clone())
-        optimizer = torch.optim.NAdam([reps], lr=0.03)
+        optimizer = torch.optim.NAdam([reps], lr=0.01)
         target = torch.tensor(4.5)
 
         loss_fn = torch.nn.MSELoss()
@@ -88,7 +88,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 4.5 <= out.item() <= 4.75:  # Good enough
+            if 4.25 <= out.item() <= 4.75:  # Good enough
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 
@@ -97,7 +97,7 @@ class IntensityGenerator:
 
             with torch.no_grad():
                 grad_abs_max = reps.grad.abs().max().item()
-                if grad_abs_max < 0.03:
+                if grad_abs_max < 0.01 and step >= 50:
                     print(f'[GRADIENT] step {step:04d}: intensity={out.item():.5f}')
                     break
 
