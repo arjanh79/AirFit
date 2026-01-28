@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EMOM Timer</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    body { margin: 0; padding: 20px; background: #0b0f16; color: #e8eefc; }
+    .wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 16px; }
+    .card { background: #121a27; border: 1px solid #24324a; border-radius: 16px; padding: 16px; }
+    h1 { margin: 0 0 6px; font-size: 22px; }
+    .sub { opacity: .8; font-size: 14px; margin-bottom: 10px; }
+    .grid { display: grid; gap: 12px; grid-template-columns: 1.2fr .8fr; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+    .timerBox { display: grid; gap: 12px; }
+    .bigTime { font-size: 64px; font-weight: 800; letter-spacing: 1px; }
+    .now { font-size: 22px; font-weight: 700; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 999px; border: 1px solid #2a3a55; background: #0f1522; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    button {
+      border: 1px solid #2a3a55; background: #0f1522; color: #e8eefc;
+      padding: 10px 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
+    }
+    button:hover { filter: brightness(1.08); }
+    button.primary { background: #1a2b4d; border-color: #395a9a; }
+    button.danger { background: #3a1620; border-color: #7d2a3b; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    input, select {
+      border: 1px solid #2a3a55; background: #0f1522; color: #e8eefc;
+      padding: 10px 12px; border-radius: 12px;
+    }
+
+    .exList { display: grid; gap: 8px; max-height: 360px; overflow: auto; padding-right: 4px; }
+    .exItem { display: flex; gap: 10px; align-items: center; padding: 10px; border-radius: 12px; border: 1px solid #24324a; background: #0f1522; }
+    .exName { font-weight: 650; }
+    .muted { opacity: .75; font-size: 13px; }
+    .mini { font-size: 12px; opacity: .8; }
+    .log { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; opacity: .9; white-space: pre-wrap; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>EMOM Workout Timer</h1>
+      <div class="sub">Every Minute On the Minute.</div>
+    </div>
+
+    <div class="grid">
+      <div class="card timerBox">
+        <div class="row">
+          <span class="pill"><span>Round</span> <strong id="roundLabel">0</strong>/<span id="roundTotal">0</span></span>
+          <span class="pill"><span>Interval</span> <strong id="intervalLabel">60</strong>s</span>
+          <span class="pill"><span>Status</span> <strong id="statusLabel">Ready</strong></span>
+        </div>
+
+        <div class="bigTime" id="timeLabel">01:00</div>
+        <div class="now">Now: <span id="exerciseLabel">Select Exercises…</span></div>
+        <div class="muted" id="nextLabel">Next: —</div>
+
+        <div class="row">
+          <button class="primary" id="startBtn">Start</button>
+          <button id="pauseBtn" disabled>Pause</button>
+          <button class="danger" id="resetBtn">Reset</button>
+          <button id="skipBtn" disabled>Next exercise</button>
+        </div>
+
+        <div class="row">
+          <label class="mini">Rounds:
+            <input id="roundsInput" type="number" min="1" max="120" value="30" style="width: 110px;">
+          </label>
+          <label class="mini">Interval (sec):
+            <input id="intervalInput" type="number" min="10" max="300" value="60" style="width: 110px;">
+          </label>
+          <label class="mini">
+            Beep:
+            <select id="beepSelect">
+              <option value="beep">Beep</option>
+              <option value="double">Double</option>
+              <option value="soft">Soft</option>
+              <option value="off">Off</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="justify-content: space-between;">
+          <div>
+            <div style="font-weight:800;">Exercises</div>
+          </div>
+          <button id="selectAllBtn">All</button>
+          <button id="selectNoneBtn">None</button>
+        </div>
+
+        <div class="exList" id="exerciseList"></div>
+
+        <div class="row" style="margin-top: 12px;">
+          <input id="customExercise" placeholder="New exercise" style="flex: 1;">
+          <button id="addExerciseBtn">Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:800; margin-bottom: 8px;">Log</div>
+      <div class="log" id="logBox">—</div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // --------- Exercises (feel free to tweak) ----------
+  const defaultExercises = [
+    { name: "Push-ups", note: "6x - Bosu" },
+    { name: "Step-ups", note: "12x - 12 kg" },
+    { name: "Clean and Press", note: "12x - 12 kg" },
+    { name: "Mountain Climbers", note: "12x - Bosu" },
+    { name: "Ab Crunches", note: "12x - 6 kg" },
+  ];
+
+  // --------- DOM ----------
+  const el = (id) => document.getElementById(id);
+  const exerciseListEl = el("exerciseList");
+  const timeLabel = el("timeLabel");
+  const exerciseLabel = el("exerciseLabel");
+  const nextLabel = el("nextLabel");
+  const roundLabel = el("roundLabel");
+  const roundTotal = el("roundTotal");
+  const intervalLabel = el("intervalLabel");
+  const statusLabel = el("statusLabel");
+  const logBox = el("logBox");
+
+  const startBtn = el("startBtn");
+  const pauseBtn = el("pauseBtn");
+  const resetBtn = el("resetBtn");
+  const skipBtn = el("skipBtn");
+
+  const roundsInput = el("roundsInput");
+  const intervalInput = el("intervalInput");
+  const beepSelect = el("beepSelect");
+
+  const selectAllBtn = el("selectAllBtn");
+  const selectNoneBtn = el("selectNoneBtn");
+  const customExercise = el("customExercise");
+  const addExerciseBtn = el("addExerciseBtn");
+
+  // --------- State ----------
+  let exercises = [...defaultExercises];
+  let selected = new Set(); // indices
+  let running = false;
+  let paused = false;
+
+  let intervalSec = 60;
+  let totalRounds = 12;
+
+  let currentRound = 0;      // 1..totalRounds
+  let currentIdx = 0;        // index in selected array order
+  let remaining = 60;        // seconds left in current minute
+  let timerId = null;
+
+  // Audio (WebAudio) simple beep
+  const audio = {
+    ctx: null,
+    ensure() {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      return this.ctx;
+    },
+    tone(freq, durMs, gain=0.08) {
+      const ctx = this.ensure();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.frequency.value = freq;
+      o.type = "sine";
+      g.gain.value = gain;
+      o.connect(g); g.connect(ctx.destination);
+      o.start();
+      setTimeout(() => { o.stop(); o.disconnect(); g.disconnect(); }, durMs);
+    },
+    ping(mode) {
+      if (mode === "off") return;
+      if (mode === "soft") { this.tone(660, 90, 0.05); return; }
+      if (mode === "double") {
+        this.tone(880, 80, 0.08);
+        setTimeout(() => this.tone(660, 90, 0.07), 130);
+        return;
+      }
+      // "beep"
+      this.tone(880, 120, 0.09);
+    }
+  };
+
+  function fmt(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  function log(line) {
+    const ts = new Date().toLocaleTimeString([], {hour: "2-digit", minute:"2-digit", second:"2-digit", hour12: false});
+    const prev = (logBox.textContent === "—") ? "" : logBox.textContent + "\n";
+    logBox.textContent = prev + `[${ts}] ${line}`;
+    logBox.scrollTop = logBox.scrollHeight;
+  }
+
+  function selectedArray() {
+    return [...selected].sort((a,b)=>a-b);
+  }
+
+  function currentExerciseName() {
+    const arr = selectedArray();
+    if (arr.length === 0) return null;
+    return exercises[arr[currentIdx % arr.length]].name;
+  }
+
+  function nextExerciseName() {
+    const arr = selectedArray();
+    if (arr.length === 0) return null;
+    return exercises[arr[(currentIdx + 1) % arr.length]].name;
+  }
+
+  function renderExercises() {
+    exerciseListEl.innerHTML = "";
+    exercises.forEach((ex, idx) => {
+      const div = document.createElement("div");
+      div.className = "exItem";
+
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = selected.has(idx);
+      cb.addEventListener("change", () => {
+        if (cb.checked) selected.add(idx);
+        else selected.delete(idx);
+        syncLabels();
+        if (!running) syncPreview();
+      });
+
+      const meta = document.createElement("div");
+      meta.style.display = "grid";
+      meta.style.gap = "2px";
+
+      const name = document.createElement("div");
+      name.className = "exName";
+      name.textContent = ex.name;
+
+      const note = document.createElement("div");
+      note.className = "muted";
+      note.textContent = ex.note || "";
+
+      meta.appendChild(name);
+      meta.appendChild(note);
+
+      div.appendChild(cb);
+      div.appendChild(meta);
+
+      exerciseListEl.appendChild(div);
+    });
+  }
+
+  function syncLabels() {
+    intervalSec = clampInt(intervalInput.value, 10, 300, 60);
+    totalRounds = clampInt(roundsInput.value, 1, 120, 12);
+    intervalLabel.textContent = intervalSec;
+    roundTotal.textContent = totalRounds;
+
+    if (!running) {
+      remaining = intervalSec;
+      timeLabel.textContent = fmt(remaining);
+    }
+  }
+
+  function syncPreview() {
+    const cur = currentExerciseName();
+    const nxt = nextExerciseName();
+    exerciseLabel.textContent = cur ?? "Select Exercises…";
+    nextLabel.textContent = "Next: " + (nxt ?? "—");
+    roundLabel.textContent = String(currentRound);
+    statusLabel.textContent = running ? (paused ? "paused" : "running") : "Ready";
+  }
+
+  function clampInt(v, min, max, fallback) {
+    const n = parseInt(v, 10);
+    if (Number.isNaN(n)) return fallback;
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function setControls() {
+    startBtn.disabled = running && !paused;
+    pauseBtn.disabled = !running;
+    skipBtn.disabled = !running;
+    pauseBtn.textContent = paused ? "Resume" : "Pause";
+  }
+
+  function start() {
+    syncLabels();
+    const arr = selectedArray();
+    if (arr.length === 0) {
+      log("No exercises selected!");
+      exerciseLabel.textContent = "No exercises selected!";
+      return;
+    }
+
+    // Resume audio context (needed on some browsers)
+    try { audio.ensure().resume?.(); } catch {}
+
+    if (!running) {
+      running = true;
+      paused = false;
+      currentRound = 1;
+      currentIdx = 0;
+      remaining = intervalSec;
+      audio.ping(beepSelect.value);
+      log(`Start EMOM: ${totalRounds} rounds, interval ${intervalSec}s. First: ${currentExerciseName()}`);
+    } else {
+      paused = false;
+      log("Continue.");
+    }
+
+    tickRender();
+    setControls();
+    loop();
+  }
+
+  function pauseToggle() {
+    if (!running) return;
+    paused = !paused;
+    statusLabel.textContent = paused ? "pauze" : "loopt";
+    log(paused ? "Paused." : "Resumed.");
+    setControls();
+  }
+
+  function reset() {
+    stopTimer();
+    running = false;
+    paused = false;
+    currentRound = 0;
+    currentIdx = 0;
+    syncLabels();
+    syncPreview();
+    setControls();
+    log("Reset.");
+  }
+
+  function stopTimer() {
+    if (timerId) clearInterval(timerId);
+    timerId = null;
+  }
+
+  function loop() {
+    stopTimer();
+    timerId = setInterval(() => {
+      if (!running || paused) return;
+
+      remaining -= 1;
+      if (remaining <= 0) {
+        // Minute boundary: next round/exercise
+        audio.ping(beepSelect.value);
+
+        currentIdx += 1;
+        currentRound += 1;
+
+        if (currentRound > totalRounds) {
+          // Finished
+          running = false;
+          stopTimer();
+          statusLabel.textContent = "ready";
+          timeLabel.textContent = "00:00";
+          exerciseLabel.textContent = "Ready!";
+          nextLabel.textContent = "Next: —";
+          setControls();
+          return;
+        }
+
+        remaining = intervalSec;
+        log(`Round ${currentRound}/${totalRounds}: ${currentExerciseName()}`);
+      }
+
+      tickRender();
+    }, 1000);
+  }
+
+  function tickRender() {
+    timeLabel.textContent = fmt(remaining);
+    syncPreview();
+  }
+
+  function skipExercise() {
+    if (!running) return;
+    audio.ping(beepSelect.value);
+
+    currentIdx += 1;
+    log(`Manually skipped to: ${currentExerciseName()}`);
+    syncPreview();
+  }
+
+  // --------- Events ----------
+  startBtn.addEventListener("click", start);
+  pauseBtn.addEventListener("click", pauseToggle);
+  resetBtn.addEventListener("click", reset);
+  skipBtn.addEventListener("click", skipExercise);
+
+  intervalInput.addEventListener("change", () => { syncLabels(); syncPreview(); });
+  roundsInput.addEventListener("change", () => { syncLabels(); syncPreview(); });
+
+  selectAllBtn.addEventListener("click", () => {
+    exercises.forEach((_, i) => selected.add(i));
+    renderExercises();
+    syncPreview();
+  });
+
+  selectNoneBtn.addEventListener("click", () => {
+    selected.clear();
+    renderExercises();
+    syncPreview();
+  });
+
+  addExerciseBtn.addEventListener("click", () => {
+    const name = (customExercise.value || "").trim();
+    if (!name) return;
+    exercises.unshift({ name, note: "custom" });
+    customExercise.value = "";
+    renderExercises();
+    log(`Exercise added: ${name}`);
+    syncPreview();
+  });
+
+  // --------- Init ----------
+  // Default select a sensible starter pack
+  ["Push-ups","Air squats","Sit-ups","Mountain climbers","Lunges","Plank"].forEach(n => {
+    const idx = exercises.findIndex(e => e.name === n);
+    if (idx >= 0) selected.add(idx);
+  });
+
+  renderExercises();
+  syncLabels();
+  syncPreview();
+  setControls();
+  log("Ready. Select exercises and press Start.");
+})();
+</script>
+</body>
+</html>

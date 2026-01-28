@@ -29,7 +29,7 @@ class IntensityGenerator:
         self.update_reps()
         self.update_intensity()
 
-        print(f'\nIntensity: {self.intensity:.3f} - Reps: {self.new_reps.tolist()}\n')
+        print(f'\nIntensity: {self.intensity:.5f} - Reps: {self.new_reps.tolist()}\n')
 
 
 
@@ -75,7 +75,7 @@ class IntensityGenerator:
 
         reps_col = self.feature_cols.index('reps')
         reps = torch.nn.Parameter(x[0, :, reps_col].clone())
-        optimizer = torch.optim.NAdam([reps], lr=0.01)
+        optimizer = torch.optim.NAdam([reps], lr=0.03)
         target = torch.tensor(4.5)
 
         loss_fn = torch.nn.MSELoss()

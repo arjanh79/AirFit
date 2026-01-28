@@ -46,6 +46,10 @@ def show_workout():
     blocks = df_to_blocks(df)
     return render_template("workout.html", blocks=blocks)
 
+@app.route("/emom")
+def show_emom():
+    return render_template("emom.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
