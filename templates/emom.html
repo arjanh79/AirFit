@@ -11,7 +11,7 @@
     .card { background: #121a27; border: 1px solid #24324a; border-radius: 16px; padding: 16px; }
     h1 { margin: 0 0 6px; font-size: 22px; }
     .sub { opacity: .8; font-size: 14px; margin-bottom: 10px; }
-    .grid { display: grid; gap: 12px; grid-template-columns: 1.2fr .8fr; }
+    .grid { display: grid; gap: 12px; grid-template-columns: 1.2fr .8fr; min-height: 640px;}
     @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
 
     .timerBox { display: grid; gap: 12px; }
@@ -51,9 +51,9 @@
     <div class="grid">
       <div class="card timerBox">
         <div class="row">
-          <span class="pill"><span>Round</span> <strong id="roundLabel">0</strong>/<span id="roundTotal">0</span></span>
-          <span class="pill"><span>Interval</span> <strong id="intervalLabel">60</strong>s</span>
-          <span class="pill"><span>Status</span> <strong id="statusLabel">Ready</strong></span>
+          <span class="pill"><span>Round: </span> <strong id="roundLabel">0</strong>/<span id="roundTotal">0</span></span>
+          <span class="pill"><span>Interval: </span> <strong id="intervalLabel">60</strong>s</span>
+          <span class="pill"><span>Status: </span> <strong id="statusLabel">Ready</strong></span>
         </div>
 
         <div class="bigTime" id="timeLabel">01:00</div>
@@ -72,7 +72,7 @@
             <input id="roundsInput" type="number" min="1" max="120" value="30" style="width: 110px;">
           </label>
           <label class="mini">Interval (sec):
-            <input id="intervalInput" type="number" min="10" max="300" value="60" style="width: 110px;">
+            <input id="intervalInput" type="number" min="10" max="300" value="90" style="width: 110px;">
           </label>
           <label class="mini">
             Beep:
@@ -87,7 +87,7 @@
       </div>
 
       <div class="card">
-        <div class="row" style="justify-content: space-between;">
+        <div class="row" style="justify-content: space-between; margin-bottom: 10px; margin-top: 10px;">
           <div>
             <div style="font-weight:800;">Exercises</div>
           </div>
@@ -114,11 +114,11 @@
 (() => {
   // --------- Exercises (feel free to tweak) ----------
   const defaultExercises = [
-    { name: "Push-ups", note: "6x - Bosu" },
-    { name: "Step-ups", note: "12x - 12 kg" },
-    { name: "Clean and Press", note: "6x - 12 kg" },
-    { name: "Ab Crunches", note: "12x - 6 kg" },
-    { name: "Bent-Over Row", note: "6x - 24kg"},
+    { name: "Step-ups", note: "10x - 12 kg" },
+    { name: "Push-ups", note: "8x - Bosu" },
+    { name: "Sit-ups Ball", note: "6x - 8 kg" },
+    { name: "Clean and Press", note: "6x - 24kg" },
+    { name: "Mountain Climbers", note: "16x - Bosu"},
   ];
 
   // --------- DOM ----------
@@ -419,7 +419,7 @@
   addExerciseBtn.addEventListener("click", () => {
     const name = (customExercise.value || "").trim();
     if (!name) return;
-    exercises.unshift({ name, note: "custom" });
+    exercises.unshift({ name, note: "-" });
     customExercise.value = "";
     renderExercises();
     log(`Exercise added: ${name}`);

@@ -55,6 +55,7 @@ class NewWorkoutBlocks:
             block_id = data[0][0]
 
             for block in new_block.itertuples(name=None, index=False):
+                print(block_id, block[3], block[1])
                 self.repo.add_exercise_block(block_id, block[3], block[1])
 
 

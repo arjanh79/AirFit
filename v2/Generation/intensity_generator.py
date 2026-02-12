@@ -88,7 +88,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 4.25 <= out.item() <= 4.75:  # Good enough
+            if 4.25 <= out.item() <= 4.50:  # Good enough
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 
