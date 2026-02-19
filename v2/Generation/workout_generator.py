@@ -148,12 +148,9 @@ class WorkoutGenerator:
                 probs_logits = torch.softmax(logits, dim=-1)
 
                 total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
-                print(total_probs)
-
                 next_token = int(torch.multinomial(total_probs, 1).item())
-                print(next_token)
-
                 tokens.append(next_token)
+
             return self._translate_to_eid(tokens[1:])
 
 

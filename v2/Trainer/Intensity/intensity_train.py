@@ -13,7 +13,7 @@ def main() -> None:
     ds = IntensityDataset(workouts)
 
     num_embedding = {
-        'exercise_id': 26, #len(repo.get_exercise_ids()[0]) + 1,
+        'exercise_id': len(repo.get_exercise_ids()[0]) + 2,
         'weight_id': len(repo.get_weight_ids()[0]) + 1,
         'equipment_id': len(repo.get_equipment_ids()[0]) + 1,
         'core': 2,

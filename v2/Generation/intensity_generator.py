@@ -55,7 +55,7 @@ class IntensityGenerator:
 
     def rebuild_model(self):
         num_embedding = {
-            'exercise_id': 26, # len(self.repo.get_exercise_ids()[0]) + 1,
+            'exercise_id': len(self.repo.get_exercise_ids()[0]) + 2,
             'weight_id': len(self.repo.get_weight_ids()[0]) + 1,
             'equipment_id': len(self.repo.get_equipment_ids()[0]) + 1,
             'core': 2,
