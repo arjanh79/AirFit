@@ -55,7 +55,7 @@ class IntensityGenerator:
 
     def rebuild_model(self):
         num_embedding = {
-            'exercise_id': len(self.repo.get_exercise_ids()[0]) + 1,
+            'exercise_id': 26, # len(self.repo.get_exercise_ids()[0]) + 1,
             'weight_id': len(self.repo.get_weight_ids()[0]) + 1,
             'equipment_id': len(self.repo.get_equipment_ids()[0]) + 1,
             'core': 2,
@@ -88,7 +88,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 4.25 <= out.item() <= 4.50:  # Good enough
+            if 4.00 <= out.item() <= 4.50:  # Good enough
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 

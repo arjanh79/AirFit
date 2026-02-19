@@ -25,14 +25,5 @@ class Mappings:
         return {name: self.ex_to_id[exercise_id] for exercise_id, name in self.exercise_ids.items() if exercise_id in self.ex_to_id.keys()}
 
 
-
 if __name__ == '__main__':
     m = Mappings()
-    print(m.exercise_to_token)
-    print(m.exercise_to_token['Deadlift'])
-    print(m.exercise_to_token['Bosu Push Up'])
-    print(m.exercise_to_token['Bent-Over Row'])
-    print(m.exercise_to_token['Ab Crunches'])
-    print(m.exercise_to_token['Dumbbell Press'])
-    print(m.exercise_to_token['Clean and Press'])
-    print(m.exercise_to_token['Bosu Clean and Press'])

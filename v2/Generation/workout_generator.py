@@ -130,7 +130,7 @@ class WorkoutGenerator:
                 logits = logits.clone()
 
                 # 'Core workout'
-                logits[[10, 13, 5, 2, 14, 11]] *= 10
+                logits[[18, 10, 13, 5, 2, 14, 11]] *= 10
 
 
                 logits[0] = float('-inf') # No padding allowed
@@ -148,8 +148,11 @@ class WorkoutGenerator:
                 probs_logits = torch.softmax(logits, dim=-1)
 
                 total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
+                print(total_probs)
 
                 next_token = int(torch.multinomial(total_probs, 1).item())
+                print(next_token)
+
                 tokens.append(next_token)
             return self._translate_to_eid(tokens[1:])
 
@@ -206,7 +209,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)

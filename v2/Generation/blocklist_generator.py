@@ -20,16 +20,20 @@ class BlockedTokens:
                     ('Shoulder Taps', 'Plank'),
                     ('Bosu Plank', 'Bosu Mountain Climbers'),
                     ('Split Squats', 'Deadlift'),
-                    ('Dumbbell Press', 'Bosu Push Up'),
-                    ('Plank', 'Bosu Push Up'),
-                    ('Shoulder Taps', 'Bosu Push Up'),
+                    ('Dumbbell Press', 'Bosu Push Ups'),
+                    ('Plank', 'Bosu Push Ups'),
+                    ('Shoulder Taps', 'Bosu Push Ups'),
                     ('Squats', 'Step Ups'),
                     ('Clean and Press', 'Dumbbell Snatch'),
                     ('Reverse Fly', 'Bent-Over Row'),
                     ('Clean and Press', 'Deadlift'),
                     ('Clean and Press', 'Bosu Clean and Press'),
                     ('Split Squats', 'Step Ups'),
-                    ('Split Squats', 'Squats')]
+                    ('Split Squats', 'Squats'),
+                    ('Dumbbell Press', 'Push Ups'),
+                    ('Plank', 'Push Ups'),
+                    ('Shoulder Taps', 'Push Ups'),
+                    ]
 
 
 
