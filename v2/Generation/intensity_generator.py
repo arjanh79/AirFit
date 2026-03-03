@@ -97,8 +97,10 @@ class IntensityGenerator:
 
             with torch.no_grad():
                 grad_abs_max = reps.grad.abs().max().item()
-                if grad_abs_max < 0.01 and step >= 50:
-                    print(f'[GRADIENT] step {step:04d}: intensity={out.item():.5f}')
+                grad_abs_mean = reps.grad.abs().mean().item()
+
+                if grad_abs_max < 0.01 and grad_abs_mean < 0.003 and step >= 100:
+                    print(f'[GRADIENT] step {step:04d}: intensity={out.item():.5f} (Max={grad_abs_max:.5f}, Mean={grad_abs_mean:.5f})')
                     break
 
 

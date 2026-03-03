@@ -148,6 +148,10 @@ class WorkoutGenerator:
                 probs_logits = torch.softmax(logits, dim=-1)
 
                 total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
+                cut_off = total_probs.sort(descending=True)[0][3]
+                mask = (total_probs > cut_off).int()
+                total_probs *= mask
+
                 next_token = int(torch.multinomial(total_probs, 1).item())
                 tokens.append(next_token)
 
@@ -206,7 +210,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)

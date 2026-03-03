@@ -25,6 +25,12 @@ class WorkoutTrainer:
                                         self.model_params['num_layers'],
                                         self.model_params['max_len'])
 
+        try:
+            self.model.load_state_dict(torch.load(MODEL_PATH / 'workout_model_best.pth', weights_only=True))
+        except FileNotFoundError:
+            print('No model loaded, using default values...')
+
+
         self.optimizer = optim.NAdam(self.model.parameters(), lr=5e-3)
         self.scheduler = self.get_scheduler()
         self.loss_fn = nn.CrossEntropyLoss()
