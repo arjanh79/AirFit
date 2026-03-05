@@ -64,7 +64,9 @@ class IntensityGenerator:
         }
 
         model = IntensityTransformer(num_embeddings = num_embedding, col_names=self.feature_cols)
-        model.load_state_dict(torch.load(MODEL_PATH / 'intensity_model_best.pth', weights_only=True))
+
+        best_model = torch.load(MODEL_PATH / 'intensity_model_best.pth')
+        model.load_state_dict(best_model['model_state'])
         model.eval()
         return model
 
@@ -88,7 +90,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 4.00 <= out.item() <= 4.50:  # Good enough
+            if 4.5 <= out.item() <= 4.75:  # Good enough
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 
@@ -108,7 +110,7 @@ class IntensityGenerator:
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(8, 90)
+                reps.clamp_(4, 50)
 
             if step % 50 == 0:
                 print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')

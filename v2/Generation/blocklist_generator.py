@@ -16,12 +16,8 @@ class BlockedTokens:
     def __init__(self):
 
         not_next = [('Deadlift', 'Step Ups'),
-                    ('Bosu Plank', 'Shoulder Taps'),
-                    ('Shoulder Taps', 'Plank'),
-                    ('Bosu Plank', 'Bosu Mountain Climbers'),
                     ('Split Squats', 'Deadlift'),
                     ('Dumbbell Press', 'Bosu Push Ups'),
-                    ('Plank', 'Bosu Push Ups'),
                     ('Shoulder Taps', 'Bosu Push Ups'),
                     ('Squats', 'Step Ups'),
                     ('Clean and Press', 'Dumbbell Snatch'),
@@ -31,20 +27,25 @@ class BlockedTokens:
                     ('Split Squats', 'Step Ups'),
                     ('Split Squats', 'Squats'),
                     ('Dumbbell Press', 'Push Ups'),
-                    ('Plank', 'Push Ups'),
                     ('Shoulder Taps', 'Push Ups'),
+                    ('Bosu Push Ups', 'Push Ups')
                     ]
 
         not_same = [('Bosu Plank', 'Plank')]
 
         not_start = ['Clean and Press', 'Deadlift', 'Dumbbell Snatch', 'Split Squats']
 
+        not_available = ['Plank', 'Bosu Plank']
+
         self.exercise_tokens = Mappings().exercise_to_token  # All known mappings
 
         self.not_next = self.get_pairs((self.get_tokens(not_next)))
         self.not_same = self.get_pairs((self.get_tokens(not_same)))
         self.not_start = self.get_start_tokens(not_start)
+        self.not_available = self.get_available_tokens(not_available)
 
+    def get_available_tokens(self, exercises):
+        return {self.exercise_tokens[name] for name in exercises}
 
     def get_pairs(self, rule):
         return {(x, y) for a, b in rule for x, y in PairRule(a, b).bi_directional()}
@@ -66,4 +67,5 @@ class BlockedTokens:
 
         next_blocked = {b for a, b in self.not_next if a == tokens[-1]}
         same_blocked = {b for a, b in self.not_same if a in tokens}
-        return list(next_blocked | same_blocked)
+
+        return list(next_blocked | same_blocked | self.not_available)

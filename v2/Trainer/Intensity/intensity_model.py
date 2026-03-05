@@ -46,6 +46,8 @@ class IntensityTransformer(nn.Module):
         self.encoder = nn.TransformerEncoder(enc_layer, num_layers=self.num_layers)
         self.lm_head = nn.Linear(self.d_model, 1, bias=True)
 
+        self.normalize = nn.LayerNorm(self.d_model)
+
 
     def forward(self, x):
 
@@ -60,6 +62,8 @@ class IntensityTransformer(nn.Module):
             else:
                 v = self.emb[name](values.long())
                 embeddings_all += self.proj[name](v)
+
+        embeddings_all = self.normalize(embeddings_all)
 
         causal_mask = torch.triu(torch.ones(t, t, dtype=torch.bool), diagonal=1)
         h = self.encoder(embeddings_all, mask=causal_mask)

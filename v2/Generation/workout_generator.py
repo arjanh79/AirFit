@@ -27,6 +27,8 @@ class ModelParams:
 class WorkoutGenerator:
     def __init__(self, model_dir=MODEL_PATH, weights_file='workout_model_best.pth'):
 
+        self.use_default_workout = False
+
         # Create database connection
         self.repo = RepositoryFactory.get_repository('sqlite')
 
@@ -52,9 +54,11 @@ class WorkoutGenerator:
 
 
     def get_token_count(self):
+        # returns logits!
         data, _ = self.repo.get_exercise_count()# SQL sorts
         data = [0 if i[1] is None else i[1] for i in data]
         data = torch.tensor(data).float()
+        data = -torch.log1p(data)
         padding = torch.tensor([float('-inf'), float('-inf')]).float()
         return torch.cat([padding, data])
 
@@ -91,7 +95,13 @@ class WorkoutGenerator:
 
 
     def generate(self):
-        exercise_ids = self.select_exercises()
+
+        exercise_ids = (
+            [10, 2, 12, 6, 24, 14, 11, 18, 22, 13, 4, 3]
+            if self.use_default_workout
+            else self.select_exercises()
+            )
+
         weights_ids = self.get_weights(exercise_ids)
         workout = self.merge_exercise_weights(exercise_ids, weights_ids)
         workout = self.get_workout_details(workout)
@@ -129,10 +139,6 @@ class WorkoutGenerator:
 
                 logits = logits.clone()
 
-                # 'Core workout'
-                logits[[18, 10, 13, 5, 2, 14, 11]] *= 10
-
-
                 logits[0] = float('-inf') # No padding allowed
                 logits[tokens] = float('-inf') # Including start token
 
@@ -148,6 +154,13 @@ class WorkoutGenerator:
                 probs_logits = torch.softmax(logits, dim=-1)
 
                 total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
+
+                allowed_count = torch.sum(total_probs > 0).item()
+                if allowed_count <= 5:
+                    print(f'[WARN] low candidate pool: {allowed_count} allowed tokens.')
+
+
+
                 cut_off = total_probs.sort(descending=True)[0][3]
                 mask = (total_probs > cut_off).int()
                 total_probs *= mask
@@ -210,7 +223,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)

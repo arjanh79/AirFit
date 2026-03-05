@@ -23,10 +23,16 @@ class IntensityTrainer:
         self.col_names = col_names
 
         self.model = IntensityTransformer(num_embeddings=self.num_embeddings, col_names=self.col_names)
-        # self.model.load_state_dict(torch.load(MODEL_PATH / 'intensity_model_best.pth', weights_only=True))
 
-        self.optimizer = optim.NAdam(self.model.parameters(), lr=1e-3)
-        self.loss_fn = nn.MSELoss(reduction='none')
+        best_model = torch.load(MODEL_PATH / 'intensity_model_best.pth')
+        self.model.load_state_dict(best_model['model_state'])
+
+        self.optimizer = optim.NAdam(self.model.parameters())
+        self.optimizer.load_state_dict(best_model['optimizer_state'])
+        for param_group in self.optimizer.param_groups:
+            param_group['lr'] = 1e-3
+
+        self.loss_fn = nn.HuberLoss(reduction='none')
         self.scheduler = self.get_scheduler()
 
 
@@ -73,7 +79,7 @@ class IntensityTrainer:
         for epoch in range(1, epochs+1):
             _  = self.train_one_epoch(epoch)  # Output not yet needed
             eval_loss = self.eval()
-            print(f' >> [EVL]              Epoch: {epoch:03d} - MSE: {eval_loss:.5f}')
+            print(f' >> [EVL] Epoch: {epoch:03d}              - MSE: {eval_loss:.5f}')
 
             if eval_loss < best_eval_loss:
                 best_eval_loss = eval_loss
@@ -110,4 +116,9 @@ class IntensityTrainer:
 
 
     def save_model(self, tag) -> None:
-        torch.save(self.model.state_dict(), MODEL_PATH / f'intensity_model_{tag}.pth')
+        data = {
+            'model_state': self.model.state_dict(),
+            'optimizer_state': self.optimizer.state_dict()
+            }
+
+        torch.save(data, MODEL_PATH / f'intensity_model_{tag}.pth')

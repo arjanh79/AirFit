@@ -21,8 +21,6 @@ def main() -> None:
         'metric_type': 2
     }
 
-    print(num_embedding)
-
     trainer = IntensityTrainer(combinator=combinator, dataset=ds, num_embeddings=num_embedding, col_names=ds.feature_cols)
     trainer.fit(epochs=500)
     trainer.save_model('last')
