@@ -16,7 +16,6 @@ class BlockedTokens:
     def __init__(self):
 
         not_next = [('Deadlift', 'Step Ups'),
-                    ('Split Squats', 'Deadlift'),
                     ('Dumbbell Press', 'Bosu Push Ups'),
                     ('Shoulder Taps', 'Bosu Push Ups'),
                     ('Squats', 'Step Ups'),
@@ -24,8 +23,6 @@ class BlockedTokens:
                     ('Reverse Fly', 'Bent-Over Row'),
                     ('Clean and Press', 'Deadlift'),
                     ('Clean and Press', 'Bosu Clean and Press'),
-                    ('Split Squats', 'Step Ups'),
-                    ('Split Squats', 'Squats'),
                     ('Dumbbell Press', 'Push Ups'),
                     ('Shoulder Taps', 'Push Ups'),
                     ('Bosu Push Ups', 'Push Ups')
@@ -33,9 +30,9 @@ class BlockedTokens:
 
         not_same = [('Bosu Plank', 'Plank')]
 
-        not_start = ['Clean and Press', 'Deadlift', 'Dumbbell Snatch', 'Split Squats']
+        not_start = ['Clean and Press', 'Deadlift', 'Dumbbell Snatch']
 
-        not_available = ['Plank', 'Bosu Plank']
+        not_available = ['Plank', 'Bosu Plank', 'Split Squats']
 
         self.exercise_tokens = Mappings().exercise_to_token  # All known mappings
 

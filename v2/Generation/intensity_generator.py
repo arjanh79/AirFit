@@ -77,12 +77,12 @@ class IntensityGenerator:
 
         reps_col = self.feature_cols.index('reps')
         reps = torch.nn.Parameter(x[0, :, reps_col].clone())
-        optimizer = torch.optim.NAdam([reps], lr=0.03)
-        target = torch.tensor(4.5)
+        optimizer = torch.optim.NAdam([reps], lr=1)
+        target = torch.tensor(0.15)
 
         loss_fn = torch.nn.MSELoss()
 
-        for step in range(500 + 1):
+        for step in range(250 + 1):
             optimizer.zero_grad()
 
             x_work = x.clone()
@@ -90,7 +90,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 4.5 <= out.item() <= 4.75:  # Good enough
+            if 0.10 <= out.item() <= 0.15:  # Good enough
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 
@@ -102,16 +102,16 @@ class IntensityGenerator:
                 grad_abs_mean = reps.grad.abs().mean().item()
 
                 if grad_abs_max < 0.01 and grad_abs_mean < 0.003 and step >= 100:
-                    print(f'[GRADIENT] step {step:04d}: intensity={out.item():.5f} (Max={grad_abs_max:.5f}, Mean={grad_abs_mean:.5f})')
-                    break
+                   print(f'[GRADIENT] step {step:04d}: intensity={out.item():.5f} (Max={grad_abs_max:.5f}, Mean={grad_abs_mean:.5f})')
+                   break
 
 
 
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(4, 50)
+                reps.clamp_(4, 20)
 
             if step % 50 == 0:
-                print(f'step {step:04d}: intensity={out.item():.5f} reps={reps.round().int().tolist()}')
+                print(f'Step {step:04d}: Intensity={out.item():.5f} Reps={reps.round().int().tolist()}')
         return reps

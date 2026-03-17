@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class IntensityTransformer(nn.Module):
     def __init__(self, num_embeddings: dict[str, int], col_names: list[str]):
         super().__init__()
@@ -48,6 +49,8 @@ class IntensityTransformer(nn.Module):
 
         self.normalize = nn.LayerNorm(self.d_model)
 
+        self.relu = nn.ReLU()
+
 
     def forward(self, x):
 
@@ -68,6 +71,11 @@ class IntensityTransformer(nn.Module):
         causal_mask = torch.triu(torch.ones(t, t, dtype=torch.bool), diagonal=1)
         h = self.encoder(embeddings_all, mask=causal_mask)
         logits = self.lm_head(h) # (B, T, 1) intensity per exercise
+        logits = self.relu(logits)
+
+
         output = torch.sum(logits, dim=1)  # (B, 1) workout intensity from exercises
+
+
         return output
 
