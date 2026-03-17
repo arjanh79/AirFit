@@ -125,9 +125,8 @@ class WorkoutGenerator:
         df_workout.rename(columns={'default_value': 'reps'}, inplace=True)
         df_workout = df_workout[['exercise_id', 'exercise_sequence', 'weight_id', 'reps', 'core', 'equipment_id']]
 
-        low, high = -3, 3
-        random_increase = self.rng.integers(low, high+1, size=len(df_workout))
-        df_workout['reps'] = df_workout['reps'] + random_increase
+        random_increase = self.rng.normal(df_workout['reps'], df_workout['reps'] * 0.25, size=len(df_workout))
+        df_workout['reps'] = random_increase # + df_workout['reps']
 
         return df_workout
 
