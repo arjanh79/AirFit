@@ -71,7 +71,6 @@ class IntensityTransformer(nn.Module):
         causal_mask = torch.triu(torch.ones(t, t, dtype=torch.bool), diagonal=1)
         h = self.encoder(embeddings_all, mask=causal_mask)
         logits = self.lm_head(h) # (B, T, 1) intensity per exercise
-        logits = self.relu(logits)
 
 
         output = torch.sum(logits, dim=1)  # (B, 1) workout intensity from exercises

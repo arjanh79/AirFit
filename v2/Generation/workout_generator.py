@@ -4,6 +4,7 @@ from typing import Any
 from collections import Counter, defaultdict
 import random
 import pandas as pd
+import numpy as np
 
 import torch
 
@@ -28,6 +29,7 @@ class WorkoutGenerator:
     def __init__(self, model_dir=MODEL_PATH, weights_file='workout_model_best.pth'):
 
         self.use_default_workout = False
+        self.rng = np.random.default_rng()
 
         # Create database connection
         self.repo = RepositoryFactory.get_repository('sqlite')
@@ -122,6 +124,10 @@ class WorkoutGenerator:
         df_workout['core'] = [0] * (len(df_workout)//2) + [1] * (len(df_workout)//2)
         df_workout.rename(columns={'default_value': 'reps'}, inplace=True)
         df_workout = df_workout[['exercise_id', 'exercise_sequence', 'weight_id', 'reps', 'core', 'equipment_id']]
+
+        low, high = -3, 3
+        random_increase = self.rng.integers(low, high+1, size=len(df_workout))
+        df_workout['reps'] = df_workout['reps'] + random_increase
 
         return df_workout
 
@@ -225,7 +231,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)

@@ -45,5 +45,5 @@ class IntensityDataset(Dataset):
         factor = 0.975
         weighted_loss = [factor ** i for i in range(len(self.x))]
         weighted_loss = torch.tensor(weighted_loss, dtype=torch.float32).unsqueeze(1)
-        weighted_loss = torch.clip(weighted_loss, 0.05, 1)
+        weighted_loss = torch.clip(weighted_loss, 0.05, 1)  # 0.05
         return weighted_loss
