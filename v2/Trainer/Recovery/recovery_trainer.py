@@ -32,7 +32,7 @@ class RecoveryTrainer:
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = 1e-3
 
-        self.loss_fn = nn.HuberLoss(reduction='none')
+        self.loss_fn = nn.BCEWithLogitsLoss(reduction='none')
         self.scheduler = self.get_scheduler()
 
 
@@ -49,7 +49,7 @@ class RecoveryTrainer:
             loss.backward()
             self.optimizer.step()
             total_loss += loss.item()
-            print(f'    [TRN] Epoch: {epoch_num:03d} - Batch: {batch:03d} - MSE: {loss.item():.5f}')
+            print(f'         [TRN] Epoch: {epoch_num:03d} - Batch: {batch:03d} - MSE: {loss.item():.5f}')
 
         loss = total_loss / len(self.dl)
         return loss
@@ -79,7 +79,7 @@ class RecoveryTrainer:
         for epoch in range(1, epochs+1):
             _  = self.train_one_epoch(epoch)  # Output not yet needed
             eval_loss = self.eval()
-            print(f' >> [EVL] Epoch: {epoch:03d}              - MSE: {eval_loss:.5f}')
+            print(f'      >> [EVL] Epoch: {epoch:03d}              - MSE: {eval_loss:.5f}')
 
             if eval_loss < best_eval_loss:
                 best_eval_loss = eval_loss
@@ -91,13 +91,12 @@ class RecoveryTrainer:
 
             sep_length = 50
 
-            print('-' * sep_length)
-
             if epochs_without_improve >= patience:
-                print('\n'+'=' * sep_length)
-                print(f'  *** Early Stopping - Epoch: {best_epoch:03d} - MSE: {best_eval_loss:.5f}')
-                print('=' * sep_length)
+                print('\n'+ 'RECOVERY ' + '=' * sep_length)
+                print(f'     *** Early Stopping - Epoch: {best_epoch:03d} - MSE: {best_eval_loss:.5f}')
                 break
+
+            print('RECOVERY ' + '-' * sep_length)
 
 
 

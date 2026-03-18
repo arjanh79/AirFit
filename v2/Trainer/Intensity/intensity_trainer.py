@@ -49,7 +49,7 @@ class IntensityTrainer:
             loss.backward()
             self.optimizer.step()
             total_loss += loss.item()
-            print(f'    [TRN] Epoch: {epoch_num:03d} - Batch: {batch:03d} - MSE: {loss.item():.5f}')
+            print(f'              [TRN] Epoch: {epoch_num:03d} - Batch: {batch:03d} - MSE: {loss.item():.5f}')
 
         loss = total_loss / len(self.dl)
         return loss
@@ -79,7 +79,7 @@ class IntensityTrainer:
         for epoch in range(1, epochs+1):
             _  = self.train_one_epoch(epoch)  # Output not yet needed
             eval_loss = self.eval()
-            print(f' >> [EVL] Epoch: {epoch:03d}              - MSE: {eval_loss:.5f}')
+            print(f'           >> [EVL] Epoch: {epoch:03d}              - MSE: {eval_loss:.5f}')
 
             if eval_loss < best_eval_loss:
                 best_eval_loss = eval_loss
@@ -91,13 +91,13 @@ class IntensityTrainer:
 
             sep_length = 50
 
-            print('-' * sep_length)
-
             if epochs_without_improve >= patience:
-                print('\n'+'=' * sep_length)
-                print(f'  *** Early Stopping - Epoch: {best_epoch:03d} - MSE: {best_eval_loss:.5f}')
-                print('=' * sep_length)
+                print('\n\n'+ 'INTENSITY ' + '=' * sep_length)
+                print(f'            *** Early Stopping - Epoch: {best_epoch:03d} - MSE: {best_eval_loss:.5f}')
+                print('INTENSITY '+'=' * sep_length)
                 break
+
+            print('INTENSITY ' + '-' * sep_length)
 
 
 

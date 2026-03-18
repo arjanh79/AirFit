@@ -20,6 +20,7 @@ class IntensityGenerator:
         self.repo = RepositoryFactory.get_repository('sqlite')
         self.combinator = IntensityCombinator()
         self.workout_id = self.get_workout_id()
+        self.rg = RecoveryGenerator()
 
         self.ds = IntensityDataset(self.combinator.get_data(completed = False))
 
@@ -29,14 +30,14 @@ class IntensityGenerator:
         self.new_reps, self.intensity = IntensityRounder(self).apply()
         self.update_reps()
         self.update_intensity()
+        recovery_score = self.get_train_tomorrow()
 
         print(f'\nIntensity: {self.intensity:.5f} - Reps: {self.new_reps.tolist()} - ', end='')
-        self.get_train_tomorrow()
+        print(f'Expected Recovery Score: {recovery_score:.5f}')
 
 
     def get_train_tomorrow(self):
-        rg = RecoveryGenerator().eval()
-        print(f'Expected Recovery Score: {rg:.5f}\n')
+        return self.rg.eval()
 
 
 
@@ -97,7 +98,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if -0.50 <= out.item() <= 0.50:  # Good enough
+            if -0.25 <= out.item() <= 0.25:  # Good enough
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 
