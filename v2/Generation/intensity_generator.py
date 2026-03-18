@@ -90,7 +90,7 @@ class IntensityGenerator:
 
             out = self.model(x_work).squeeze()
 
-            if 0.00 <= out.item() <= 0.25:  # Good enough
+            if -0.50 <= out.item() <= 0.50:  # Good enough
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 
@@ -110,7 +110,7 @@ class IntensityGenerator:
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(4, 50)
+                reps.clamp_(6, 50)
 
             if step % 50 == 0:
                 print(f'Step {step:04d}: Intensity={out.item():.5f} Reps={reps.round().int().tolist()}')

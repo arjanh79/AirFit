@@ -1,0 +1,124 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.utils.data import DataLoader
+
+from v2.Data.recovery_dataset import RecoveryDataset
+from v2.Domain.recovery_combinator import RecoveryCombinator
+from v2.Trainer.Recovery.recovery_model import RecoveryTransformer
+from v2.config import MODEL_PATH
+
+
+class RecoveryTrainer:
+
+    def __init__(self, combinator: RecoveryCombinator, dataset: RecoveryDataset,
+                 num_embeddings: dict[str, int], col_names: list[str]):
+
+        self.wc = combinator
+        self.ds = dataset
+        self.dl = DataLoader(self.ds, batch_size=16, shuffle=False) # FALSE!
+
+        self.num_embeddings = num_embeddings
+        self.col_names = col_names
+
+        self.model = RecoveryTransformer(num_embeddings=self.num_embeddings, col_names=self.col_names)
+
+        best_model = torch.load(MODEL_PATH / 'recovery_model_best.pth')
+        self.model.load_state_dict(best_model['model_state'])
+
+        self.optimizer = optim.NAdam(self.model.parameters())
+        self.optimizer.load_state_dict(best_model['optimizer_state'])
+        for param_group in self.optimizer.param_groups:
+            param_group['lr'] = 1e-3
+
+        self.loss_fn = nn.HuberLoss(reduction='none')
+        self.scheduler = self.get_scheduler()
+
+
+    def train_one_epoch(self, epoch_num) -> float:
+        self.model.train()
+        total_loss = 0.0
+        for batch, (x, y, l) in enumerate(self.dl, start=1):
+            self.optimizer.zero_grad()
+            intensity = self.model(x)  # (B, 1)
+
+            loss = self.loss_fn(intensity, y.unsqueeze(1))
+            loss = torch.mean(loss * l)
+
+            loss.backward()
+            self.optimizer.step()
+            total_loss += loss.item()
+            print(f'    [TRN] Epoch: {epoch_num:03d} - Batch: {batch:03d} - MSE: {loss.item():.5f}')
+
+        loss = total_loss / len(self.dl)
+        return loss
+
+    def eval(self):
+        self.model.eval()
+        total_loss = 0.0
+        with torch.no_grad():
+            for x, y, l in self.dl:
+                intensity = self.model(x)
+                loss = self.loss_fn(intensity, y.unsqueeze(1))
+                loss = torch.mean(loss * l)
+                total_loss += loss.item()
+        eval_loss = total_loss / len(self.dl)
+        self.scheduler.step(eval_loss)
+
+        return eval_loss
+
+
+    def fit(self, epochs: int) -> None:
+
+        epochs_without_improve = 0
+        best_eval_loss = float('inf')
+        best_epoch = 0
+        patience = 20
+
+        for epoch in range(1, epochs+1):
+            _  = self.train_one_epoch(epoch)  # Output not yet needed
+            eval_loss = self.eval()
+            print(f' >> [EVL] Epoch: {epoch:03d}              - MSE: {eval_loss:.5f}')
+
+            if eval_loss < best_eval_loss:
+                best_eval_loss = eval_loss
+                epochs_without_improve = 0
+                best_epoch = epoch
+                self.save_model('best')
+            else:
+                epochs_without_improve += 1
+
+            sep_length = 50
+
+            print('-' * sep_length)
+
+            if epochs_without_improve >= patience:
+                print('\n'+'=' * sep_length)
+                print(f'  *** Early Stopping - Epoch: {best_epoch:03d} - MSE: {best_eval_loss:.5f}')
+                print('=' * sep_length)
+                break
+
+
+
+    def get_scheduler(self) -> ReduceLROnPlateau:
+        scheduler = ReduceLROnPlateau(
+            self.optimizer,
+            mode='min',
+            factor=0.75,
+            patience=3,
+            threshold_mode='rel',
+            threshold=1e-3,
+            min_lr=1e-6,
+            cooldown=3,
+        )
+        return scheduler
+
+
+    def save_model(self, tag) -> None:
+        data = {
+            'model_state': self.model.state_dict(),
+            'optimizer_state': self.optimizer.state_dict()
+            }
+
+        torch.save(data, MODEL_PATH / f'recovery_model_{tag}.pth')
