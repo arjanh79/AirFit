@@ -134,14 +134,16 @@ class GenericRepository:
         return self.db.execute_query(sql)
 
 
-    def get_recovery_data(self):
+    def get_recovery_data(self, completed):
+
+        where = 'W.train_tomorrow > -1' if completed else ' W.workout_intensity IS NULL AND W.train_tomorrow IS NULL'
 
         sql = (f'SELECT W.timestamp, W.workout_id, W.train_tomorrow, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
                f'FROM Workout W '
                f'JOIN WorkoutExercise WE on WE.workout_id = W.workout_id '
                f'JOIN Exercise E on E.exercise_id = WE.exercise_id '
                f'JOIN Weight G on WE.weight_id = G.weight_id '
-               f'WHERE W.train_tomorrow NOT NULL '
+               f'WHERE {where} '
                f'ORDER BY W.timestamp, WE.core, WE.exercise_sequence')
 
         return self.db.execute_query(sql)

@@ -48,8 +48,8 @@ class RecoveryTransformer(nn.Module):
         self.lm_head = nn.Linear(self.d_model, 1, bias=True)
 
         self.normalize = nn.LayerNorm(self.d_model)
+        self.sigmoid = nn.Sigmoid()
 
-        self.relu = nn.ReLU()
 
 
     def forward(self, x):
@@ -72,7 +72,9 @@ class RecoveryTransformer(nn.Module):
         h = self.encoder(embeddings_all, mask=causal_mask)
         logits = self.lm_head(h) # (B, T, 1) intensity per exercise
 
-        output = torch.sum(logits, dim=1)  # (B, 1) workout intensity from exercises
+        logits = torch.sum(logits, dim=1)  # (B, 1) workout intensity from exercises
+
+        output = self.sigmoid(logits)
 
         return output
 

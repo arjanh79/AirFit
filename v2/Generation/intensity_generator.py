@@ -5,6 +5,7 @@ from v2.Data.factories import RepositoryFactory
 from v2.Data.intensity_dataset import IntensityDataset
 from v2.Domain.intensity_combinator import IntensityCombinator
 from v2.Generation.intensity_round import IntensityRounder
+from v2.Generation.recovery_generator import RecoveryGenerator
 from v2.Trainer.Intensity.intensity_model import IntensityTransformer
 from v2.config import MODEL_PATH
 
@@ -29,7 +30,13 @@ class IntensityGenerator:
         self.update_reps()
         self.update_intensity()
 
-        print(f'\nIntensity: {self.intensity:.5f} - Reps: {self.new_reps.tolist()}\n')
+        print(f'\nIntensity: {self.intensity:.5f} - Reps: {self.new_reps.tolist()} - ', end='')
+        self.get_train_tomorrow()
+
+
+    def get_train_tomorrow(self):
+        rg = RecoveryGenerator().eval()
+        print(f'Expected Recovery Score: {rg:.5f}\n')
 
 
 
@@ -104,8 +111,6 @@ class IntensityGenerator:
                 if grad_abs_max < 0.01 and grad_abs_mean < 0.003 and step >= 50:
                    print(f'[GRADIENT] step {step:04d}: intensity={out.item():.5f} (Max={grad_abs_max:.5f}, Mean={grad_abs_mean:.5f})')
                    break
-
-
 
             optimizer.step()
 
