@@ -28,7 +28,7 @@ class RecoveryGenerator:
             x, y, l = self.ds[0]
             x = x.unsqueeze(0).to(torch.float32)
             probs = self.model(x)
-            return probs.item()
+            return torch.nn.Sigmoid()(probs).item()
 
     def get_workout_id(self):
         data, cols = self.repo.check_available_workout()

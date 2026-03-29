@@ -36,12 +36,12 @@ class IntensityRounder:
 
         intensity = self.model(x_reps).item()
 
-        if intensity < -0.50:
+        if intensity < 0.00:
             reps += default_steps
             x_reps[:, :, self.reps_col] = reps
 
         with torch.no_grad():
-            reps.clamp_(6, 50)
+            reps.clamp_(4, 10)
 
         intensity = self.model(x_reps).item()
 

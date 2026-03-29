@@ -85,7 +85,7 @@ class IntensityGenerator:
 
         reps_col = self.feature_cols.index('reps')
         reps = torch.nn.Parameter(x[0, :, reps_col].clone())
-        optimizer = torch.optim.NAdam([reps], lr=0.3)
+        optimizer = torch.optim.NAdam([reps], lr=0.1)
         target = torch.tensor(0.15)
 
         loss_fn = torch.nn.MSELoss()
@@ -116,7 +116,7 @@ class IntensityGenerator:
             optimizer.step()
 
             with torch.no_grad():
-                reps.clamp_(6, 50)
+                reps.clamp_(4, 10)
 
             if step % 50 == 0:
                 print(f'Step {step:04d}: Intensity={out.item():.5f} Reps={reps.round().int().tolist()}')

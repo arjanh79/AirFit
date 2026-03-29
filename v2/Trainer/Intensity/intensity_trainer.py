@@ -32,7 +32,7 @@ class IntensityTrainer:
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = 1e-3
 
-        self.loss_fn = nn.HuberLoss(reduction='none')
+        self.loss_fn = nn.HuberLoss(reduction='none', delta=0.15)
         self.scheduler = self.get_scheduler()
 
 

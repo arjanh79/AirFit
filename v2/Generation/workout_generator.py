@@ -150,7 +150,7 @@ class WorkoutGenerator:
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
 
-                logits[[13, 5, 22, 11, 25, 23, 12, 20, 19, 3, 14]] *= 5
+                logits[[13, 5, 22, 11, 25, 23, 12, 20, 19, 3, 14]] *= 2
 
                 lambda_ = 0.5
                 probs_count = self.token_count.clone() # How many workouts contain that token?
