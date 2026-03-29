@@ -151,30 +151,24 @@ class WorkoutGenerator:
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
 
-                logits[[[11, 14, 22, 5], [12, 20, 19, 23]][seq_num >= 6]] *= 5
+                blocks = [[11, 14, 22, 5, 13, 18], [12, 20, 19, 23]]
+                idx = seq_num >= 6
 
-                # lambda_ = 0.75
-                # probs_count = self.token_count.clone() # How many workouts contain that token?
-                # probs_count[tokens] = float('-inf')
-                # probs_count[blocked_tokens] = float('-inf')
+                logits[blocks[idx]] *= 3
+                logits[blocks[not idx]] *= 0.1
 
-                # probs_count = torch.softmax(probs_count, dim=-1)
                 probs_logits = torch.softmax(logits, dim=-1)
 
-                # total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
                 total_probs = probs_logits
 
                 allowed_count = torch.sum(total_probs > 0).item()
                 if allowed_count <= 5:
                     print(f'[WARN] low candidate pool: {allowed_count} allowed tokens.')
 
+                top_k = 2
+                top_indices = torch.topk(total_probs, k=top_k).indices
+                next_token = int(top_indices[torch.randint(0, top_k, (1,))].item())
 
-
-                cut_off = total_probs.sort(descending=True)[0][3]
-                mask = (total_probs > cut_off).int()
-                total_probs *= mask
-
-                next_token = int(torch.multinomial(total_probs, 1).item())
                 tokens.append(next_token)
 
             return self._translate_to_eid(tokens[1:])
@@ -232,7 +226,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
