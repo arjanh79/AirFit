@@ -27,7 +27,8 @@ class Mappings:
 
 if __name__ == '__main__':
     m = Mappings()
-    exercises = ['Deadlift', 'Bent-Over Row', 'Squats', 'Clean and Press', 'Dumbbell Snatch', 'Step Ups', 'Dead Bug - Dynamic', 'Shoulder Taps', 'Reverse Fly', 'Ab Twist', 'Dumbbell Press']
+    # exercises = ['Deadlift', 'Bent-Over Row', 'Squats', 'Clean and Press', 'Dumbbell Snatch', 'Step Ups', 'Dead Bug - Dynamic', 'Shoulder Taps', 'Reverse Fly', 'Ab Twist', 'Dumbbell Press']
+    exercises = ['Dead Bug - Dynamic', 'Shoulder Taps', 'Reverse Fly', 'Step Ups']
     for exercise in exercises:
         # print(f'{exercise} \t {m.exercise_to_token[exercise]}')
         print(m.exercise_to_token[exercise])

@@ -23,17 +23,15 @@ class BlockedTokens:
                     ('Clean and Press', 'Dumbbell Snatch'),
                     ('Reverse Fly', 'Bent-Over Row'),
                     ('Clean and Press', 'Deadlift'),
-                    ('Clean and Press', 'Bosu Clean and Press'),
                     ('Shoulder Taps', 'Push Ups'),
-                    ('Bosu Push Ups', 'Push Ups'),
                     ('Bent-Over Row', 'Clean and Press'),
                     ('Deadlift', 'Dumbbell Snatch'),
                     ('Bent-Over Row', 'Deadlift'),
-                    ('Dumbbell Press', 'Push Ups'),
                     ('Clean and Press', 'Shoulder Taps'),
+                    ('Bosu Mountain Climbers', 'Shoulder Taps')
                     ]
 
-        not_same = [('Bosu Plank', 'Plank'), ('Dumbbell Press', 'Bosu Push Ups')]
+        not_same = [('Bosu Plank', 'Plank'), ('Dumbbell Press', 'Bosu Push Ups'), ('Clean and Press', 'Bosu Clean and Press'), ('Dumbbell Press', 'Push Ups'), ('Bosu Push Ups', 'Push Ups')]
 
         not_start = ['Clean and Press', 'Deadlift']
 

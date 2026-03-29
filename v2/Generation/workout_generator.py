@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 
 import torch
+from scipy.stats import logser
 
 from v2.Data.factories import RepositoryFactory
 from v2.Generation.blocklist_generator import BlockedTokens
@@ -138,7 +139,7 @@ class WorkoutGenerator:
     def select_exercises(self, length: int=12, temperature: float=0.8) -> list[int]:
         tokens = [1]
         with torch.no_grad():
-            for _ in range(length):
+            for seq_num in range(length):
                 x = torch.tensor(tokens, dtype=torch.long).unsqueeze(0)
                 logits = self.model(x)[0, -1] / temperature
 
@@ -150,17 +151,18 @@ class WorkoutGenerator:
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
 
-                logits[[13, 5, 22, 11, 25, 23, 12, 20, 19, 3, 14]] *= 2
+                logits[[[11, 14, 22, 5], [12, 20, 19, 23]][seq_num >= 6]] *= 5
 
-                lambda_ = 0.5
-                probs_count = self.token_count.clone() # How many workouts contain that token?
-                probs_count[tokens] = float('-inf')
-                probs_count[blocked_tokens] = float('-inf')
+                # lambda_ = 0.75
+                # probs_count = self.token_count.clone() # How many workouts contain that token?
+                # probs_count[tokens] = float('-inf')
+                # probs_count[blocked_tokens] = float('-inf')
 
-                probs_count = torch.softmax(probs_count, dim=-1)
+                # probs_count = torch.softmax(probs_count, dim=-1)
                 probs_logits = torch.softmax(logits, dim=-1)
 
-                total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
+                # total_probs = (probs_count * lambda_) + (probs_logits * (1 - lambda_))
+                total_probs = probs_logits
 
                 allowed_count = torch.sum(total_probs > 0).item()
                 if allowed_count <= 5:
@@ -230,7 +232,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
