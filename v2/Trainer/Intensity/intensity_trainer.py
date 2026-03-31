@@ -17,6 +17,8 @@ class IntensityTrainer:
 
         self.wc = combinator
         self.ds = dataset
+
+
         self.dl = DataLoader(self.ds, batch_size=16, shuffle=False) # FALSE!
 
         self.num_embeddings = num_embeddings
@@ -40,6 +42,7 @@ class IntensityTrainer:
         self.model.train()
         total_loss = 0.0
         for batch, (x, y, l) in enumerate(self.dl, start=1):
+
             self.optimizer.zero_grad()
             intensity = self.model(x)  # (B, 1)
 
