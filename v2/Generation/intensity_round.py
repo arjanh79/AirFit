@@ -41,7 +41,7 @@ class IntensityRounder:
             x_reps[:, :, self.reps_col] = reps
 
         with torch.no_grad():
-            reps.clamp_(4, 10)
+            reps.clamp_(6, 20)
 
         intensity = self.model(x_reps).item()
 
