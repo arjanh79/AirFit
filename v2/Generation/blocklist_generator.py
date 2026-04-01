@@ -30,7 +30,7 @@ class BlockedTokens:
                     ('Clean and Press', 'Bosu Clean and Press')
                     ]
 
-        not_same = [('Bosu Plank', 'Plank'), ('Dumbbell Press', 'Bosu Push Ups'), ('Dumbbell Press', 'Push Ups'), ('Bosu Push Ups', 'Push Ups')]
+        not_same = [('Bosu Push Ups', 'Push Ups')]
 
         not_start = ['Clean and Press', 'Deadlift']
 
