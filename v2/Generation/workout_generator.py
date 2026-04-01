@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 import torch
-from scipy.stats import logser
+from datetime import datetime
 
 from v2.Data.factories import RepositoryFactory
 from v2.Generation.blocklist_generator import BlockedTokens
@@ -29,7 +29,8 @@ class ModelParams:
 class WorkoutGenerator:
     def __init__(self, model_dir=MODEL_PATH, weights_file='workout_model_best.pth'):
 
-        self.use_default_workout = False
+        self.use_default_workout = True if datetime.now().timetuple().tm_yday % 3 == 0 else False
+
         self.rng = np.random.default_rng()
 
         # Create database connection
@@ -100,7 +101,7 @@ class WorkoutGenerator:
     def generate(self):
 
         exercise_ids = (
-            [10, 2, 12, 6, 24, 14, 11, 18, 22, 13, 4, 3]
+            [6, 4, 10, 1, 25, 2, 12, 3, 23, 14, 22, 5]
             if self.use_default_workout
             else self.select_exercises()
             )
@@ -126,7 +127,7 @@ class WorkoutGenerator:
         df_workout.rename(columns={'default_value': 'reps'}, inplace=True)
         df_workout = df_workout[['exercise_id', 'exercise_sequence', 'weight_id', 'reps', 'core', 'equipment_id']]
 
-        random_increase = self.rng.normal(df_workout['reps'], df_workout['reps'] * 0.25, size=len(df_workout))
+        random_increase = self.rng.normal(df_workout['reps'], 3, size=len(df_workout))
         df_workout['reps'] = random_increase # + df_workout['reps']
 
         return df_workout
