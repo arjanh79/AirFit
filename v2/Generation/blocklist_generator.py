@@ -26,11 +26,10 @@ class BlockedTokens:
                     ('Bent-Over Row', 'Clean and Press'),
                     ('Clean and Press', 'Shoulder Taps'),
                     ('Bosu Mountain Climbers', 'Shoulder Taps'),
-                    ('Bent-Over Row', 'Deadlift'),
-                    ('Clean and Press', 'Bosu Clean and Press')
+                    ('Bent-Over Row', 'Deadlift')
                     ]
 
-        not_same = [('Bosu Push Ups', 'Push Ups')]
+        not_same = [('Bosu Push Ups', 'Push Ups'), ('Clean and Press', 'Bosu Clean and Press')]
 
         not_start = ['Clean and Press', 'Deadlift']
 

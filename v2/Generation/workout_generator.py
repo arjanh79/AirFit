@@ -152,11 +152,11 @@ class WorkoutGenerator:
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
 
-                blocks = [[11, 14, 22, 5, 13, 18], [12, 20, 19, 23]]
-                idx = seq_num >= 6
+                blocks = [[13, 22, 23, 14, 5, 11, 25, 7], [2, 3, 12, 15, 19, 16, 8, 20]]
+                idx = seq_num >= 5
 
-                logits[blocks[idx]] *= 3
-                logits[blocks[not idx]] *= 0.1
+                logits[blocks[idx]] *= 5
+                logits[blocks[not idx]] *= 0.01
 
                 probs_logits = torch.softmax(logits, dim=-1)
 

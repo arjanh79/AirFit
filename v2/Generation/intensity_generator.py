@@ -99,6 +99,7 @@ class IntensityGenerator:
             out = self.model(x_work).squeeze()
 
             if 0.15 <= out.item() <= 0.35:  # Good enough
+                print(f'Step {step:04d}: Intensity={out.item():.5f} Reps={reps.round().int().tolist()}')
                 print(f'[INTENSITY] step {step:04d}: intensity={out.item():.5f}')
                 break
 
