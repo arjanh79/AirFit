@@ -34,14 +34,27 @@ class IntensityRounder:
         x_reps = self.x.clone()
         x_reps[:, :, self.reps_col] = reps
 
-        intensity = self.model(x_reps).item()
 
-        if intensity < 0.10:
-            reps += default_steps
+        intensity_logits = self.model(x_reps, True)
+        intensity = torch.sum(intensity_logits, dim=1)
+
+        steps, min_idx = 0, 0
+        while intensity < 0.15 and steps < 5:
+
+            scores = intensity_logits[0, :, 0].clone()
+            scores[min_idx] = torch.inf
+            min_idx = torch.argmin(scores)
+
+            reps[min_idx] += default_steps[min_idx]
             x_reps[:, :, self.reps_col] = reps
+
+            steps += 1
+            intensity_logits = self.model(x_reps, True)
+            intensity = torch.sum(intensity_logits, dim=1)
 
         with torch.no_grad():
             reps.clamp_(6, 20)
+            x_reps[:, :, self.reps_col] = reps
 
         intensity = self.model(x_reps).item()
 

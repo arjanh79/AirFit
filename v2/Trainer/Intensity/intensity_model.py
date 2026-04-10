@@ -52,7 +52,7 @@ class IntensityTransformer(nn.Module):
         self.relu = nn.ReLU()
 
 
-    def forward(self, x):
+    def forward(self, x, return_logits=False):
 
         b, t, f = x.shape
         embeddings_all = 0
@@ -72,6 +72,8 @@ class IntensityTransformer(nn.Module):
         h = self.encoder(embeddings_all, mask=causal_mask)
         logits = self.lm_head(h) # (B, T, 1) intensity per exercise
 
+        if return_logits:
+            return logits
 
         output = torch.sum(logits, dim=1)  # (B, 1) workout intensity from exercises
 

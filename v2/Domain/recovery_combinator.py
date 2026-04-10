@@ -11,10 +11,10 @@ class RecoveryCombinator:
     def get_data(self, completed):
         data, cols = self.repository.get_recovery_data(completed = completed)
         df = pd.DataFrame(data, columns=cols)
-        df = df.sort_values(['timestamp', 'core' ,'exercise_sequence'])
+        df = df.sort_values(['workout_completed', 'core' ,'exercise_sequence'])
 
         if completed:
-            agg = {col: list for col in df.columns if col not in ['workout_id', 'timestamp', 'train_tomorrow']}
+            agg = {col: list for col in df.columns if col not in ['workout_id', 'workout_completed', 'train_tomorrow']}
             df = df.groupby(['workout_id', 'train_tomorrow'], as_index=False).agg(agg)
 
         return df

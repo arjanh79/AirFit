@@ -29,7 +29,7 @@ class GenericRepository:
 
     def save_workout_header(self, workout_id):
         now = int(time.time())
-        sql = 'INSERT INTO Workout(workout_id, timestamp) VALUES (?, ?)'
+        sql = 'INSERT INTO Workout(workout_id, workout_completed) VALUES (?, ?)'
         self.db.execute_insert(sql, (workout_id, now))
 
 
@@ -123,13 +123,13 @@ class GenericRepository:
 
         where = 'NOT' if completed else 'IS'
 
-        sql = (f'SELECT W.timestamp, W.workout_id, W.workout_intensity, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
+        sql = (f'SELECT W.workout_completed, W.workout_id, W.workout_intensity, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
                f'FROM Workout W '
                f'JOIN WorkoutExercise WE on WE.workout_id = W.workout_id '
                f'JOIN Exercise E on E.exercise_id = WE.exercise_id '
                f'JOIN Weight G on WE.weight_id = G.weight_id '
                f'WHERE W.workout_intensity {where} NULL '
-               f'ORDER BY W.timestamp, WE.core, WE.exercise_sequence')
+               f'ORDER BY W.workout_completed, WE.core, WE.exercise_sequence')
 
         return self.db.execute_query(sql)
 
@@ -138,13 +138,13 @@ class GenericRepository:
 
         where = 'W.train_tomorrow > -1' if completed else ' W.workout_intensity IS NULL AND W.train_tomorrow IS NULL'
 
-        sql = (f'SELECT W.timestamp, W.workout_id, W.train_tomorrow, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
+        sql = (f'SELECT W.workout_completed, W.workout_id, W.train_tomorrow, WE.exercise_id, WE.exercise_sequence, WE.weight_id, WE.reps, WE.core, E.metric_type, G.equipment_id '
                f'FROM Workout W '
                f'JOIN WorkoutExercise WE on WE.workout_id = W.workout_id '
                f'JOIN Exercise E on E.exercise_id = WE.exercise_id '
                f'JOIN Weight G on WE.weight_id = G.weight_id '
                f'WHERE {where} '
-               f'ORDER BY W.timestamp, WE.core, WE.exercise_sequence')
+               f'ORDER BY W.workout_completed, WE.core, WE.exercise_sequence')
 
         return self.db.execute_query(sql)
 
