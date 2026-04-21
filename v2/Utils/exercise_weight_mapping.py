@@ -30,5 +30,5 @@ class WeightMappings:
 
 if __name__ == '__main__':
     m = WeightMappings()
-    m.print_exercises('Ab Twist')
+    m.print_exercises('Renegade Rows')
     # m.get_all_weights()

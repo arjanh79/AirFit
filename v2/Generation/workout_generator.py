@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 
 import torch
-from datetime import datetime
 
 from v2.Data.factories import RepositoryFactory
 from v2.Generation.blocklist_generator import BlockedTokens
@@ -29,7 +28,7 @@ class ModelParams:
 class WorkoutGenerator:
     def __init__(self, model_dir=MODEL_PATH, weights_file='workout_model_best.pth'):
 
-        self.use_default_workout = True if datetime.now().timetuple().tm_yday % 3 == 0 else False
+        self.use_default_workout = False # True if datetime.now().timetuple().tm_yday % 3 == 0 else False
 
         self.rng = np.random.default_rng()
 
@@ -138,9 +137,9 @@ class WorkoutGenerator:
 
 
     def select_exercises(self, length: int=12, temperature: float=0.8) -> list[int]:
-        tokens = [1]
+        tokens = [1, 7, 22, 5, 23, 14, 26]
         with torch.no_grad():
-            for seq_num in range(length):
+            for seq_num in range(6):
                 x = torch.tensor(tokens, dtype=torch.long).unsqueeze(0)
                 logits = self.model(x)[0, -1] / temperature
 
@@ -151,12 +150,6 @@ class WorkoutGenerator:
 
                 blocked_tokens = self.block_rules.get_blocked_tokens(tokens)
                 logits[blocked_tokens] = float('-inf')
-
-                blocks = [[13, 22, 23, 14, 5, 11, 25, 7], [2, 3, 12, 15, 19, 16, 8, 20]]
-                idx = seq_num >= 5
-
-                logits[blocks[idx]] *= 5
-                logits[blocks[not idx]] *= 0.01
 
                 probs_logits = torch.softmax(logits, dim=-1)
 

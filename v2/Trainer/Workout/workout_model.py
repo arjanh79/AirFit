@@ -24,7 +24,6 @@ class WorkoutTransformer(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         b, t = x.shape   # batch_size, number of tokens in sequence
         pos = torch.arange(t).unsqueeze(0).expand(b, t)
-
         h = self.tok_emb(x) + self.pos_emb(pos)
 
         causal_mask = torch.triu(torch.ones(t, t, dtype=torch.bool), diagonal=1) # Don't look ahead!

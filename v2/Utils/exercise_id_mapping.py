@@ -27,8 +27,8 @@ class Mappings:
 
 if __name__ == '__main__':
     m = Mappings()
-    exercises = [  "Deadlift", "Squats", "Split Squats", "Dumbbell Press", "Bent-Over Row", "Clean and Press", "Dumbbell Snatch","Bosu Clean and Press"]
+    exercises = ['Bosu Clean and Press', 'Renegade Rows']
     # exercises = ['Push Ups']
     for exercise in exercises:
         print(f'{exercise} \t {m.exercise_to_token[exercise]}')
-        # print(m.exercise_to_token[exercise])
+        print(m.exercise_to_token[exercise])

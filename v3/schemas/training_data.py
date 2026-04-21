@@ -17,6 +17,6 @@ class WorkoutHeader:
     loss: float
 
 @dataclass
-class Workout():
+class Workout:
     header: WorkoutHeader
     body: list[WorkoutBody]
