@@ -137,7 +137,7 @@ class WorkoutGenerator:
 
 
     def select_exercises(self, length: int=12, temperature: float=0.8) -> list[int]:
-        tokens = [1, 7, 22, 5, 23, 14, 26]
+        tokens = [1, 7, 22, 5, 14, 23, 26]
         with torch.no_grad():
             for seq_num in range(6):
                 x = torch.tensor(tokens, dtype=torch.long).unsqueeze(0)
@@ -220,7 +220,7 @@ class WorkoutGenerator:
 
     def get_clean_workout(self):
 
-        # self.repo.delete_unrated_workouts()  # Uncomment for testing!
+        self.repo.delete_unrated_workouts()  # Uncomment for testing!
 
         data, _ = self.repo.check_available_workout()
         available_workout = len(data)
