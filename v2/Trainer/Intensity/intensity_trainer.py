@@ -25,14 +25,17 @@ class IntensityTrainer:
         self.col_names = col_names
 
         self.model = IntensityTransformer(num_embeddings=self.num_embeddings, col_names=self.col_names)
-
-        best_model = torch.load(MODEL_PATH / 'intensity_model_best.pth')
-        self.model.load_state_dict(best_model['model_state'])
-
         self.optimizer = optim.NAdam(self.model.parameters())
-        self.optimizer.load_state_dict(best_model['optimizer_state'])
+
+        try:
+            best_model = torch.load(MODEL_PATH / 'intensity_model_best.pth')
+            self.model.load_state_dict(best_model['model_state'])
+            self.optimizer.load_state_dict(best_model['optimizer_state'])
+        except Exception as e:
+            print(e)
+
         for param_group in self.optimizer.param_groups:
-            param_group['lr'] = 1e-3
+           param_group['lr'] = 1e-3
 
         self.loss_fn = nn.HuberLoss(reduction='none', delta=0.15)
         self.scheduler = self.get_scheduler()

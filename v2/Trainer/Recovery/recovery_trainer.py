@@ -91,7 +91,7 @@ class RecoveryTrainer:
 
             sep_length = 50
 
-            if epochs_without_improve >= patience or best_eval_loss < 1e-5:
+            if epochs_without_improve >= patience or best_eval_loss < 1e-4:
                 print('\n'+ 'RECOVERY ' + '=' * sep_length)
                 print(f'     *** Early Stopping - Epoch: {best_epoch:03d} - MSE: {best_eval_loss:.5f}')
                 break

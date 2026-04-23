@@ -9,6 +9,7 @@ class IntensityDataset(Dataset):
     def __init__(self, workouts):
         self.workouts = workouts
 
+
         self.feature_cols = ['exercise_id', 'exercise_sequence', 'weight_id', 'reps',
                              'core', 'metric_type', 'equipment_id']
 
@@ -21,9 +22,9 @@ class IntensityDataset(Dataset):
         self.x = np.stack(self.x, axis=0).astype(np.int64)
 
         # fix if we only have 1 sample
-        if self.x.shape[0] == 12:
+        if self.x.shape[2] == 1:
             self.x = self.x.transpose((2, 1, 0))
-            self.y = np.ones(self.x.shape[0]) + 3.5
+        #    # self.y = np.ones(self.x.shape[0]) + 3.5
 
         self.x = self.x.transpose((0, 2, 1))
 

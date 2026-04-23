@@ -77,5 +77,6 @@ class IntensityTransformer(nn.Module):
 
         output = torch.sum(logits, dim=1)  # (B, 1) workout intensity from exercises
 
+
         return output
 
