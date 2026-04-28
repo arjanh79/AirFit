@@ -35,7 +35,7 @@ class WorkoutGenerate:
                 self.update_reps(reps)
             print(np.round(reps.detach().numpy(), 3))
             diff_loss = abs(previous_loss - loss.item())
-            if diff_loss < 1.0e-05 and step > 10:
+            if diff_loss < 1.0e-05 and step >= 10:
                 print(f'{step} {diff_loss:.5f}')
                 break
             previous_loss = loss.item()

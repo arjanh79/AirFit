@@ -17,7 +17,8 @@ class WorkoutModel(nn.Module):
         self.normalize = nn.LayerNorm(16)
 
         encoder_layer = nn.TransformerEncoderLayer(d_model=16, nhead=4, batch_first=True)
-        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=2)
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=2)
+
         self.head = nn.Linear(16, 1)
 
 
@@ -39,7 +40,10 @@ class WorkoutModel(nn.Module):
         x = torch.cat([emb, reps], dim=2)
         x = self.input_projection(x)
         x = self.normalize(x)
-        x = self.transformer(x)
+
+        causal_mask = torch.triu(torch.ones(6, 6, dtype=torch.bool), diagonal=1)
+        x = self.encoder(x, mask=causal_mask)
+
         logits = self.head(x).squeeze(-1)
 
         return logits

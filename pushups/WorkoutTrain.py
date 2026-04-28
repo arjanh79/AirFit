@@ -2,7 +2,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
+
 
 from torch.utils.data import DataLoader
 from pushups.WorkoutDataset import WorkoutDataset
@@ -16,27 +16,29 @@ if __name__ == '__main__':
     ds = WorkoutDataset()
     dl = DataLoader(ds, batch_size=32, shuffle=False)
 
-    loss_fn = nn.BCEWithLogitsLoss()
+    loss_fn = nn.BCEWithLogitsLoss(reduction='none')
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 
     best_loss = torch.inf
     loss_counter = 0
-    for epoch in range(5000):
+    for epoch in range(500):
         model.train()
-        for X, y in dl:
+        for X, y, l in dl:
             model.zero_grad()
             y_pred = model(X)
             loss = loss_fn(y_pred, y)
+            loss = torch.mean(torch.sum(loss, dim=1) * l)
             loss.backward()
             optimizer.step()
             print(f'Epoch: {epoch:03d} Loss: {loss.item():.5f}')
         model.eval()
         with torch.no_grad():
             total_loss = 0
-            for X, y in dl:
+            for X, y, l in dl:
                 y_pred = model(X)
                 loss = loss_fn(y_pred, y)
+                loss = torch.mean(torch.sum(loss, dim=1) * l)
                 total_loss += loss
             if total_loss < best_loss:
                 best_loss = total_loss
