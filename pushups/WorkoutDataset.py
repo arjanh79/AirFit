@@ -10,10 +10,6 @@ class WorkoutDataset(Dataset):
         self.X, self.y = self.read_data()
         self.weighted_loss = self.create_weighted_loss()
 
-        print(self.X)
-        print(self.y)
-        print(self.weighted_loss)
-
 
     def read_data(self):
         with open(self.data_file, 'r') as f:

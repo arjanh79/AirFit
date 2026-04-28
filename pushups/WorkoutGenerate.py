@@ -3,8 +3,6 @@ import numpy as np
 
 from pushups.WorkoutModel import WorkoutModel
 
-import matplotlib.pyplot as plt
-
 
 class WorkoutGenerate:
     def __init__(self):
@@ -28,7 +26,7 @@ class WorkoutGenerate:
             optimizer.zero_grad()
             logits = self.model(reps)
             probs = torch.sigmoid(logits)
-            loss =loss_fn(probs, target)
+            loss = loss_fn(probs, target)
             loss.backward()
             optimizer.step()
             with torch.no_grad():
@@ -36,11 +34,12 @@ class WorkoutGenerate:
             print(np.round(reps.detach().numpy(), 3))
             diff_loss = abs(previous_loss - loss.item())
             if diff_loss < 1.0e-05 and step >= 10:
-                print(f'{step} {diff_loss:.5f}')
+                print(f'EARLY STOPPING - {step} - {diff_loss:.5f} - {loss.item():.5f}')
                 break
             previous_loss = loss.item()
 
         with torch.no_grad():
+            reps = torch.clamp(reps, 2, 20)
             self.update_reps(reps)
 
         reps = np.round(reps.squeeze().detach().numpy())

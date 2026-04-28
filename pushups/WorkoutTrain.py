@@ -27,9 +27,12 @@ if __name__ == '__main__':
         for X, y, l in dl:
             model.zero_grad()
             y_pred = model(X)
+
             loss = loss_fn(y_pred, y)
-            loss = torch.mean(torch.sum(loss, dim=1) * l)
+            loss = loss.sum(dim=1)
+            loss = (loss * l).mean()
             loss.backward()
+
             optimizer.step()
             print(f'Epoch: {epoch:03d} Loss: {loss.item():.5f}')
         model.eval()
@@ -37,8 +40,11 @@ if __name__ == '__main__':
             total_loss = 0
             for X, y, l in dl:
                 y_pred = model(X)
+
                 loss = loss_fn(y_pred, y)
-                loss = torch.mean(torch.sum(loss, dim=1) * l)
+                loss = loss.sum(dim=1)
+                loss = (loss * l).mean()
+
                 total_loss += loss
             if total_loss < best_loss:
                 best_loss = total_loss
