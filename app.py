@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import pandas as pd
 
 from v2.Generation.workout_generator import WorkoutGenerator
@@ -41,8 +41,18 @@ def df_to_blocks(df: pd.DataFrame) -> list[dict]:
 
 @app.route("/")
 def show_workout():
+
+    short = request.args.get("short", default=0, type=int)
+
     wg = WorkoutGenerator()
     df = wg.get_clean_workout()
+
+    if short == 1:
+        df = df[:6].copy()
+        df.loc[1:, 'reps'] *= 2
+        df.loc[0, 'equipment'] = 'Powerbag'
+        df.loc[0, 'weight'] = 25
+
     blocks = df_to_blocks(df)
     return render_template("workout.html", blocks=blocks)
 

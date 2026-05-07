@@ -137,7 +137,7 @@ class WorkoutGenerator:
 
 
     def select_exercises(self, length: int=12, temperature: float=0.8) -> list[int]:
-        tokens = [1, 7, 22, 5, 14, 23, 26]
+        tokens = [0, 11, 22, 5, 14, 23, 26]
         with torch.no_grad():
             for seq_num in range(6):
                 x = torch.tensor(tokens, dtype=torch.long).unsqueeze(0)
